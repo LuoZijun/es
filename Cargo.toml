@@ -1,0 +1,67 @@
+[package]
+name = "ecmascript"
+version = "0.1.0"
+authors = ["luozijun <luozijun.assistant@gmail.com>"]
+include = [
+    "data/*",
+    "src/*",
+    "bin/*",
+    "Cargo.toml",
+    "README.rst",
+]
+
+[workspace]
+members = [
+    
+]
+
+[dependencies]
+log = "0.4"
+unicode-xid = "0.1"
+
+# time = "0.1"
+# gc = "0.3"
+# gc_derive = "0.3"
+# toolshed = "0.8"
+# bitflags = "0.1"
+
+env_logger = { version = "0.6", optional = true, default-features = false, features = [ "termcolor", "atty", "humantime"] }
+rustyline = { version = "3.0", optional = true }
+
+[[bin]]
+# compiler
+name = "esc"
+path = "bin/esc.rs"
+required-features = [ "env_logger", "rustyline", "compiler" ]
+
+[[bin]]
+# interpreter
+name = "esi"
+path = "bin/esi.rs"
+required-features = [ "env_logger", "rustyline", "vm" ]
+
+
+[features]
+default = [ 
+    "parser", "compiler", "vm",
+    "env_logger", "rustyline"
+]
+parser = [ ]
+compiler = [ "parser" ]
+vm = [ "compiler" ]
+
+
+# https://doc.rust-lang.org/cargo/reference/manifest.html#the-profile-sections
+[profile.dev]
+opt-level = 0
+debug = true
+codegen-units = 16
+lto = false
+panic = "unwind"
+
+[profile.release]
+opt-level = 3
+debug = false
+codegen-units = 1
+lto = true
+panic = "abort"
