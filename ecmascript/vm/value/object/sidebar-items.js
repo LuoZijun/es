@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ObjectKind",""],["PropertyDescriptor",""],["PropertyKey",""]],"struct":[["AccessorPropertyDescriptor",""],["DataPropertyDescriptor",""],["Object",""],["Property",""]]});

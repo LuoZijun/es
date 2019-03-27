@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ScopeLevel",""]],"struct":[["Scope",""],["ScopeRef",""]]});
