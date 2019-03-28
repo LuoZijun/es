@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Value",""],["ValueKind",""]],"mod":[["boolean",""],["null",""],["number",""],["object",""],["string",""],["symbol",""],["undefined",""]]});
+initSidebarItems({"enum":[["Value",""],["Value2",""],["ValueKind",""]],"mod":[["boolean",""],["null",""],["number",""],["object",""],["string",""],["symbol",""],["undefined",""]],"struct":[["Value3",""]]});

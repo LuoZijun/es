@@ -814,11 +814,8 @@
 <span id="814">814</span>
 <span id="815">815</span>
 <span id="816">816</span>
-<span id="817">817</span>
-<span id="818">818</span>
-<span id="819">819</span>
 </pre><div class="example-wrap"><pre class="rust ">
-
+<span class="kw">use</span> <span class="ident">error</span>::{ <span class="ident">Error</span>, <span class="ident">ErrorKind</span>, };
 <span class="kw">use</span> <span class="ident">vm</span>::<span class="ident">value</span>::<span class="ident">Value</span>;
 <span class="kw">use</span> <span class="ident">vm</span>::<span class="ident">value</span>::<span class="ident">Undefined</span>;
 <span class="kw">use</span> <span class="ident">vm</span>::<span class="ident">value</span>::<span class="ident">Null</span>;
@@ -826,7 +823,7 @@
 <span class="kw">use</span> <span class="ident">vm</span>::<span class="ident">value</span>::<span class="ident">String</span>;
 <span class="kw">use</span> <span class="ident">vm</span>::<span class="ident">value</span>::<span class="ident">Symbol</span>;
 <span class="kw">use</span> <span class="ident">vm</span>::<span class="ident">value</span>::<span class="ident">Object</span>;
-<span class="comment">// use error::Error;</span>
+
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>;
@@ -907,7 +904,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">toExponential</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fraction_digits</span>: <span class="kw-2">&amp;</span><span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Object</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">toExponential</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fraction_digits</span>: <span class="kw-2">&amp;</span><span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">fraction_digits</span>.<span class="ident">toNumber</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">num</span><span class="op">|</span> <span class="ident">num</span>.<span class="ident">toInteger</span>()) {
             <span class="prelude-val">Ok</span>(<span class="ident">f</span>) <span class="op">=&gt;</span> {
                 <span class="kw">if</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">is_nan</span>() {
@@ -917,8 +914,7 @@
                 <span class="kw">let</span> <span class="ident">f</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="ident">f</span>.<span class="ident">into</span>();
 
                 <span class="kw">if</span> <span class="ident">f</span> <span class="op">&gt;</span> <span class="number">20</span> {
-                    <span class="comment">// FIXME: Return JSValue ( RangeError )</span>
-                    <span class="prelude-val">Err</span>(<span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;toExponential() argument must be between 0 and 20&quot;</span>.<span class="ident">to_string</span>()))
+                    <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">RangeError</span>, <span class="string">&quot;toExponential() argument must be between 0 and 20&quot;</span>))
                 } <span class="kw">else</span> {
                     <span class="prelude-val">Ok</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:.*e}&quot;</span>, <span class="ident">f</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="self">self</span>.<span class="number">0</span>).<span class="ident">into</span>())
                 }
@@ -928,7 +924,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">toPrecision</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">precision</span>: <span class="kw-2">&amp;</span><span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Object</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">toPrecision</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">precision</span>: <span class="kw-2">&amp;</span><span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">precision</span>.<span class="ident">is_undefined</span>() {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">into</span>());
         }
@@ -942,8 +938,7 @@
                 <span class="kw">let</span> <span class="ident">p</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">into</span>();
 
                 <span class="kw">if</span> <span class="ident">p</span> <span class="op">&lt;</span> <span class="number">1</span> <span class="op">||</span> <span class="ident">p</span> <span class="op">&gt;</span> <span class="number">21</span> {
-                    <span class="comment">// FIXME: Return JSValue ( RangeError )</span>
-                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;toPrecision() argument must be between 1 and 21&quot;</span>.<span class="ident">to_string</span>()));
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">RangeError</span>, <span class="string">&quot;toPrecision() argument must be between 1 and 21&quot;</span>));
                 }
                 
                 <span class="kw">let</span> <span class="ident">integer_part</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">trunc</span>();
@@ -964,7 +959,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">toFixed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fraction_digits</span>: <span class="kw-2">&amp;</span><span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Object</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">toFixed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fraction_digits</span>: <span class="kw-2">&amp;</span><span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">fraction_digits</span>.<span class="ident">toNumber</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">num</span><span class="op">|</span> <span class="ident">num</span>.<span class="ident">toInteger</span>()) {
             <span class="prelude-val">Ok</span>(<span class="ident">f</span>) <span class="op">=&gt;</span> {
                 <span class="kw">if</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">is_nan</span>() {
@@ -974,8 +969,7 @@
                 <span class="kw">let</span> <span class="ident">f</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="ident">f</span>.<span class="ident">into</span>();
 
                 <span class="kw">if</span> <span class="ident">f</span> <span class="op">&gt;</span> <span class="number">20</span> {
-                    <span class="comment">// FIXME: Return JSValue ( RangeError )</span>
-                    <span class="prelude-val">Err</span>(<span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;toFixed() argument must be between 0 and 20&quot;</span>.<span class="ident">to_string</span>()))
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">RangeError</span>, <span class="string">&quot;toFixed() argument must be between 0 and 20&quot;</span>));
                 } <span class="kw">else</span> {
                     <span class="prelude-val">Ok</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:.*}&quot;</span>, <span class="ident">f</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="self">self</span>.<span class="number">0</span>).<span class="ident">into</span>())
                 }
