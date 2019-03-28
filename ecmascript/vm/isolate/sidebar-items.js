@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Isolate",""],["IsolateRef",""]]});
+initSidebarItems({"struct":[["Isolate",""]],"type":[["IsolateRef",""]]});

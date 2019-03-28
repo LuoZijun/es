@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["SymbolKind",""]],"struct":[["Symbol",""],["SymbolRegistry",""],["SymbolRegistryRef",""]]});
+initSidebarItems({"enum":[["SymbolKind",""]],"struct":[["Symbol",""],["SymbolRegistry",""]],"type":[["SymbolRegistryRef",""]]});
