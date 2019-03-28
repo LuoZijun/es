@@ -1,6 +1,4 @@
-
-// use crate::uuid::Uuid;
-
+use rc_ref::RcRef;
 use vm::value::Value;
 use vm::value::Undefined;
 use vm::value::String;
@@ -32,15 +30,12 @@ pub enum SymbolKind {
     Private,
 }
 
+pub type SymbolRegistryRef = RcRef<SymbolRegistry>;
+
 #[derive(Debug)]
 pub struct SymbolRegistry {
     public: Vec<Vec<char>>,
     private: Vec<Option<Vec<char>>>,
-}
-
-#[derive(Debug)]
-pub struct SymbolRegistryRef {
-    inner: Rc<RefCell<SymbolRegistry>>,
 }
 
 #[derive(Debug, Clone)]
@@ -48,29 +43,6 @@ pub struct Symbol {
     kind: SymbolKind,
     id: usize,
     registry_ref: SymbolRegistryRef,
-}
-
-
-impl SymbolRegistryRef {
-    pub fn new(ctx: SymbolRegistry) -> Self {
-        SymbolRegistryRef { inner: Rc::new(RefCell::new(ctx)) }
-    }
-
-    pub fn borrow(&self) -> Ref<SymbolRegistry> {
-        self.inner.borrow()
-    }
-
-    pub fn borrow_mut(&self) -> RefMut<SymbolRegistry> {
-        self.inner.borrow_mut()
-    }
-}
-
-impl Clone for SymbolRegistryRef {
-    fn clone(&self) -> Self {
-        SymbolRegistryRef {
-            inner: Rc::clone(&self.inner),
-        }
-    }
 }
 
 

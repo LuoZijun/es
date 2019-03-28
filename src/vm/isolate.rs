@@ -1,4 +1,5 @@
 use error::Error;
+use rc_ref::RcRef;
 use vm::value::Value;
 use vm::value::symbol::{ SymbolRegistry, SymbolRegistryRef, };
 use vm::scope::{ Scope, ScopeRef, };
@@ -7,16 +8,11 @@ use std::rc::{ Rc, };
 use std::cell::{ Cell, Ref, RefMut, RefCell, };
 
 
-
+pub type IsolateRef = RcRef<Isolate>;
 #[derive(Debug)]
 pub struct Isolate {
     scope_ref: Option<ScopeRef>, // Global
     symbol_register_ref: SymbolRegistryRef,
-}
-
-#[derive(Debug)]
-pub struct IsolateRef {
-    inner: Rc<RefCell<Isolate>>,
 }
 
 impl Isolate {
@@ -50,28 +46,6 @@ impl Isolate {
 
     pub fn run_module(&self, module: &str) -> Result<Value, Error> {
         unimplemented!()
-    }
-}
-
-impl Clone for IsolateRef {
-    fn clone(&self) -> Self {
-        IsolateRef {
-            inner: Rc::clone(&self.inner),
-        }
-    }
-}
-
-impl IsolateRef {
-    pub fn new(ctx: Isolate) -> Self {
-        IsolateRef { inner: Rc::new(RefCell::new(ctx)) }
-    }
-
-    pub fn borrow(&self) -> Ref<Isolate> {
-        self.inner.borrow()
-    }
-
-    pub fn borrow_mut(&self) -> RefMut<Isolate> {
-        self.inner.borrow_mut()
     }
 }
 
