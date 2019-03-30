@@ -1,4 +1,4 @@
-#![feature(duration_constants, test)]
+#![feature(repeat_generic_slice, duration_constants, test)]
 #![recursion_limit="128"]
 #![allow(
     unused_imports, unused_variables, unused_must_use, 
@@ -15,6 +15,7 @@ extern crate unicode_xid;
 
 // extern crate time;
 
+pub mod ustring;
 pub mod rc_ref;
 
 
