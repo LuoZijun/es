@@ -209,12 +209,12 @@ fn literal_string(lexer: &mut Lexer) {
     lexer.bump();
 
     let closing_delimiter = openning;
-    let closing_delimiter2 = None;
+    let is_template = false;
     let allow_line_terminator = false;
     let unescape = true;
 
     if let Some(chars) = lexer.read_string_literal(closing_delimiter,
-                                                   closing_delimiter2,
+                                                   is_template,
                                                    allow_line_terminator,
                                                    unescape) {
         lexer.token = Token::LiteralString(chars);
@@ -762,11 +762,11 @@ impl<'a> Lexer<'a> {
     pub fn new(source: &'a [char]) -> Self {
         let source_len = source.len();
         Self {
-            source: source,
+            source,
             offset: 0,
             max_offset: source_len - 1,
 
-            token: Token::Init,
+            token: Token::UnexpectedToken,
             line_offset: 0,
             line: 0,
             column: 0,
@@ -896,7 +896,7 @@ impl<'a> Lexer<'a> {
     #[inline]
     pub fn read_string_literal(&mut self,
                                closing_delimiter: char,
-                               closing_delimiter2: Option<char>,
+                               is_template: bool,
                                allow_line_terminator: bool,
                                unescape: bool,
                                ) -> Option<Vec<char>> {
@@ -1064,25 +1064,24 @@ impl<'a> Lexer<'a> {
                     self.bump_line();
                 },
                 _ => {
-                    if c == closing_delimiter {
-                        self.bump();
-
-                        match closing_delimiter2 {
-                            Some(closing_delimiter2) => {
-                                if self.character() != closing_delimiter2 {
-                                    self.token = Token::UnexpectedToken;
-                                    return None;
-                                }
-
+                    if is_template {
+                        if c == '$' {
+                            self.bump();
+                            if self.character() != '{' {
+                                s.push(c);
+                                continue;
+                            } else {
                                 self.bump();
-                                return Some(s);
-                            },
-                            None => {
                                 return Some(s);
                             }
                         }
                     }
 
+                    if c == closing_delimiter {
+                        self.bump();
+                        return Some(s);
+                    }
+                    
                     s.push(c);
                     self.bump();
                 }
@@ -1358,12 +1357,12 @@ impl<'a> Lexer<'a> {
     #[inline]
     fn read_regular_expression_literal(&mut self) -> Option<RegularExpressionLiteral> {
         let closing_delimiter = '/';
-        let closing_delimiter2 = None;
+        let is_template = false;
         let allow_line_terminator = false;
         let unescape = false;
 
         let body = self.read_string_literal(closing_delimiter,
-                                            closing_delimiter2,
+                                            is_template,
                                             allow_line_terminator,
                                             unescape)?;
         let mut flags: Option<Vec<char>> = None;

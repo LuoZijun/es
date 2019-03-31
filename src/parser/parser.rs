@@ -1,185 +1,193 @@
+use error::{ ErrorKind, Error, };
 use version::ECMAScriptVersion;
 use lexer::{ ESChar, Lexer, Token, SpannedToken, Punctuator, Keyword, };
 
-// use crate::ast::Node;
+
 use ast::span::{ LineColumn, Span, };
 use ast::float::Float;
 use ast::statement::{ 
-    Statement, StatementList,
-    LexicalDeclaration, LexicalDeclarationKind, LexicalBinding,
+    SpannedStatement, Statement, StatementList,
+    VariableStatement, LexicalDeclaration, LexicalDeclarationKind, LexicalBinding,
 
 };
-use ast::expression::{ Expression, };
+use ast::expression::{ SpannedExpression, Expression, };
 
 
-
-#[derive(Debug)]
-pub enum ParseError {
-    UnexpectedEndOfProgram,
-    UnexpectedToken {
-        source: String,
-        line_column: LineColumn,
-    },
-}
 
 
 pub struct Parser<'a> {
-    start: LineColumn,
-    lexer: Lexer<'a>,
-    body: StatementList,
+    pub lexer: Lexer<'a>,
+    pub body: StatementList,
+    pub filename: String,
 }
 
 impl<'a> Parser<'a> {
     pub fn new(code: &'a [char]) -> Self {
         let lexer = Lexer::new(code);
-        let start = LineColumn::default();
-        Self { start, lexer, body: vec![] }
+
+        Self { lexer, body: vec![], filename: "@debugger".into() }
     }
     
-    fn next_token(&mut self) -> Result<SpannedToken, ParseError> {
-        self.lexer.consume();
+    pub fn error(&mut self, e: Error, start: LineColumn) -> Error {
         unimplemented!()
     }
 
-    pub fn process(&mut self) -> Result<(), ParseError>{
-        let token = self.lexer.token.clone();
+    pub fn error_line(&mut self, start: LineColumn) -> String {
+        let mut idx = start.offset;
+        for c in &self.lexer.source[start.offset..] {
+            if c.is_es_line_terminator() {
+                break;
+            }
 
-        match token {
-            Token::WhiteSpaces => Ok(()),
-            Token::LineTerminator => Ok(()),
-            Token::Keyword(kw) => {
-                match kw {
-                    Keyword::Let => {
-                        // let
-                        self.next_token();
-
-                    },
-                    Keyword::Const => {
-                        // const
-
-                    },
-                    Keyword::Var => {
-                        // var
-
-                    },
-                    _ => {
-                        
-                    }
-                }
-
-                unimplemented!()
-            },
-            Token::Punctuator(punct) => {
-                match punct {
-                    Punctuator::BackTick => {
-                        // `
-
-                    },
-                    Punctuator::Semicolon => {
-                        // :
-
-                    },
-                    Punctuator::LParen => {
-                        // (
-                    },
-                    Punctuator::LBracket => {
-                        // [
-
-                    },
-                    Punctuator::LBrace => {
-                        // {
-
-                    },
-                    _ => {
-
-                    }
-                }
-                
-                unimplemented!()
-            },
-            Token::Identifier(ident) => {
-                // let i: Vec<char> = *ident;
-                unimplemented!()
-            },
-            Token::LiteralNull => {
-                unimplemented!()
-            },
-            Token::LiteralBoolean(val) => {
-                unimplemented!()
-            },
-            Token::LiteralString(val) => {
-                unimplemented!()
-            },
-            Token::LiteralDecimalNumeric(val) => {
-                unimplemented!()
-            },
-            Token::LiteralFloatNumeric(val) => {
-                unimplemented!()
-            },
-            _ => unreachable!(),
+            idx += 1;
         }
+
+        self.lexer.source[start.offset..idx].iter().collect::<String>()
     }
 
-    fn error(&mut self) -> Result<(), ParseError> {
+    pub fn unexpected_token(&mut self, spanned_token: SpannedToken) -> Error {
+        let start = spanned_token.start;
+
+        let mut e = Error::new(ErrorKind::LexicalError, "UnexpectedToken");
+        let line = self.error_line(start);
+        
+        e.set_stack(self.filename.as_ref(), start.line, start.column, Some(line));
+
+        e
+    }
+
+    pub fn next_token(&mut self) -> Result<Option<SpannedToken>, Error> {
+        let start = self.lexer.line_column();
+        
+        self.lexer.consume();
+
+        let end = self.lexer.line_column();
+
         match self.lexer.token {
+            Token::EndOfProgram => {
+                Ok(None)
+            },
             Token::UnexpectedEof => {
-                return Err(ParseError::UnexpectedEndOfProgram);
+                let mut e = Error::new(ErrorKind::LexicalError, "UnexpectedEof");
+                e.set_stack(self.filename.as_ref(), start.line, start.column, None);
+                Err(e)
             },
             Token::UnexpectedToken => {
-                let mut idx = self.start.offset;
-                let mut line_str: Vec<char> = vec![];
-                
-                for c in &self.lexer.source[self.start.offset..] {
-                    if c.is_es_line_terminator() {
-                        break;
-                    }
+                let mut e = Error::new(ErrorKind::LexicalError, "UnexpectedToken");
+                let line = self.error_line(start);
 
-                    idx += 1;
-                }
+                e.set_stack(self.filename.as_ref(), start.line, start.column, Some(line));
 
-                let line = self.lexer.source[self.start.offset..idx].iter().collect::<String>();
-
-                return Err(ParseError::UnexpectedToken {
-                    source: line,
-                    line_column: self.start,
-                });
+                Err(e)
             },
-            _ => unreachable!(),
+            _ => {
+                let spanned_token = Span { start, end, item: self.lexer.token.clone() };
+                Ok(Some(spanned_token))
+            },
         }
     }
 
-    pub fn parse(&mut self) -> Result<(), ParseError> {
-        loop {
-            self.start = self.lexer.line_column();
+    pub fn next_token2(&mut self) -> Result<SpannedToken, Error> {
+        let start = self.lexer.line_column();
 
-            self.lexer.consume();
-            
-            let end = self.lexer.line_column();
-
-            match self.lexer.token {
-                Token::EndOfProgram => {
-                    return Ok(());
-                },
-                Token::UnexpectedEof | Token::UnexpectedToken => {
-                    return self.error();
-                },
-                _ => {
-                    self.process()?;
-                },
-            }
+        match self.next_token()? {
+            Some(spanned_token) => Ok(spanned_token),
+            None => {
+                let mut e = Error::new(ErrorKind::ParseError, "UnexpectedEof");
+                e.set_stack(self.filename.as_ref(), start.line, start.column, None);
+                Err(e)
+            },
         }
-    }
-
-    fn parse_statement(&mut self) {
-
     }
     
-    fn parse_declaration(&mut self) {
+    pub fn process(&mut self, token: SpannedToken) -> Result<SpannedStatement, Error> {
+        match token.item {
+            Token::Keyword(Keyword::Var)
+            | Token::Keyword(Keyword::Let)
+            | Token::Keyword(Keyword::Const)
+            | Token::Keyword(Keyword::Function)
+            | Token::Keyword(Keyword::Class)
+            | Token::Keyword(Keyword::Async) 
 
+            | Token::Punctuator(Punctuator::Semicolon)
+            | Token::Keyword(Keyword::Debugger)
+             => {
+                // Stmt
+                return self.parse_statement(token);
+            },
+
+            Token::LiteralNull
+            | Token::LiteralBoolean(_)
+            | Token::LiteralString(_)
+            | Token::LiteralDecimalNumeric(_)
+            | Token::LiteralFloatNumeric(_)
+            | Token::Identifier(_)
+
+            | Token::Punctuator(Punctuator::BackTick)
+            | Token::Punctuator(Punctuator::LParen)
+            | Token::Punctuator(Punctuator::LBracket)
+            | Token::Punctuator(Punctuator::LBrace)
+
+            => {
+                // expr
+                let spanned_expr = self.parse_expression(token)?;
+                let start = spanned_expr.start;
+                let end = spanned_expr.end;
+                let item = Statement::Expression(Box::new(spanned_expr.item));
+                let stmt = Span { start, end, item, };
+                
+                Ok(stmt)
+            },
+            _ => {
+                Err(self.unexpected_token(token))
+            },
+        }
     }
 
-    fn parse_expression(&mut self) {
 
+    pub fn parse(&mut self) -> Result<(), Error> {
+        match self.next_token()? {
+            Some(spanned_token) => {
+                match spanned_token.item {
+                    Token::SingleLineComment | Token::MultiLineComment
+                    | Token::WhiteSpaces
+                    | Token::LineTerminator => {
+
+                    },
+                    Token::HashBang => {
+
+                    },
+                    _ => {
+                        self.process(spanned_token)?;
+                    }
+                }
+            },
+            None => {
+                return Ok(());
+            }
+        }
+
+        loop {
+            match self.next_token()? {
+                Some(spanned_token) => {
+                    match spanned_token.item {
+                        Token::SingleLineComment | Token::MultiLineComment
+                        | Token::WhiteSpaces
+                        | Token::LineTerminator => {
+                            continue;
+                        },
+                        _ => {
+                            self.process(spanned_token)?;
+                        }
+                    }
+                },
+                None => {
+                    break;
+                }
+            }
+        }
+
+        Ok(())
     }
 }
 
@@ -195,7 +203,7 @@ pub fn parse(source: &str) {
             trace!("EOF.");
         },
         Err(e) => {
-            error!("{:?}", e);
+            println!("{:?}", e);
         }
     }
 }

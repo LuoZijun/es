@@ -2,6 +2,7 @@ use std::str::FromStr;
 use std::convert::TryFrom;
 
 
+pub const KEYWORD_ASYNC: &[char]      = &['a', 's', 'y', 'n', 'c'];
 pub const KEYWORD_AWAIT: &[char]      = &['a', 'w', 'a', 'i', 't'];
 pub const KEYWORD_BREAK: &[char]      = &['b', 'r', 'e', 'a', 'k'];
 pub const KEYWORD_CASE: &[char]       = &['c', 'a', 's', 'e'];
@@ -49,6 +50,7 @@ pub const KEYWORD_PUBLIC: &[char]     = &['p', 'u', 'b', 'l', 'i', 'c'];
 // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-keywords
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum Keyword {
+    Async,
     Await,
     Break,
     Case,
@@ -99,6 +101,24 @@ pub enum Keyword {
     Public,
 }
 
+impl Keyword {
+    pub fn is_future_reserved(&self) -> bool {
+        // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-FutureReservedWord
+        use self::Keyword::*;
+
+        match *self {
+            Enum => true,
+            Implements
+            | Package
+            | Protected
+            | Interface
+            | Private
+            | Public => true,
+            _ => false,
+        }
+    }
+}
+
 impl FromStr for Keyword {
     type Err = ();
 
@@ -106,6 +126,7 @@ impl FromStr for Keyword {
         use self::Keyword::*;
 
         match s {
+            "async" => Ok(Async),
             "await" => Ok(Await),
             "break" => Ok(Break),
             "case" => Ok(Case),
@@ -161,6 +182,7 @@ impl TryFrom<&[char]> for Keyword {
         use self::Keyword::*;
 
         match value {
+            KEYWORD_ASYNC => Ok(Async),
             KEYWORD_AWAIT => Ok(Await),
             KEYWORD_BREAK => Ok(Break),
             KEYWORD_CASE => Ok(Case),

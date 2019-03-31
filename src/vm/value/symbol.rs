@@ -62,8 +62,8 @@ impl SymbolRegistry {
         }
     }
 
-    pub fn find_public_description(&self, description: &Vec<char>) -> Option<usize> {
-        self.public.iter().position(|item| &item[..] == &description[..])
+    pub fn find_public_description(&self, description: &[char]) -> Option<usize> {
+        self.public.iter().position(|item| &item[..] == description)
     }
 
     pub fn get_description(&self, kind: SymbolKind, id: usize) -> Option<&Vec<char>> {

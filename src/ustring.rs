@@ -128,7 +128,7 @@ impl UString {
 
         Self { inner: self.inner[start..size].to_vec() }
     }
-    
+
     pub fn replace(&self, s: &Self, replace_with: &Self) -> Self {
         match self.indexOf(s) {
             Some(idx) => {
@@ -141,6 +141,12 @@ impl UString {
                 Self { inner: self.inner.clone() }
             },
         }
+    }
+}
+
+impl fmt::Debug for UString {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self.inner.iter().collect::<String>())
     }
 }
 

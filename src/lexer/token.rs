@@ -46,8 +46,6 @@ pub enum Token {
     UnexpectedToken,
     UnexpectedEof,
 
-    Init,
-    
     HashBang,
     
     SingleLineComment,
@@ -79,6 +77,26 @@ impl Token {
 
         match *self {
             UnexpectedToken | UnexpectedEof => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_hashbang(&self) -> bool {
+        match *self {
+            Token::HashBang => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_literal(&self) -> bool {
+        use self::Token::*;
+
+        match *self {
+            LiteralNull
+            | LiteralBoolean(_) 
+            | LiteralString(_)
+            | LiteralDecimalNumeric(_)
+            | LiteralFloatNumeric(_) => true,
             _ => false,
         }
     }

@@ -1,10 +1,11 @@
 // pub use super::class::ClassDeclaration;
 // pub use super::function::FunctionDeclaration;
 
-
+use ast::span::Span;
 use ast::expression::{ Expression, };
 
 
+pub type SpannedStatement = Span<Statement>;
 pub type StatementList = Vec<Statement>;
 
 

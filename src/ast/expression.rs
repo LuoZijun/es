@@ -11,6 +11,9 @@ use std::convert::TryFrom;
 use std::convert::TryInto;
 
 
+pub type SpannedExpression = Span<Expression>;
+
+
 #[derive(Debug, PartialEq, Clone)]
 pub enum Expression {
     This,

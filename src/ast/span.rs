@@ -27,13 +27,13 @@ impl fmt::Display for LineColumn {
 
 
 #[derive(Debug, Eq, Clone)]
-pub struct Span<T: fmt::Debug + PartialEq + hash::Hash + Clone> {
+pub struct Span<T: fmt::Debug + PartialEq + Clone> {
     pub start: LineColumn,
     pub end: LineColumn,
     pub item: T,
 }
 
-impl<T: fmt::Debug + PartialEq + hash::Hash + Clone> PartialEq for Span<T> {
+impl<T: fmt::Debug + PartialEq + Clone> PartialEq for Span<T> {
     fn eq(&self, other: &Span<T>) -> bool {
         self.item == other.item
     }

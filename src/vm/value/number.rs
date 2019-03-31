@@ -16,6 +16,7 @@ use std::hash;
 use std::string;
 use std::marker::PhantomData;
 use std::collections::HashMap;
+use std::convert::From;
 
 
 #[derive(Debug, Clone, Copy)]
@@ -187,8 +188,8 @@ impl Number {
                 return 0.0f64.into();
             }
         }
-
-        if self.0.abs() == 1.0 {
+        
+        if (self.0.abs() - 1.0).abs() < std::f64::EPSILON {
             if exponent.0.is_infinite() && exponent.0.is_sign_positive() {
                 return f64::NAN.into();
             }
@@ -451,11 +452,7 @@ impl PartialEq for Number {
         // -NaN == -NaN
         // +NaN == -NaN
         if self.0.is_nan() {
-            if other.0.is_nan() {
-                true
-            } else {
-                false
-            }
+            other.0.is_nan()
         } else {
             self.0 == other.0
         }
@@ -472,7 +469,7 @@ impl PartialOrd for Number {
 
 impl Ord for Number {
     fn cmp(&self, other: &Number) -> cmp::Ordering {
-        if self.0  == other.0 {
+        if (self.0 - other.0).abs() < std::f64::EPSILON {
             cmp::Ordering::Equal
         } else if self.0 > other.0 {
             cmp::Ordering::Greater
@@ -505,17 +502,17 @@ impl fmt::Display for Number {
 
 impl From<u8> for Number {
     fn from(n: u8) -> Self {
-        Number(n as f64)
+        Number(f64::from(n))
     }
 }
 impl From<u16> for Number {
     fn from(n: u16) -> Self {
-        Number(n as f64)
+        Number(f64::from(n))
     }
 }
 impl From<u32> for Number {
     fn from(n: u32) -> Self {
-        Number(n as f64)
+        Number(f64::from(n))
     }
 }
 impl From<u64> for Number {
@@ -525,7 +522,7 @@ impl From<u64> for Number {
 }
 impl From<i8> for Number {
     fn from(n: i8) -> Self {
-        Number(n as f64)
+        Number(f64::from(n))
     }
 }
 impl From<i16> for Number {
@@ -535,7 +532,7 @@ impl From<i16> for Number {
 }
 impl From<i32> for Number {
     fn from(n: i32) -> Self {
-        Number(n as f64)
+        Number(f64::from(n))
     }
 }
 impl From<i64> for Number {
@@ -556,7 +553,7 @@ impl From<usize> for Number {
 
 impl From<f32> for Number {
     fn from(n: f32) -> Self {
-        Number(n as f64)
+        Number(f64::from(n))
     }
 }
 impl From<f64> for Number {
@@ -565,10 +562,9 @@ impl From<f64> for Number {
     }
 }
 
-
 impl From<bool> for Number {
     fn from(b: bool) -> Self {
-        if b == true {
+        if b {
             1.0f64.into()
         } else {
             0.0f64.into()
@@ -578,9 +574,7 @@ impl From<bool> for Number {
 
 impl Into<bool> for Number {
     fn into(self) -> bool {
-        if self.0 == 0.0f64 || self.0 == -0.0f64 {
-            false
-        } else if self.0.is_nan() {
+        if self.0 == 0.0f64 || self.0 == -0.0f64 || self.0.is_nan() {
             false
         } else {
             true

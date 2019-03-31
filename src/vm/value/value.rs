@@ -218,7 +218,7 @@ impl Value {
             Null(s)       => Ok(s.into()),
             Boolean(s)    => Ok(s.into()),
             String(ref s) => Ok(s.into()),
-            Number(s)     => Ok(s.into()),
+            Number(s)     => Ok(s),
             // FIXME: Return JSValue (TypeError)
             Symbol(_)     => Err(Error::new(ErrorKind::TypeError, "Cannot convert a Symbol value to a number")),
             Object(ref s) => Ok(s.into()),
@@ -289,7 +289,7 @@ impl ops::Add for Value {
     type Output = Result<Value, Error>;
 
     fn add(self, other: Value) -> Self::Output {
-        let is_string = self.is_string() || other.is_string();
+        let is_string: bool = self.is_string() || other.is_string();
 
         if is_string {
             match self.toString() {
@@ -533,7 +533,7 @@ impl Into<PropertyKey> for Value {
     fn into(self) -> PropertyKey {
         match self {
             Value::Symbol(val) => PropertyKey::Symbol(val),
-            val @ _ => PropertyKey::String(val.toString().unwrap())
+            val => PropertyKey::String(val.toString().unwrap())
         }
     }
 }

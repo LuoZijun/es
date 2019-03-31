@@ -5,6 +5,8 @@
     non_snake_case, unreachable_code, dead_code, unused_mut,
     unused_macros,
 )]
+#![allow(clippy::all)]
+
 
 #[cfg(test)]
 extern crate test;
