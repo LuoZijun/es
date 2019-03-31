@@ -199,189 +199,205 @@
 <span id="199">199</span>
 <span id="200">200</span>
 <span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="ident">error</span>::{ <span class="ident">ErrorKind</span>, <span class="ident">Error</span>, };
 <span class="kw">use</span> <span class="ident">version</span>::<span class="ident">ECMAScriptVersion</span>;
 <span class="kw">use</span> <span class="ident">lexer</span>::{ <span class="ident">ESChar</span>, <span class="ident">Lexer</span>, <span class="ident">Token</span>, <span class="ident">SpannedToken</span>, <span class="ident">Punctuator</span>, <span class="ident">Keyword</span>, };
 
-<span class="comment">// use crate::ast::Node;</span>
+
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">span</span>::{ <span class="ident">LineColumn</span>, <span class="ident">Span</span>, };
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">float</span>::<span class="ident">Float</span>;
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">statement</span>::{ 
-    <span class="ident">Statement</span>, <span class="ident">StatementList</span>,
-    <span class="ident">LexicalDeclaration</span>, <span class="ident">LexicalDeclarationKind</span>, <span class="ident">LexicalBinding</span>,
+    <span class="ident">SpannedStatement</span>, <span class="ident">Statement</span>, <span class="ident">StatementList</span>,
+    <span class="ident">VariableStatement</span>, <span class="ident">LexicalDeclaration</span>, <span class="ident">LexicalDeclarationKind</span>, <span class="ident">LexicalBinding</span>,
 
 };
-<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">expression</span>::{ <span class="ident">Expression</span>, };
+<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">expression</span>::{ <span class="ident">SpannedExpression</span>, <span class="ident">Expression</span>, };
 
 
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ParseError</span> {
-    <span class="ident">UnexpectedEndOfProgram</span>,
-    <span class="ident">UnexpectedToken</span> {
-        <span class="ident">source</span>: <span class="ident">String</span>,
-        <span class="ident">line_column</span>: <span class="ident">LineColumn</span>,
-    },
-}
 
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="ident">start</span>: <span class="ident">LineColumn</span>,
-    <span class="ident">lexer</span>: <span class="ident">Lexer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
-    <span class="ident">body</span>: <span class="ident">StatementList</span>,
+    <span class="kw">pub</span> <span class="ident">lexer</span>: <span class="ident">Lexer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">body</span>: <span class="ident">StatementList</span>,
+    <span class="kw">pub</span> <span class="ident">filename</span>: <span class="ident">String</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">code</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">char</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">lexer</span> <span class="op">=</span> <span class="ident">Lexer</span>::<span class="ident">new</span>(<span class="ident">code</span>);
-        <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">LineColumn</span>::<span class="ident">default</span>();
-        <span class="self">Self</span> { <span class="ident">start</span>, <span class="ident">lexer</span>, <span class="ident">body</span>: <span class="macro">vec</span><span class="macro">!</span>[] }
+
+        <span class="self">Self</span> { <span class="ident">lexer</span>, <span class="ident">body</span>: <span class="macro">vec</span><span class="macro">!</span>[], <span class="ident">filename</span>: <span class="string">&quot;@debugger&quot;</span>.<span class="ident">into</span>() }
     }
     
-    <span class="kw">fn</span> <span class="ident">next_token</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SpannedToken</span>, <span class="ident">ParseError</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">consume</span>();
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">error</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">e</span>: <span class="ident">Error</span>, <span class="ident">start</span>: <span class="ident">LineColumn</span>) <span class="op">-&gt;</span> <span class="ident">Error</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">process</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">ParseError</span><span class="op">&gt;</span>{
-        <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">token</span>.<span class="ident">clone</span>();
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">error_line</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">start</span>: <span class="ident">LineColumn</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">idx</span> <span class="op">=</span> <span class="ident">start</span>.<span class="ident">offset</span>;
+        <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">source</span>[<span class="ident">start</span>.<span class="ident">offset</span>..] {
+            <span class="kw">if</span> <span class="ident">c</span>.<span class="ident">is_es_line_terminator</span>() {
+                <span class="kw">break</span>;
+            }
 
-        <span class="kw">match</span> <span class="ident">token</span> {
-            <span class="ident">Token</span>::<span class="ident">WhiteSpaces</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(()),
-            <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(()),
-            <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">kw</span>) <span class="op">=&gt;</span> {
-                <span class="kw">match</span> <span class="ident">kw</span> {
-                    <span class="ident">Keyword</span>::<span class="ident">Let</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// let</span>
-                        <span class="self">self</span>.<span class="ident">next_token</span>();
-
-                    },
-                    <span class="ident">Keyword</span>::<span class="ident">Const</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// const</span>
-
-                    },
-                    <span class="ident">Keyword</span>::<span class="ident">Var</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// var</span>
-
-                    },
-                    <span class="kw">_</span> <span class="op">=&gt;</span> {
-                        
-                    }
-                }
-
-                <span class="macro">unimplemented</span><span class="macro">!</span>()
-            },
-            <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
-                <span class="kw">match</span> <span class="ident">punct</span> {
-                    <span class="ident">Punctuator</span>::<span class="ident">BackTick</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// `</span>
-
-                    },
-                    <span class="ident">Punctuator</span>::<span class="ident">Semicolon</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// :</span>
-
-                    },
-                    <span class="ident">Punctuator</span>::<span class="ident">LParen</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// (</span>
-                    },
-                    <span class="ident">Punctuator</span>::<span class="ident">LBracket</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// [</span>
-
-                    },
-                    <span class="ident">Punctuator</span>::<span class="ident">LBrace</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// {</span>
-
-                    },
-                    <span class="kw">_</span> <span class="op">=&gt;</span> {
-
-                    }
-                }
-                
-                <span class="macro">unimplemented</span><span class="macro">!</span>()
-            },
-            <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> {
-                <span class="comment">// let i: Vec&lt;char&gt; = *ident;</span>
-                <span class="macro">unimplemented</span><span class="macro">!</span>()
-            },
-            <span class="ident">Token</span>::<span class="ident">LiteralNull</span> <span class="op">=&gt;</span> {
-                <span class="macro">unimplemented</span><span class="macro">!</span>()
-            },
-            <span class="ident">Token</span>::<span class="ident">LiteralBoolean</span>(<span class="ident">val</span>) <span class="op">=&gt;</span> {
-                <span class="macro">unimplemented</span><span class="macro">!</span>()
-            },
-            <span class="ident">Token</span>::<span class="ident">LiteralString</span>(<span class="ident">val</span>) <span class="op">=&gt;</span> {
-                <span class="macro">unimplemented</span><span class="macro">!</span>()
-            },
-            <span class="ident">Token</span>::<span class="ident">LiteralDecimalNumeric</span>(<span class="ident">val</span>) <span class="op">=&gt;</span> {
-                <span class="macro">unimplemented</span><span class="macro">!</span>()
-            },
-            <span class="ident">Token</span>::<span class="ident">LiteralFloatNumeric</span>(<span class="ident">val</span>) <span class="op">=&gt;</span> {
-                <span class="macro">unimplemented</span><span class="macro">!</span>()
-            },
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+            <span class="ident">idx</span> <span class="op">+=</span> <span class="number">1</span>;
         }
+
+        <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">source</span>[<span class="ident">start</span>.<span class="ident">offset</span>..<span class="ident">idx</span>].<span class="ident">iter</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">error</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">ParseError</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unexpected_token</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">spanned_token</span>: <span class="ident">SpannedToken</span>) <span class="op">-&gt;</span> <span class="ident">Error</span> {
+        <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">spanned_token</span>.<span class="ident">start</span>;
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">LexicalError</span>, <span class="string">&quot;UnexpectedToken&quot;</span>);
+        <span class="kw">let</span> <span class="ident">line</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">error_line</span>(<span class="ident">start</span>);
+        
+        <span class="ident">e</span>.<span class="ident">set_stack</span>(<span class="self">self</span>.<span class="ident">filename</span>.<span class="ident">as_ref</span>(), <span class="ident">start</span>.<span class="ident">line</span>, <span class="ident">start</span>.<span class="ident">column</span>, <span class="prelude-val">Some</span>(<span class="ident">line</span>));
+
+        <span class="ident">e</span>
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">next_token</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SpannedToken</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">line_column</span>();
+        
+        <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">consume</span>();
+
+        <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">line_column</span>();
+
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">token</span> {
+            <span class="ident">Token</span>::<span class="ident">EndOfProgram</span> <span class="op">=&gt;</span> {
+                <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
+            },
             <span class="ident">Token</span>::<span class="ident">UnexpectedEof</span> <span class="op">=&gt;</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ParseError</span>::<span class="ident">UnexpectedEndOfProgram</span>);
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">LexicalError</span>, <span class="string">&quot;UnexpectedEof&quot;</span>);
+                <span class="ident">e</span>.<span class="ident">set_stack</span>(<span class="self">self</span>.<span class="ident">filename</span>.<span class="ident">as_ref</span>(), <span class="ident">start</span>.<span class="ident">line</span>, <span class="ident">start</span>.<span class="ident">column</span>, <span class="prelude-val">None</span>);
+                <span class="prelude-val">Err</span>(<span class="ident">e</span>)
             },
             <span class="ident">Token</span>::<span class="ident">UnexpectedToken</span> <span class="op">=&gt;</span> {
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">idx</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">start</span>.<span class="ident">offset</span>;
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">line_str</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
-                
-                <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">source</span>[<span class="self">self</span>.<span class="ident">start</span>.<span class="ident">offset</span>..] {
-                    <span class="kw">if</span> <span class="ident">c</span>.<span class="ident">is_es_line_terminator</span>() {
-                        <span class="kw">break</span>;
-                    }
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">LexicalError</span>, <span class="string">&quot;UnexpectedToken&quot;</span>);
+                <span class="kw">let</span> <span class="ident">line</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">error_line</span>(<span class="ident">start</span>);
 
-                    <span class="ident">idx</span> <span class="op">+=</span> <span class="number">1</span>;
-                }
+                <span class="ident">e</span>.<span class="ident">set_stack</span>(<span class="self">self</span>.<span class="ident">filename</span>.<span class="ident">as_ref</span>(), <span class="ident">start</span>.<span class="ident">line</span>, <span class="ident">start</span>.<span class="ident">column</span>, <span class="prelude-val">Some</span>(<span class="ident">line</span>));
 
-                <span class="kw">let</span> <span class="ident">line</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">source</span>[<span class="self">self</span>.<span class="ident">start</span>.<span class="ident">offset</span>..<span class="ident">idx</span>].<span class="ident">iter</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>();
-
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ParseError</span>::<span class="ident">UnexpectedToken</span> {
-                    <span class="ident">source</span>: <span class="ident">line</span>,
-                    <span class="ident">line_column</span>: <span class="self">self</span>.<span class="ident">start</span>,
-                });
+                <span class="prelude-val">Err</span>(<span class="ident">e</span>)
             },
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+            <span class="kw">_</span> <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="ident">spanned_token</span> <span class="op">=</span> <span class="ident">Span</span> { <span class="ident">start</span>, <span class="ident">end</span>, <span class="ident">item</span>: <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">token</span>.<span class="ident">clone</span>() };
+                <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">spanned_token</span>))
+            },
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">ParseError</span><span class="op">&gt;</span> {
-        <span class="kw">loop</span> {
-            <span class="self">self</span>.<span class="ident">start</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">line_column</span>();
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">next_token2</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SpannedToken</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">line_column</span>();
 
-            <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">consume</span>();
-            
-            <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">line_column</span>();
-
-            <span class="kw">match</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">token</span> {
-                <span class="ident">Token</span>::<span class="ident">EndOfProgram</span> <span class="op">=&gt;</span> {
-                    <span class="kw">return</span> <span class="prelude-val">Ok</span>(());
-                },
-                <span class="ident">Token</span>::<span class="ident">UnexpectedEof</span> <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">UnexpectedToken</span> <span class="op">=&gt;</span> {
-                    <span class="kw">return</span> <span class="self">self</span>.<span class="ident">error</span>();
-                },
-                <span class="kw">_</span> <span class="op">=&gt;</span> {
-                    <span class="self">self</span>.<span class="ident">process</span>()<span class="question-mark">?</span>;
-                },
-            }
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">next_token</span>()<span class="question-mark">?</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">spanned_token</span>) <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">spanned_token</span>),
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">ErrorKind</span>::<span class="ident">ParseError</span>, <span class="string">&quot;UnexpectedEof&quot;</span>);
+                <span class="ident">e</span>.<span class="ident">set_stack</span>(<span class="self">self</span>.<span class="ident">filename</span>.<span class="ident">as_ref</span>(), <span class="ident">start</span>.<span class="ident">line</span>, <span class="ident">start</span>.<span class="ident">column</span>, <span class="prelude-val">None</span>);
+                <span class="prelude-val">Err</span>(<span class="ident">e</span>)
+            },
         }
-    }
-
-    <span class="kw">fn</span> <span class="ident">parse_statement</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-
     }
     
-    <span class="kw">fn</span> <span class="ident">parse_declaration</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">process</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">SpannedToken</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SpannedStatement</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="ident">token</span>.<span class="ident">item</span> {
+            <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">Keyword</span>::<span class="ident">Var</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">Keyword</span>::<span class="ident">Let</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">Keyword</span>::<span class="ident">Const</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">Keyword</span>::<span class="ident">Function</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">Keyword</span>::<span class="ident">Class</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">Keyword</span>::<span class="ident">Async</span>) 
 
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">Punctuator</span>::<span class="ident">Semicolon</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">Keyword</span>::<span class="ident">Debugger</span>)
+             <span class="op">=&gt;</span> {
+                <span class="comment">// Stmt</span>
+                <span class="kw">return</span> <span class="self">self</span>.<span class="ident">parse_statement</span>(<span class="ident">token</span>);
+            },
+
+            <span class="ident">Token</span>::<span class="ident">LiteralNull</span>
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralBoolean</span>(<span class="kw">_</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralString</span>(<span class="kw">_</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralDecimalNumeric</span>(<span class="kw">_</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralFloatNumeric</span>(<span class="kw">_</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="kw">_</span>)
+
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">Punctuator</span>::<span class="ident">BackTick</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">Punctuator</span>::<span class="ident">LParen</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">Punctuator</span>::<span class="ident">LBracket</span>)
+            <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">Punctuator</span>::<span class="ident">LBrace</span>)
+
+            <span class="op">=&gt;</span> {
+                <span class="comment">// expr</span>
+                <span class="kw">let</span> <span class="ident">spanned_expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token</span>)<span class="question-mark">?</span>;
+                <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">spanned_expr</span>.<span class="ident">start</span>;
+                <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="ident">spanned_expr</span>.<span class="ident">end</span>;
+                <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">Statement</span>::<span class="ident">Expression</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">spanned_expr</span>.<span class="ident">item</span>));
+                <span class="kw">let</span> <span class="ident">stmt</span> <span class="op">=</span> <span class="ident">Span</span> { <span class="ident">start</span>, <span class="ident">end</span>, <span class="ident">item</span>, };
+                
+                <span class="prelude-val">Ok</span>(<span class="ident">stmt</span>)
+            },
+            <span class="kw">_</span> <span class="op">=&gt;</span> {
+                <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token</span>))
+            },
+        }
     }
 
-    <span class="kw">fn</span> <span class="ident">parse_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
 
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">next_token</span>()<span class="question-mark">?</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">spanned_token</span>) <span class="op">=&gt;</span> {
+                <span class="kw">match</span> <span class="ident">spanned_token</span>.<span class="ident">item</span> {
+                    <span class="ident">Token</span>::<span class="ident">SingleLineComment</span> <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">MultiLineComment</span>
+                    <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">WhiteSpaces</span>
+                    <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> {
+
+                    },
+                    <span class="ident">Token</span>::<span class="ident">HashBang</span> <span class="op">=&gt;</span> {
+
+                    },
+                    <span class="kw">_</span> <span class="op">=&gt;</span> {
+                        <span class="self">self</span>.<span class="ident">process</span>(<span class="ident">spanned_token</span>)<span class="question-mark">?</span>;
+                    }
+                }
+            },
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
+                <span class="kw">return</span> <span class="prelude-val">Ok</span>(());
+            }
+        }
+
+        <span class="kw">loop</span> {
+            <span class="kw">match</span> <span class="self">self</span>.<span class="ident">next_token</span>()<span class="question-mark">?</span> {
+                <span class="prelude-val">Some</span>(<span class="ident">spanned_token</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">match</span> <span class="ident">spanned_token</span>.<span class="ident">item</span> {
+                        <span class="ident">Token</span>::<span class="ident">SingleLineComment</span> <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">MultiLineComment</span>
+                        <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">WhiteSpaces</span>
+                        <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> {
+                            <span class="kw">continue</span>;
+                        },
+                        <span class="kw">_</span> <span class="op">=&gt;</span> {
+                            <span class="self">self</span>.<span class="ident">process</span>(<span class="ident">spanned_token</span>)<span class="question-mark">?</span>;
+                        }
+                    }
+                },
+                <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
+                    <span class="kw">break</span>;
+                }
+            }
+        }
+
+        <span class="prelude-val">Ok</span>(())
     }
 }
 
@@ -397,7 +413,7 @@
             <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;EOF.&quot;</span>);
         },
         <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
-            <span class="macro">error</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">e</span>);
+            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">e</span>);
         }
     }
 }

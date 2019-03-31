@@ -273,14 +273,16 @@
 <span id="273">273</span>
 <span id="274">274</span>
 <span id="275">275</span>
+<span id="276">276</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// pub use super::class::ClassDeclaration;</span>
 <span class="comment">// pub use super::function::FunctionDeclaration;</span>
 
-
+<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">span</span>::<span class="ident">Span</span>;
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">expression</span>::{ <span class="ident">Expression</span>, };
 
 
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">SpannedStatement</span> <span class="op">=</span> <span class="ident">Span</span><span class="op">&lt;</span><span class="ident">Statement</span><span class="op">&gt;</span>;
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">StatementList</span> <span class="op">=</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Statement</span><span class="op">&gt;</span>;
 
 

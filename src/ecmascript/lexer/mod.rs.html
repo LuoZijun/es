@@ -1522,7 +1522,6 @@
 <span id="1522">1522</span>
 <span id="1523">1523</span>
 <span id="1524">1524</span>
-<span id="1525">1525</span>
 </pre><div class="example-wrap"><pre class="rust ">
 
 <span class="kw">mod</span> <span class="ident">eschar</span>;
@@ -1735,12 +1734,12 @@
     <span class="ident">lexer</span>.<span class="ident">bump</span>();
 
     <span class="kw">let</span> <span class="ident">closing_delimiter</span> <span class="op">=</span> <span class="ident">openning</span>;
-    <span class="kw">let</span> <span class="ident">closing_delimiter2</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+    <span class="kw">let</span> <span class="ident">is_template</span> <span class="op">=</span> <span class="bool-val">false</span>;
     <span class="kw">let</span> <span class="ident">allow_line_terminator</span> <span class="op">=</span> <span class="bool-val">false</span>;
     <span class="kw">let</span> <span class="ident">unescape</span> <span class="op">=</span> <span class="bool-val">true</span>;
 
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">chars</span>) <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">read_string_literal</span>(<span class="ident">closing_delimiter</span>,
-                                                   <span class="ident">closing_delimiter2</span>,
+                                                   <span class="ident">is_template</span>,
                                                    <span class="ident">allow_line_terminator</span>,
                                                    <span class="ident">unescape</span>) {
         <span class="ident">lexer</span>.<span class="ident">token</span> <span class="op">=</span> <span class="ident">Token</span>::<span class="ident">LiteralString</span>(<span class="ident">chars</span>);
@@ -2288,11 +2287,11 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">source</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">char</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">source_len</span> <span class="op">=</span> <span class="ident">source</span>.<span class="ident">len</span>();
         <span class="self">Self</span> {
-            <span class="ident">source</span>: <span class="ident">source</span>,
+            <span class="ident">source</span>,
             <span class="ident">offset</span>: <span class="number">0</span>,
             <span class="ident">max_offset</span>: <span class="ident">source_len</span> <span class="op">-</span> <span class="number">1</span>,
 
-            <span class="ident">token</span>: <span class="ident">Token</span>::<span class="ident">Init</span>,
+            <span class="ident">token</span>: <span class="ident">Token</span>::<span class="ident">UnexpectedToken</span>,
             <span class="ident">line_offset</span>: <span class="number">0</span>,
             <span class="ident">line</span>: <span class="number">0</span>,
             <span class="ident">column</span>: <span class="number">0</span>,
@@ -2422,7 +2421,7 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read_string_literal</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
                                <span class="ident">closing_delimiter</span>: <span class="ident">char</span>,
-                               <span class="ident">closing_delimiter2</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;</span>,
+                               <span class="ident">is_template</span>: <span class="ident">bool</span>,
                                <span class="ident">allow_line_terminator</span>: <span class="ident">bool</span>,
                                <span class="ident">unescape</span>: <span class="ident">bool</span>,
                                ) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;&gt;</span> {
@@ -2590,25 +2589,24 @@
                     <span class="self">self</span>.<span class="ident">bump_line</span>();
                 },
                 <span class="kw">_</span> <span class="op">=&gt;</span> {
-                    <span class="kw">if</span> <span class="ident">c</span> <span class="op">==</span> <span class="ident">closing_delimiter</span> {
-                        <span class="self">self</span>.<span class="ident">bump</span>();
-
-                        <span class="kw">match</span> <span class="ident">closing_delimiter2</span> {
-                            <span class="prelude-val">Some</span>(<span class="ident">closing_delimiter2</span>) <span class="op">=&gt;</span> {
-                                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">character</span>() <span class="op">!=</span> <span class="ident">closing_delimiter2</span> {
-                                    <span class="self">self</span>.<span class="ident">token</span> <span class="op">=</span> <span class="ident">Token</span>::<span class="ident">UnexpectedToken</span>;
-                                    <span class="kw">return</span> <span class="prelude-val">None</span>;
-                                }
-
+                    <span class="kw">if</span> <span class="ident">is_template</span> {
+                        <span class="kw">if</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;$&#39;</span> {
+                            <span class="self">self</span>.<span class="ident">bump</span>();
+                            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">character</span>() <span class="op">!=</span> <span class="string">&#39;{&#39;</span> {
+                                <span class="ident">s</span>.<span class="ident">push</span>(<span class="ident">c</span>);
+                                <span class="kw">continue</span>;
+                            } <span class="kw">else</span> {
                                 <span class="self">self</span>.<span class="ident">bump</span>();
-                                <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">s</span>);
-                            },
-                            <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
                                 <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">s</span>);
                             }
                         }
                     }
 
+                    <span class="kw">if</span> <span class="ident">c</span> <span class="op">==</span> <span class="ident">closing_delimiter</span> {
+                        <span class="self">self</span>.<span class="ident">bump</span>();
+                        <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">s</span>);
+                    }
+                    
                     <span class="ident">s</span>.<span class="ident">push</span>(<span class="ident">c</span>);
                     <span class="self">self</span>.<span class="ident">bump</span>();
                 }
@@ -2884,12 +2882,12 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">read_regular_expression_literal</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RegularExpressionLiteral</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">closing_delimiter</span> <span class="op">=</span> <span class="string">&#39;/&#39;</span>;
-        <span class="kw">let</span> <span class="ident">closing_delimiter2</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+        <span class="kw">let</span> <span class="ident">is_template</span> <span class="op">=</span> <span class="bool-val">false</span>;
         <span class="kw">let</span> <span class="ident">allow_line_terminator</span> <span class="op">=</span> <span class="bool-val">false</span>;
         <span class="kw">let</span> <span class="ident">unescape</span> <span class="op">=</span> <span class="bool-val">false</span>;
 
         <span class="kw">let</span> <span class="ident">body</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_string_literal</span>(<span class="ident">closing_delimiter</span>,
-                                            <span class="ident">closing_delimiter2</span>,
+                                            <span class="ident">is_template</span>,
                                             <span class="ident">allow_line_terminator</span>,
                                             <span class="ident">unescape</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flags</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;&gt;</span> <span class="op">=</span> <span class="prelude-val">None</span>;
