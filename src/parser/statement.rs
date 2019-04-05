@@ -3,6 +3,7 @@ use parser::parser::Parser;
 
 
 use lexer::{ ESChar, Lexer, Token, SpannedToken, Punctuator, Keyword, };
+use ast::IdentifierReference;
 use ast::span::{ LineColumn, Span, };
 use ast::float::Float;
 use ast::statement::{ 
@@ -48,30 +49,81 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_lexical_binding(&mut self, end: &mut LineColumn) -> Result<Vec<LexicalBinding>, Error> {
-        let token2 = self.next_token2()?;
+        let mut declarators: Vec<LexicalBinding> = vec![];
 
-        match token2.item {
-            Token::Identifier(ref ident) => {
+        loop {
+            let token = self.next_token2_with_skip(&[
+                Token::SingleLineComment,
+                Token::MultiLineComment,
+                Token::WhiteSpaces,
+                Token::LineTerminator,
+            ])?;
 
-            },
-            Token::Punctuator(Punctuator::LBracket) => {
-                // [
+            match token.item {
+                Token::Identifier(ident) => {
+                    let token2 = self.next_token2_with_skip(&[
+                        Token::SingleLineComment,
+                        Token::MultiLineComment,
+                        Token::WhiteSpaces,
+                        Token::LineTerminator,
+                    ])?;
+                    
+                    let mut lexical_binding = LexicalBinding {
+                        name: Box::new(Expression::Identifier( Box::new(ident) )),
+                        initializer: None,
+                    };
 
-            },
-            Token::Punctuator(Punctuator::LBrace) => {
-                // {
+                    match token2.item {
+                        Token::Punctuator(Punctuator::Assign) => {
+                            let token3 = self.next_token2_with_skip(&[
+                                Token::SingleLineComment,
+                                Token::MultiLineComment,
+                                Token::WhiteSpaces,
+                                Token::LineTerminator,
+                            ])?;
 
-            },
-            Token::Punctuator(Punctuator::Semicolon) => {
-                // ;
-                unimplemented!()
-            },
-            _ => {
+                            let spanned_expr = self.parse_expression(token3)?;
+                            lexical_binding.initializer = Some(Box::new(spanned_expr.item));
 
+                            declarators.push(lexical_binding);
+                        },
+                        Token::Punctuator(Punctuator::Comma) => {
+                            declarators.push(lexical_binding);
+                            continue;
+                        },
+                        Token::Punctuator(Punctuator::Semicolon) => {
+                            // ;
+                            declarators.push(lexical_binding);
+                            return Ok(declarators);
+                        },
+                        _ => {
+                            return Err(self.unexpected_token(token2));
+                        }
+                    }
+                },
+                Token::Punctuator(Punctuator::LBracket) => {
+                    // [
+                    self.parse_array_binding_pattern();
+                    unimplemented!()
+                },
+                Token::Punctuator(Punctuator::LBrace) => {
+                    // {
+                    self.parse_object_binding_pattern();
+                    unimplemented!()
+                },
+                Token::Punctuator(Punctuator::Semicolon) => {
+                    // ;
+                    if declarators.len() == 0 {
+                        return Err(self.unexpected_token(token));
+                    }
+
+                    return Ok(declarators);
+                },
+                _ => {
+                    return Err(self.unexpected_token(token));
+                }
             }
         }
-
-        unimplemented!()
     }
 
     pub fn parse_variable_statement(&mut self, spanned_token: SpannedToken) -> Result<SpannedStatement, Error> {
@@ -101,5 +153,4 @@ impl<'a> Parser<'a> {
 
         Ok(stmt)
     }
-
 }

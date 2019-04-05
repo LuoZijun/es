@@ -17,7 +17,7 @@ use ast::expression::{ SpannedExpression, Expression, };
 
 pub struct Parser<'a> {
     pub lexer: Lexer<'a>,
-    pub body: StatementList,
+    pub body: Vec<SpannedStatement>,
     pub filename: String,
 }
 
@@ -99,7 +99,39 @@ impl<'a> Parser<'a> {
             },
         }
     }
-    
+
+    pub fn next_token2_with_skip(&mut self, tokens: &[Token]) -> Result<SpannedToken, Error> {
+        loop {
+            let token = self.next_token2()?;
+            if tokens.contains(&token.item) {
+                continue;
+            } else {
+                return Ok(token);
+            }
+        }
+    }
+
+    pub fn next_token2_with_skip_all(&mut self) -> Result<SpannedToken, Error> {
+        // comment
+        // whitespace
+        // LineTerminator
+        loop {
+            let token = self.next_token2()?;
+
+            match token.item {
+                Token::SingleLineComment
+                | Token::MultiLineComment
+                | Token::WhiteSpaces
+                | Token::LineTerminator => {
+                    continue;
+                },
+                _ => {
+                    return Ok(token);
+                },
+            }
+        }
+    }
+
     pub fn process(&mut self, token: SpannedToken) -> Result<SpannedStatement, Error> {
         match token.item {
             Token::Keyword(Keyword::Var)
@@ -158,7 +190,8 @@ impl<'a> Parser<'a> {
 
                     },
                     _ => {
-                        self.process(spanned_token)?;
+                        let spanned_statement = self.process(spanned_token)?;
+                        self.body.push(spanned_statement);
                     }
                 }
             },
@@ -177,7 +210,8 @@ impl<'a> Parser<'a> {
                             continue;
                         },
                         _ => {
-                            self.process(spanned_token)?;
+                            let spanned_statement = self.process(spanned_token)?;
+                            self.body.push(spanned_statement);
                         }
                     }
                 },
@@ -200,6 +234,7 @@ pub fn parse(source: &str) {
 
     match parser.parse() {
         Ok(_) => {
+            println!("Body:\n{:?}", parser.body);
             trace!("EOF.");
         },
         Err(e) => {

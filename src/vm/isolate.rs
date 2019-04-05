@@ -9,6 +9,7 @@ use std::cell::{ Cell, Ref, RefMut, RefCell, };
 
 
 pub type IsolateRef = RcRef<Isolate>;
+
 #[derive(Debug)]
 pub struct Isolate {
     scope_ref: Option<ScopeRef>, // Global

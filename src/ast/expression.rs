@@ -2,6 +2,7 @@ use ast::IdentifierName;
 // use super::class::ClassExpression;
 // use super::function::{ FunctionExpression, ArrowFunctionExpression, UniqueFormalParameters, };
 
+use ast::IdentifierReference;
 use ast::span::Span;
 use ast::float::{ Float,  };
 // use ast::jsx::{ JSXFragment, JSXElement, };
@@ -140,12 +141,6 @@ impl Expression {
             _ => false,
         }
     }
-}
-
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct IdentifierReference {
-    pub value: Vec<char>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
