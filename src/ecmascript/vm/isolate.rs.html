@@ -59,6 +59,7 @@
 <span id="59">59</span>
 <span id="60">60</span>
 <span id="61">61</span>
+<span id="62">62</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">error</span>::<span class="ident">Error</span>;
 <span class="kw">use</span> <span class="ident">rc_ref</span>::<span class="ident">RcRef</span>;
@@ -71,6 +72,7 @@
 
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">IsolateRef</span> <span class="op">=</span> <span class="ident">RcRef</span><span class="op">&lt;</span><span class="ident">Isolate</span><span class="op">&gt;</span>;
+
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Isolate</span> {
     <span class="ident">scope_ref</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ScopeRef</span><span class="op">&gt;</span>, <span class="comment">// Global</span>
