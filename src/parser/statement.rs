@@ -45,7 +45,7 @@ impl<'a> Parser<'a> {
             _ => {
                 unimplemented!()
             },
-         }
+        }
     }
 
     fn parse_lexical_binding(&mut self, end: &mut LineColumn) -> Result<Vec<LexicalBinding>, Error> {

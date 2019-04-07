@@ -1,3 +1,5 @@
+use std::collections::{ VecDeque, HashMap, };
+
 pub mod span;
 pub mod float;
 pub mod statement;
@@ -11,9 +13,6 @@ pub mod expression;
 
 // pub mod function;
 // pub mod class;
-
-
-use std::collections::{ VecDeque, HashMap, };
 
 
 pub type IdentifierName = Vec<char>;

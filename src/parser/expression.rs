@@ -19,24 +19,78 @@ use ast::expression::{
 
 impl<'a> Parser<'a> {
     pub fn parse_expression(&mut self, spanned_token: SpannedToken) -> Result<SpannedExpression, Error> {
-        match spanned_token.item {
+        let spanned_expression = match spanned_token.item {
             Token::LiteralNull
             | Token::LiteralBoolean(_)
             | Token::LiteralString(_) 
             | Token::LiteralDecimalNumeric(_)
             | Token::LiteralFloatNumeric(_) => {
-                return self.parse_primitive_literal(spanned_token);
-            },
-            Token::Punctuator(Punctuator::Div) => {
-                return self.parse_regular_expression_literal(spanned_token);
+                self.parse_primitive_literal(spanned_token)?
             },
             Token::Punctuator(Punctuator::BackTick) => {
-                return self.parse_template_literal(spanned_token);
+                self.parse_template_literal(spanned_token)?
+            },
+            Token::Punctuator(Punctuator::Div) => {
+                self.parse_regular_expression_literal(spanned_token)?
+            },
+            Token::Punctuator(Punctuator::Increment) => {
+                unimplemented!()
+            },
+            Token::Punctuator(Punctuator::Decrement) => {
+                unimplemented!()
+            },
+            Token::Punctuator(Punctuator::Not) => {
+                unimplemented!()
+            },
+            Token::Punctuator(Punctuator::Add) => {
+                unimplemented!()
+            },
+            Token::Punctuator(Punctuator::Sub) => {
+                unimplemented!()
+            },
+            Token::Punctuator(Punctuator::Spread) => {
+                unimplemented!()
+            },
+            Token::Punctuator(Punctuator::BitNot) => {
+                // ~
+                unimplemented!()
+            },
+            
+            _ => {
+                unimplemented!()
+            },
+        };
+
+        let token2 = self.next_token2_with_skip(&[
+            Token::SingleLineComment,
+            Token::MultiLineComment,
+            Token::WhiteSpaces,
+            Token::LineTerminator,
+        ])?;
+
+        match token2.item {
+            Token::Punctuator(Punctuator::Semicolon) => {
+                // ;
+                self.tokens.push(token2);
+                return Ok(spanned_expression);
+            },
+
+            Token::Punctuator(Punctuator::DotMark) => {
+                // .
+                // member
+
+            },
+            Token::Punctuator(Punctuator::LBracket) => {
+                // [
+                // member
+
             },
             _ => {
                 unimplemented!()
             },
-         }
+        }
+
+        unimplemented!()
     }
 
     pub fn parse_primitive_literal(&mut self, spanned_token: SpannedToken) -> Result<SpannedExpression, Error> {

@@ -13,11 +13,10 @@ use ast::statement::{
 use ast::expression::{ SpannedExpression, Expression, };
 
 
-
-
 pub struct Parser<'a> {
     pub lexer: Lexer<'a>,
     pub body: Vec<SpannedStatement>,
+    pub tokens: Vec<SpannedToken>,
     pub filename: String,
 }
 
@@ -25,7 +24,7 @@ impl<'a> Parser<'a> {
     pub fn new(code: &'a [char]) -> Self {
         let lexer = Lexer::new(code);
 
-        Self { lexer, body: vec![], filename: "@debugger".into() }
+        Self { lexer, body: vec![], tokens: vec![], filename: "@debugger".into() }
     }
     
     pub fn error(&mut self, e: Error, start: LineColumn) -> Error {
@@ -57,13 +56,25 @@ impl<'a> Parser<'a> {
     }
 
     pub fn next_token(&mut self) -> Result<Option<SpannedToken>, Error> {
-        let start = self.lexer.line_column();
+        let start;
+        let end;
+        let token;
         
-        self.lexer.consume();
+        if let Some(tok) = self.tokens.pop() {
+            start = tok.start;
+            end = tok.end;
+            token = tok.item;
+        } else {
+            start = self.lexer.line_column();
+            
+            self.lexer.consume();
 
-        let end = self.lexer.line_column();
+            end = self.lexer.line_column();
 
-        match self.lexer.token {
+            token = self.lexer.token.clone();
+        }
+        
+        match token {
             Token::EndOfProgram => {
                 Ok(None)
             },
@@ -81,7 +92,7 @@ impl<'a> Parser<'a> {
                 Err(e)
             },
             _ => {
-                let spanned_token = Span { start, end, item: self.lexer.token.clone() };
+                let spanned_token = Span { start, end, item: token };
                 Ok(Some(spanned_token))
             },
         }

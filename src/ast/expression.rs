@@ -151,7 +151,7 @@ pub struct StringLiteral {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct RegularExpressionLiteral {
-    pub body: Vec<char>,
+    pub body: StringLiteral,
     pub flags: Option<[u8; 6]>, // g/i/m/u/y/s
 }
 
