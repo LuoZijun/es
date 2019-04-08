@@ -27,7 +27,7 @@ pub enum Expression {
     TemplateLiteral(Box<TemplateLiteral>),
     ArrayLiteral(Box<ArrayLiteral>),
     ObjectLiteral(Box<ObjectLiteral>),
-    GroupingOperator(Box<GroupingOperator>),
+    Parenthesized(Box<ParenthesizedExpression>),
 
     Member(Box<MemberExpression>),
     SuperMember(Box<SuperMemberExpression>),
@@ -48,7 +48,8 @@ pub enum Expression {
     Yield(Box<YieldExpression>),
     
     Assignment(Box<AssignmentExpression>),
-    
+    Comma(Box<CommaExpression>),
+
     // 
     ObjectBindingPattern(Box<ObjectBindingPattern>),
     ArrayBindingPattern(Box<ArrayBindingPattern>),
@@ -99,7 +100,7 @@ impl Expression {
             | TemplateLiteral(_)
             | ArrayLiteral(_)
             | ObjectLiteral(_)
-            | GroupingOperator(_) => true,
+            | Parenthesized(_) => true,
             _ => false,
         }
     }
@@ -150,6 +151,42 @@ impl Expression {
             _ => false,
         }
     }
+    
+    pub fn precedence(&self) -> u8 {
+        // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
+        use self::Expression::*;
+        
+        match *self {
+            Parenthesized(_) => 20,
+            Member(_) 
+            | SuperMember(_)
+            | TaggedTemplate(_)
+            | NewTarget
+            | Call(_)
+            | SuperCall(_) => 19,
+            New(ref expr) => {
+                if expr.arguments.is_some() {
+                    19
+                } else {
+                    18
+                }
+            },
+            Postfix(_) => 17,
+            Prefix(_) => 16,
+            Infix(ref expr) => expr.operator.precedence(),
+            Conditional(_) => 4,
+            Assignment(_) => 3,
+            Yield(_) => 2,
+            // Spread => 1,
+            Comma(_) => 0,
+
+            This | Identifier(_) | NullLiteral | BooleanLiteral(_) 
+            | StringLiteral(_) | NumericLiteral(_) | RegularExpressionLiteral(_)
+            | TemplateLiteral(_)
+            | ArrayLiteral(_) | ObjectLiteral(_) => 21,
+            ObjectBindingPattern(_) | ArrayBindingPattern(_) => 21,
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -182,11 +219,9 @@ pub struct ObjectLiteral {
 
 // ( Expression, + )
 #[derive(Debug, PartialEq, Clone)]
-pub struct GroupingOperator {
-    // TODO:
+pub struct ParenthesizedExpression {
     pub elems: Vec<Expression>,
 }
-
 
 // FunctionExpression
 // ClassExpression
@@ -250,6 +285,7 @@ pub struct NewExpression {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum PrefixOperator {
+    // Await,
     Delete,    // delete
     Void,      // void
     TypeOf,    // typeof
@@ -294,6 +330,32 @@ pub enum InfixOperator {
 
     InstanceOf,
     In,
+}
+
+impl InfixOperator {
+    pub fn precedence(&self) -> u8 {
+        use self::InfixOperator::*;
+
+        match *self {
+            Pow => 15,
+            Mul | Div | Rem => 14,
+            Add | Sub => 13,
+
+
+            BitShl | BitShr | BitUShr => 12,
+
+            Gt | Lt | GtEq | LtEq | In | InstanceOf => 11,
+
+            Eq | Neq | StrictEq | StrictNeq => 10,
+
+            BitAnd => 9,
+            BitXor => 8,
+            BitOr => 7,
+
+            And => 6,
+            Or => 5,
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -383,7 +445,13 @@ pub struct AssignmentExpression {
     pub right: Box<Expression>,
 }
 
-
+// https://www.ecma-international.org/ecma-262/9.0/index.html#sec-comma-operator
+// Expression, +
+#[derive(Debug, PartialEq, Clone)]
+pub struct CommaExpression {
+    // TODO:
+    pub elems: Vec<Expression>,
+}
 
 
 #[derive(Debug, PartialEq, Clone)]
