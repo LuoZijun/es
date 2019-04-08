@@ -12,7 +12,8 @@ use ast::statement::{
 use ast::expression::{
     SpannedExpression, Expression,
     ObjectBindingPattern, ArrayBindingPattern,
-    StringLiteral,
+    StringLiteral, TemplateLiteral,
+
 };
 
 
@@ -78,9 +79,11 @@ impl<'a> Parser<'a> {
 
         match token2.item {
             Token::Punctuator(Punctuator::Semicolon)
-            | Token::Punctuator(Punctuator::Comma) => {
-                // ;
-                // ,
+            | Token::Punctuator(Punctuator::Comma)
+            | Token::Punctuator(Punctuator::RParen)
+            | Token::Punctuator(Punctuator::RBracket)
+            | Token::Punctuator(Punctuator::RBrace) => {
+                // ; , ) ] }
                 self.tokens.push(token2);
                 return Ok(spanned_expression);
             },
@@ -157,7 +160,78 @@ impl<'a> Parser<'a> {
     }
     
     pub fn parse_template_literal(&mut self, spanned_token: SpannedToken) -> Result<SpannedExpression, Error> {
-        unimplemented!()
+        let mut strings: Vec<StringLiteral> = vec![];
+        let mut bounds: Vec<Expression> = vec![];
+        let start = spanned_token.start;
+
+        #[allow(unused_assignments)]
+        let mut end: LineColumn = spanned_token.end;
+
+        let closing_delimiter = '`';
+        let is_template = true;
+        let allow_line_terminator = true;
+        let unescape = true;
+
+        loop {
+            let ustring_start = self.lexer.line_column();
+
+            #[allow(unused_assignments)]
+            match self.lexer.read_string_literal(closing_delimiter,
+                                                is_template,
+                                                allow_line_terminator,
+                                                unescape) {
+                Some(ustring) => {
+                    let line_column = self.lexer.line_column();
+                    let idx = line_column.offset + line_column.column;
+                    let last_two_char = [ self.lexer.source.get(idx-1), self.lexer.source.get(idx-2) ];
+                    let has_inline_expr = last_two_char == [ Some(&'{'), Some(&'$') ];
+                    
+                    let ustring_end = self.lexer.line_column();
+
+                    let start_offset = ustring_start.offset + ustring_start.column + 1;
+                    let end_offset = ustring_end.offset + ustring_end.column - 1 - 1;
+
+                    let raw = self.lexer.source[start_offset..end_offset].to_vec();
+
+                    strings.push(StringLiteral { raw: raw, cooked: ustring });
+
+                    if !has_inline_expr {
+                        end = ustring_end;
+                        break;
+                    }
+
+                    let token2 = self.next_token2_with_skip(&[
+                        Token::SingleLineComment,
+                        Token::MultiLineComment,
+                        Token::WhiteSpaces,
+                        Token::LineTerminator,
+                    ])?;
+                    let expr = self.parse_expression(token2)?;
+
+                    let token3 = self.next_token2_with_skip(&[
+                        Token::SingleLineComment,
+                        Token::MultiLineComment,
+                        Token::WhiteSpaces,
+                        Token::LineTerminator,
+                    ])?;
+
+                    if token3.item != Token::Punctuator(Punctuator::RBrace) {
+                        return Err(self.unexpected_token(token3));
+                    }
+
+                    end = expr.end;
+                    bounds.push(expr.item);
+                },
+                None => {
+                    return Err(self.unexpected_token(spanned_token));
+                }
+            }
+        }
+
+        let tpl = TemplateLiteral { strings, bounds };
+        let item = Expression::TemplateLiteral(Box::new(tpl));
+        
+        Ok(Span { start, end: end, item })
     }
 
     pub fn parse_regular_expression_literal(&mut self, spanned_token: SpannedToken) -> Result<SpannedExpression, Error> {
