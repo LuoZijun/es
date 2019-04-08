@@ -33,12 +33,6 @@ pub enum LineTerminator {
     // NextLine,           // NEL  : U+0085
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub struct RegularExpressionLiteral {
-    pub body: Vec<char>,
-    pub flags: Option<Vec<char>>,
-}
-
 // MemSize: 16 Bytes
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum Token {

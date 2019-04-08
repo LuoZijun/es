@@ -17,7 +17,9 @@ pub use self::token::*;
 pub use self::punctuator::*;
 pub use self::keyword::*;
 
+use error::Error;
 use ast::span::{ LineColumn, Span, };
+use ast::expression::RegularExpressionLiteral;
 
 use std::str::FromStr;
 use std::convert::TryFrom;
@@ -1355,16 +1357,19 @@ impl<'a> Lexer<'a> {
     }
 
     #[inline]
-    fn read_regular_expression_literal(&mut self) -> Option<RegularExpressionLiteral> {
+    pub fn read_regular_expression_literal(&mut self) -> Option<RegularExpressionLiteral> {
         let closing_delimiter = '/';
         let is_template = false;
         let allow_line_terminator = false;
         let unescape = false;
 
+        let start = self.line_offset + self.column;
         let body = self.read_string_literal(closing_delimiter,
                                             is_template,
                                             allow_line_terminator,
                                             unescape)?;
+        let end = self.line_offset + self.column;
+
         let mut flags: Option<Vec<char>> = None;
         
         // read flags
@@ -1375,6 +1380,11 @@ impl<'a> Lexer<'a> {
 
             // It is a Syntax Error if IdentifierPart contains a Unicode escape sequence.
             if !c.is_es_identifier_part() {
+                break;
+            }
+
+            if !c.is_ascii_alphabetic() {
+                warn!("regular flags must is one of `a-Z` or `A-Z`. ");
                 break;
             }
 
@@ -1391,7 +1401,7 @@ impl<'a> Lexer<'a> {
             
             self.bump();
         }
-
+        
         Some(RegularExpressionLiteral { body, flags, })
     }
 
@@ -1427,6 +1437,12 @@ impl<'a> Lexer<'a> {
     }
 
     #[inline]
+    pub fn next_token(&mut self) -> LexerResult {
+        self.handler()(self);
+        unimplemented!()
+    }
+
+    #[inline]
     pub fn consume(&mut self) {
         // let start = self.line_column();
 
@@ -1447,6 +1463,12 @@ impl<'a> Lexer<'a> {
     }
 }
 
+#[derive(Debug)]
+pub enum LexerResult {
+    EOF,
+    Ok(SpannedToken),
+    Err(Error),
+}
 
 pub fn tokenize(source: &str) {
     let mut code = source.chars().collect::<Vec<char>>();

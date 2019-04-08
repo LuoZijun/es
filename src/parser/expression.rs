@@ -20,6 +20,13 @@ use ast::expression::{
 impl<'a> Parser<'a> {
     pub fn parse_expression(&mut self, spanned_token: SpannedToken) -> Result<SpannedExpression, Error> {
         let spanned_expression = match spanned_token.item {
+            Token::Identifier(ident) => {
+                let start = spanned_token.start;
+                let end = spanned_token.end;
+                let item = Expression::Identifier( Box::new(ident) );
+
+                Span { start, end, item }
+            },
             Token::LiteralNull
             | Token::LiteralBoolean(_)
             | Token::LiteralString(_) 
@@ -33,6 +40,8 @@ impl<'a> Parser<'a> {
             Token::Punctuator(Punctuator::Div) => {
                 self.parse_regular_expression_literal(spanned_token)?
             },
+
+            // prefix expression
             Token::Punctuator(Punctuator::Increment) => {
                 unimplemented!()
             },
@@ -48,14 +57,13 @@ impl<'a> Parser<'a> {
             Token::Punctuator(Punctuator::Sub) => {
                 unimplemented!()
             },
-            Token::Punctuator(Punctuator::Spread) => {
-                unimplemented!()
-            },
             Token::Punctuator(Punctuator::BitNot) => {
                 // ~
                 unimplemented!()
             },
-            
+            // Token::Punctuator(Punctuator::Spread) => {
+            //     unimplemented!()
+            // },
             _ => {
                 unimplemented!()
             },
@@ -69,8 +77,10 @@ impl<'a> Parser<'a> {
         ])?;
 
         match token2.item {
-            Token::Punctuator(Punctuator::Semicolon) => {
+            Token::Punctuator(Punctuator::Semicolon)
+            | Token::Punctuator(Punctuator::Comma) => {
                 // ;
+                // ,
                 self.tokens.push(token2);
                 return Ok(spanned_expression);
             },
@@ -78,19 +88,21 @@ impl<'a> Parser<'a> {
             Token::Punctuator(Punctuator::DotMark) => {
                 // .
                 // member
+                if spanned_expression.item.is_numeric_literal() {
+                    return Err(self.unexpected_token(token2));
+                }
 
+                unimplemented!()
             },
             Token::Punctuator(Punctuator::LBracket) => {
                 // [
                 // member
-
+                unimplemented!()
             },
             _ => {
                 unimplemented!()
             },
         }
-
-        unimplemented!()
     }
 
     pub fn parse_primitive_literal(&mut self, spanned_token: SpannedToken) -> Result<SpannedExpression, Error> {
@@ -149,7 +161,18 @@ impl<'a> Parser<'a> {
     }
 
     pub fn parse_regular_expression_literal(&mut self, spanned_token: SpannedToken) -> Result<SpannedExpression, Error> {
-        unimplemented!()
+        match self.lexer.read_regular_expression_literal() {
+            Some(regexp) => {
+                let start = spanned_token.start;
+                let end = spanned_token.end;
+                let item = Expression::RegularExpressionLiteral(Box::new(regexp));
+                
+                Ok(Span { start, end, item })
+            },
+            None => {
+                return Err(self.unexpected_token(spanned_token));
+            }
+        }
     }
 
     pub fn parse_object_binding_pattern(&mut self) -> Result<ObjectBindingPattern, Error> {

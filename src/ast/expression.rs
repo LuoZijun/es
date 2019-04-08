@@ -76,6 +76,15 @@ impl Expression {
         }
     }
 
+    pub fn is_numeric_literal(&self) -> bool {
+        use self::Expression::*;
+
+        match *self {
+            NumericLiteral(_) => true,
+            _ => false,
+        }
+    }
+
     pub fn is_primary_expression(&self) -> bool {
         use self::Expression::*;
 
@@ -151,8 +160,8 @@ pub struct StringLiteral {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct RegularExpressionLiteral {
-    pub body: StringLiteral,
-    pub flags: Option<[u8; 6]>, // g/i/m/u/y/s
+    pub body: Vec<char>,          // raw string
+    pub flags: Option<Vec<char>>, // g/i/m/u/y/s
 }
 
 #[derive(Debug, PartialEq, Clone)]
