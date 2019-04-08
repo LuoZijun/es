@@ -638,11 +638,11 @@
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
         }
     }
-    
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">precedence</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u8</span> {
         <span class="comment">// https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table</span>
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">Expression</span>::<span class="kw-2">*</span>;
-        
+
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
             <span class="ident">Parenthesized</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="number">20</span>,
             <span class="ident">Member</span>(<span class="kw">_</span>) 
@@ -772,7 +772,7 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">PrefixOperator</span> {
-    <span class="comment">// Await,</span>
+    <span class="ident">Await</span>,     <span class="comment">// await</span>
     <span class="ident">Delete</span>,    <span class="comment">// delete</span>
     <span class="ident">Void</span>,      <span class="comment">// void</span>
     <span class="ident">TypeOf</span>,    <span class="comment">// typeof</span>
