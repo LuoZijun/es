@@ -151,11 +151,11 @@ impl Expression {
             _ => false,
         }
     }
-    
+
     pub fn precedence(&self) -> u8 {
         // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
         use self::Expression::*;
-        
+
         match *self {
             Parenthesized(_) => 20,
             Member(_) 
@@ -285,7 +285,7 @@ pub struct NewExpression {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum PrefixOperator {
-    // Await,
+    Await,     // await
     Delete,    // delete
     Void,      // void
     TypeOf,    // typeof
