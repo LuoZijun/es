@@ -1544,8 +1544,9 @@
 <span id="1544">1544</span>
 <span id="1545">1545</span>
 <span id="1546">1546</span>
+<span id="1547">1547</span>
 </pre><div class="example-wrap"><pre class="rust ">
-
+<span class="kw">mod</span> <span class="ident">htmlentity</span>;
 <span class="kw">mod</span> <span class="ident">eschar</span>;
 <span class="kw">mod</span> <span class="ident">token</span>;
 <span class="kw">mod</span> <span class="ident">punctuator</span>;
@@ -1563,6 +1564,7 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">token</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">punctuator</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">keyword</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">htmlentity</span>::<span class="ident">HTMLEntity</span>;
 
 <span class="kw">use</span> <span class="ident">error</span>::<span class="ident">Error</span>;
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">span</span>::{ <span class="ident">LineColumn</span>, <span class="ident">Span</span>, };
@@ -2948,7 +2950,7 @@
             
             <span class="self">self</span>.<span class="ident">bump</span>();
         }
-        
+
         <span class="prelude-val">Some</span>(<span class="ident">RegularExpressionLiteral</span> { <span class="ident">body</span>, <span class="ident">flags</span>, })
     }
 
