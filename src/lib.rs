@@ -15,7 +15,6 @@ extern crate test;
 extern crate log;
 extern crate unicode_xid;
 
-// extern crate time;
 
 pub mod ustring;
 pub mod rc_ref;

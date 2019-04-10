@@ -1,4 +1,4 @@
-
+mod htmlentity;
 mod eschar;
 mod token;
 mod punctuator;
@@ -16,6 +16,7 @@ pub use self::eschar::{
 pub use self::token::*;
 pub use self::punctuator::*;
 pub use self::keyword::*;
+pub use self::htmlentity::HTMLEntity;
 
 use error::Error;
 use ast::span::{ LineColumn, Span, };
@@ -1401,7 +1402,7 @@ impl<'a> Lexer<'a> {
             
             self.bump();
         }
-        
+
         Some(RegularExpressionLiteral { body, flags, })
     }
 
