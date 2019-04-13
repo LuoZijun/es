@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["ast",""],["compiler",""],["error",""],["lexer",""],["rc_ref",""],["ustring",""],["version",""],["vm",""]]});
+initSidebarItems({"mod":[["ast",""],["compiler",""],["error",""],["lexer",""],["rc_ref",""],["version",""],["vm",""]]});
