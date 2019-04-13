@@ -2,7 +2,7 @@
 use crate::test;
 use crate::unicode_xid::UnicodeXID;
 
-use ast::literal::Float;
+use ast::float::{ Float,  };
 
 use std::fmt;
 use std::cmp;
@@ -103,20 +103,20 @@ impl Default for LineColumn {
 pub enum Token {
     HashBang,
     
-    SingleLineComment(Box<Vec<char>>),
-    MultiLineComment(Box<Vec<char>>),
+    SingleLineComment(Vec<char>),
+    MultiLineComment(Vec<char>),
     
     WhiteSpaces,
     LineTerminator(LineTerminator),
 
     Keyword(Keyword),
-    Identifier(Box<Vec<char>>),
+    Identifier(Vec<char>),
     
     Punctuator(Punctuator),
 
     LiteralUndefined,
     LiteralNull,
-    LiteralString(Box<Vec<char>>),
+    LiteralString(Vec<char>),
     LiteralBoolean(bool),
     LiteralHexNumeric(u64),
     LiteralBinaryNumeric(u64),
@@ -1397,8 +1397,7 @@ impl<'a> Lexer<'a> {
             return Ok(span);
         }
     }
-
-
+    
     #[inline]
     pub fn consume(&mut self) -> Result<SpannedToken, LexError> {
         loop {
