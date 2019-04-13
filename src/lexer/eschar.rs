@@ -55,10 +55,10 @@ pub const ZWNBSP: char = '\u{FEFF}';  // whitespace
 
 // White Space Code Points
 // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-white-space
-pub const TAB: char  = '\u{0009}';
-pub const VT: char   = '\u{000B}';
-pub const FF: char   = '\u{000C}';
-pub const SP: char   = '\u{0020}';
+pub const TAB: char  = '\u{0009}';    // '\t'
+pub const VT: char   = '\u{000B}';    // '\v'
+pub const FF: char   = '\u{000C}';    // '\f'
+pub const SP: char   = '\u{0020}';    // ' '
 pub const NBSP: char = '\u{00A0}';
 
 // Line Terminator Code Points
@@ -69,6 +69,11 @@ pub const LS: char = '\u{2028}';
 pub const PS: char = '\u{2029}';
 
 pub const CR_LF: &[char]  = &[ CR, LF, ];
+
+
+// Single Escape Character
+pub const BACKSPACE: char = '\u{0008}';  // \b
+
 
 
 #[derive(Debug)]
@@ -88,33 +93,23 @@ pub enum Category {
 
 pub trait ESChar {
     fn is_es_whitespace(self) -> bool;
-    
     fn is_es_line_terminator(self) -> bool;
-    
     fn is_es_punctuator_start(self) -> bool;
-
     fn is_es_keyword_start(self) -> bool;
-
     fn is_es_keyword_break(self) -> bool;
-
     fn is_es_identifier_start(self) -> bool;
-
     fn is_es_identifier_part(self) -> bool;
-
     fn is_es_identifier_break(self) -> bool;
-
     fn is_es_binary_digit(self) -> bool;
-
     fn is_es_octal_digit(self) -> bool;
-
     fn is_es_hex_digit(self) -> bool;
-
     fn is_es_decimal_digit(self) -> bool;
+    fn is_es_digit_break(self) -> bool;
+    fn is_es_single_escape_character(self) -> bool;
 }
 
 
 impl ESChar for char {
-
     #[inline]
     fn is_es_line_terminator(self) -> bool {
         // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-line-terminators
@@ -222,5 +217,31 @@ impl ESChar for char {
     #[inline]
     fn is_es_decimal_digit(self) -> bool {
         self.is_ascii_digit()
+    }
+
+    #[inline]
+    fn is_es_digit_break(self) -> bool {
+        if self.is_es_line_terminator() || self.is_es_whitespace() {
+            return true;
+        }
+
+        match self {
+            '\0' | '}' | ')' | ']'
+            | ';' | ':' | ',' | '?'
+            | '/' | '|' | '&' | '^'
+            | '<' | '>' | '='
+            | '+' | '-' | '*' | '%' => true,
+            _ => false,
+        }
+    }
+
+    #[inline]
+    fn is_es_single_escape_character(self) -> bool {
+        // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-SingleEscapeCharacter
+        // one of ' " \ b f n r t v
+        match self {
+            '\'' | '"' | '\\' | 'b' | 'f' | 'n' | 'r' | 't' | 'v' => true ,
+            _ => false,
+        }
     }
 }

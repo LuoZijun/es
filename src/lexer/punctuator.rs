@@ -1,8 +1,7 @@
 use std::str::FromStr;
-use std::convert::TryFrom;
 
 
-pub const PUNCT_SPREAD: &[char]        = &[ '.', '.', '.', ];
+pub const PUNCT_DOTDOTDOT: &[char]     = &[ '.', '.', '.', ];
 pub const PUNCT_FATARROW: &[char]      = &[ '=', '>', ];
 pub const PUNCT_INCREMENT: &[char]     = &[ '+', '+', ];
 pub const PUNCT_DECREMENT: &[char]     = &[ '-', '-', ];
@@ -35,55 +34,53 @@ pub const PUNCT_LTEQ: &[char]          = &[ '<', '=', ];
 // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-punctuators
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum Punctuator {
-    BackTick,    // `
-    Question,    // ?
-    DotMark,     // .
-    Semicolon,   // ;
-    Colon,       // :
-    Comma,       // ,
-    Spread,      // ...
+    BackTick,       // `
+    Colon,          // :
+    Question,       // ?
+    Semicolon,      // ;
+    Comma,          // ,
+    Dot,            // .
+    DotDotDot,      // ... , Spread
 
-    LParen,      // (
-    RParen,      // )
-    LBracket,    // [
-    RBracket,    // ]
-    LBrace,      // {
-    RBrace,      // }
+    LParen,         // (
+    RParen,         // )
+    LBracket,       // [
+    RBracket,       // ]
+    LBrace,         // {
+    RBrace,         // }
+    FatArrow,       // =>
 
-    FatArrow,    // =>
+    Increment,      // ++ , Maybe unary operator
+    Decrement,      // -- , Maybe unary operator
 
-    Increment,   // ++
-    Decrement,   // --
+    // Logical operator
+    Not,            //  ! , unary operator
+    And,            // &&
+    Or,             // ||
 
-    Assign,      // =
-
-    Not,         // !
-    And,         // &&
-    Or,          // ||
-
-    Add,         // +
-    Sub,         // -
-    Mul,         // *
-    Div,         // /
-    Rem,         // %
-    Pow,         // **
-
-    BitNot,         // ~
+    // Binary operators
+    Add,            //  + , Maybe unary operator
+    Sub,            //  - , Maybe unary operator
+    Mul,            //  *
+    Div,            //  /
+    Rem,            //  %
+    Pow,            // **
+    BitNot,         // ~ , unary operator
     BitAnd,         // &
     BitOr,          // |
     BitXor,         // ^
-    
     BitShl,         // <<
     BitShr,         // >>
     BitUShr,        // >>>
 
+    // assignment operator
+    Assign,         //  =
     AddAssign,      // +=
     SubAssign,      // -=
     MulAssign,      // *=
     DivAssign,      // /=
     RemAssign,      // %=
     PowAssign,      // **=
-
     BitAndAssign,   // &=
     BitOrAssign,    // |=
     BitXorAssign,   // ^=
@@ -91,14 +88,15 @@ pub enum Punctuator {
     BitShrAssign,   // >>=
     BitUShrAssign,  // >>>=
 
-    Eq,          // ==
-    StrictEq,    // ===
-    Gt,          // >
-    Lt,          // <
-    Neq,         // !=
-    StrictNeq,   // !==
-    GtEq,        // >=
-    LtEq,        // <=
+    // compare operator
+    Eq,             // ==
+    StrictEq,       // ===
+    Gt,             // >
+    Lt,             // <
+    Neq,            // !=
+    StrictNeq,      // !==
+    GtEq,           // >=
+    LtEq,           // <=
 }
 
 impl FromStr for Punctuator {
@@ -110,11 +108,11 @@ impl FromStr for Punctuator {
         match s {
             "`" => Ok(BackTick),
             "?" => Ok(Question),
-            "." => Ok(DotMark),
+            "." => Ok(Dot),
             ";" => Ok(Semicolon),
             ":" => Ok(Colon),
             "," => Ok(Comma),
-            "..." => Ok(Spread),
+            "..." => Ok(DotDotDot),
             "(" => Ok(LParen),
             ")" => Ok(RParen),
             "[" => Ok(LBracket),

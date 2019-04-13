@@ -1,5 +1,4 @@
 use std::str::FromStr;
-use std::convert::TryFrom;
 
 
 pub const KEYWORD_ASYNC: &[char]      = &['a', 's', 'y', 'n', 'c'];
@@ -117,6 +116,57 @@ impl Keyword {
             _ => false,
         }
     }
+
+    pub fn try_from(value: &[char]) -> Result<Self, ()> {
+        use self::Keyword::*;
+
+        match value {
+            KEYWORD_ASYNC => Ok(Async),
+            KEYWORD_AWAIT => Ok(Await),
+            KEYWORD_BREAK => Ok(Break),
+            KEYWORD_CASE => Ok(Case),
+            KEYWORD_CATCH => Ok(Catch),
+            KEYWORD_CLASS => Ok(Class),
+            KEYWORD_CONST => Ok(Const),
+            KEYWORD_CONTINUE => Ok(Continue),
+            KEYWORD_DEBUGGER => Ok(Debugger),
+            KEYWORD_DEFAULT => Ok(Default),
+            KEYWORD_DELETE => Ok(Delete),
+            KEYWORD_DO => Ok(Do),
+            KEYWORD_ELSE => Ok(Else),
+            KEYWORD_EXPORT => Ok(Export),
+            KEYWORD_EXTENDS => Ok(Extends),
+            KEYWORD_FINALLY => Ok(Finally),
+            KEYWORD_FOR => Ok(For),
+            KEYWORD_FUNCTION => Ok(Function),
+            KEYWORD_IF => Ok(If),
+            KEYWORD_IMPORT => Ok(Import),
+            KEYWORD_IN => Ok(In),
+            KEYWORD_INSTANCEOF => Ok(Instanceof),
+            KEYWORD_NEW => Ok(New),
+            KEYWORD_RETURN => Ok(Return),
+            KEYWORD_SUPER => Ok(Super),
+            KEYWORD_SWITCH => Ok(Switch),
+            KEYWORD_THIS => Ok(This),
+            KEYWORD_THROW => Ok(Throw),
+            KEYWORD_TRY => Ok(Try),
+            KEYWORD_TYPEOF => Ok(Typeof),
+            KEYWORD_VAR => Ok(Var),
+            KEYWORD_VOID => Ok(Void),
+            KEYWORD_WHILE => Ok(While),
+            KEYWORD_WITH => Ok(With),
+            KEYWORD_YIELD => Ok(Yield),
+            KEYWORD_LET => Ok(Let),
+            KEYWORD_STATIC => Ok(Static),
+            KEYWORD_ENUM => Ok(Enum),
+            KEYWORD_IMPLEMENTS => Ok(Implements),
+            KEYWORD_PROTECTED => Ok(Package),
+            KEYWORD_INTERFACE => Ok(Protected),
+            KEYWORD_PRIVATE => Ok(Interface),
+            KEYWORD_PUBLIC => Ok(Private),
+            _ => Err(()),
+        }
+    }
 }
 
 impl FromStr for Keyword {
@@ -174,59 +224,3 @@ impl FromStr for Keyword {
         }
     }
 }
-
-impl TryFrom<&[char]> for Keyword {
-    type Error = ();
-    
-    fn try_from(value: &[char]) -> Result<Self, Self::Error> {
-        use self::Keyword::*;
-
-        match value {
-            KEYWORD_ASYNC => Ok(Async),
-            KEYWORD_AWAIT => Ok(Await),
-            KEYWORD_BREAK => Ok(Break),
-            KEYWORD_CASE => Ok(Case),
-            KEYWORD_CATCH => Ok(Catch),
-            KEYWORD_CLASS => Ok(Class),
-            KEYWORD_CONST => Ok(Const),
-            KEYWORD_CONTINUE => Ok(Continue),
-            KEYWORD_DEBUGGER => Ok(Debugger),
-            KEYWORD_DEFAULT => Ok(Default),
-            KEYWORD_DELETE => Ok(Delete),
-            KEYWORD_DO => Ok(Do),
-            KEYWORD_ELSE => Ok(Else),
-            KEYWORD_EXPORT => Ok(Export),
-            KEYWORD_EXTENDS => Ok(Extends),
-            KEYWORD_FINALLY => Ok(Finally),
-            KEYWORD_FOR => Ok(For),
-            KEYWORD_FUNCTION => Ok(Function),
-            KEYWORD_IF => Ok(If),
-            KEYWORD_IMPORT => Ok(Import),
-            KEYWORD_IN => Ok(In),
-            KEYWORD_INSTANCEOF => Ok(Instanceof),
-            KEYWORD_NEW => Ok(New),
-            KEYWORD_RETURN => Ok(Return),
-            KEYWORD_SUPER => Ok(Super),
-            KEYWORD_SWITCH => Ok(Switch),
-            KEYWORD_THIS => Ok(This),
-            KEYWORD_THROW => Ok(Throw),
-            KEYWORD_TRY => Ok(Try),
-            KEYWORD_TYPEOF => Ok(Typeof),
-            KEYWORD_VAR => Ok(Var),
-            KEYWORD_VOID => Ok(Void),
-            KEYWORD_WHILE => Ok(While),
-            KEYWORD_WITH => Ok(With),
-            KEYWORD_YIELD => Ok(Yield),
-            KEYWORD_LET => Ok(Let),
-            KEYWORD_STATIC => Ok(Static),
-            KEYWORD_ENUM => Ok(Enum),
-            KEYWORD_IMPLEMENTS => Ok(Implements),
-            KEYWORD_PROTECTED => Ok(Package),
-            KEYWORD_INTERFACE => Ok(Protected),
-            KEYWORD_PRIVATE => Ok(Interface),
-            KEYWORD_PUBLIC => Ok(Private),
-            _ => Err(()),
-        }
-    }
-}
-

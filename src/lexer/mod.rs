@@ -1,8 +1,14 @@
 mod htmlentity;
 mod eschar;
+pub mod escape;
+
 mod token;
+mod token2;
+
 mod punctuator;
 mod keyword;
+
+// mod operator;
 
 
 use crate::unicode_xid::UnicodeXID;
@@ -29,6 +35,14 @@ use std::convert::TryFrom;
 pub const LITERAL_NULL: &[char]   = &['n', 'u', 'l', 'l'];
 pub const LITERAL_TRUE: &[char]   = &['t', 'r', 'u', 'e'];
 pub const LITERAL_FALSE: &[char]  = &['f', 'a', 'l', 's', 'e'];
+
+
+#[derive(Debug)]
+pub enum LexerResult {
+    EOF,
+    Ok(SpannedToken),
+    Err(Error),
+}
 
 
 pub type CharHandler = fn(lexer: &mut Lexer) -> ();
@@ -289,8 +303,8 @@ fn punct_rparen(lexer: &mut Lexer) {
 // ...
 #[inline]
 fn punct_dotmark(lexer: &mut Lexer) {
-    const DOT_MARK: Token = Token::Punctuator(Punctuator::DotMark);
-    const SPREAD: Token = Token::Punctuator(Punctuator::Spread);
+    const DOT_MARK: Token = Token::Punctuator(Punctuator::Dot);
+    const SPREAD: Token = Token::Punctuator(Punctuator::DotDotDot);
 
     lexer.bump();
     match lexer.character() {
@@ -1464,12 +1478,7 @@ impl<'a> Lexer<'a> {
     }
 }
 
-#[derive(Debug)]
-pub enum LexerResult {
-    EOF,
-    Ok(SpannedToken),
-    Err(Error),
-}
+
 
 pub fn tokenize(source: &str) {
     let mut code = source.chars().collect::<Vec<char>>();
