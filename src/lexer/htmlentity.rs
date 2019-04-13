@@ -1,6 +1,7 @@
 
 
 // https://dev.w3.org/html5/html-author/charref
+// https://www.w3.org/TR/html5/entities.json
 // https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Character_entity_references_in_HTML
 // https://www.freeformatter.com/html-entities.html
 
