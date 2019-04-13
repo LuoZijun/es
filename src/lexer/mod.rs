@@ -1,28 +1,31 @@
 mod htmlentity;
 mod eschar;
-pub mod escape;
+mod escape;
 
 mod token;
-mod token2;
+// mod token2;
 
 mod punctuator;
 mod keyword;
 
-// mod operator;
+mod operator;
 
 
 use crate::unicode_xid::UnicodeXID;
 
 
+pub use self::escape::*;
 pub use self::eschar::{
     ESChar, Category, 
     CR, LF, LS, PS,
     TAB, VT, FF, SP, NBSP, ZWNBSP,
 };
+pub use self::htmlentity::HTMLEntity;
 pub use self::token::*;
 pub use self::punctuator::*;
 pub use self::keyword::*;
-pub use self::htmlentity::HTMLEntity;
+pub use self::operator::*;
+
 
 use error::Error;
 use ast::span::{ LineColumn, Span, };

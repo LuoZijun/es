@@ -1,4 +1,4 @@
-#![feature(repeat_generic_slice, duration_constants, test)]
+#![feature(repeat_generic_slice, duration_constants, const_fn, test)]
 #![recursion_limit="128"]
 #![allow(
     unused_imports, unused_variables, unused_must_use, 
@@ -14,6 +14,7 @@ extern crate test;
 #[macro_use]
 extern crate log;
 extern crate unicode_xid;
+extern crate toolshed;
 
 
 pub mod ustring;
@@ -28,7 +29,7 @@ pub mod lexer;
 // pub mod lexer0;
 // pub mod lexer1;
 
-pub mod parser;
+// pub mod parser;
 pub mod compiler;
 pub mod vm;
 
