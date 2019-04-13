@@ -68,6 +68,23 @@ impl From<u64> for Float {
     }
 }
 
+impl From<i64> for Float {
+    fn from(n: i64) -> Self {
+        Float(n as f64)
+    }
+}
+impl From<i32> for Float {
+    fn from(n: i32) -> Self {
+        Float(n as f64)
+    }
+}
+impl From<isize> for Float {
+    fn from(n: isize) -> Self {
+        Float(n as f64)
+    }
+}
+
+
 impl From<usize> for Float {
     fn from(n: usize) -> Self {
         Float(n as f64)

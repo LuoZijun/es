@@ -1,6 +1,7 @@
 mod htmlentity;
 mod eschar;
 mod escape;
+mod numberic;
 
 mod token;
 // mod token2;

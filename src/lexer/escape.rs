@@ -6,6 +6,24 @@ use lexer::eschar::{
 };
 
 
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum EscapeSequenceKind {
+    // CharacterEscapeSequence
+    // NullCharacter , 0 [lookahead ∉ DecimalDigit]
+    // HexEscapeSequence
+    // UnicodeEscapeSequence
+    String,
+    // LineTerminator
+    // CharacterEscapeSequence
+    // NullCharacter
+    // HexEscapeSequence
+    // UnicodeEscapeSequence
+    TemplateString,
+    // UnicodeEscapeSequence
+    Identifier,
+}
+
+
 #[inline]
 pub fn single_escape_character(c: char) -> char {
     // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-SingleEscapeCharacter
@@ -16,11 +34,11 @@ pub fn single_escape_character(c: char) -> char {
         '"'  => c,
         '\\' => c,
         'b'  => BACKSPACE,
-        'f'  => FF,  // FORM FEED
-        'n'  => LF,  // LINE FEED
-        'r'  => CR,  // CARRIAGE RETURN
-        't'  => TAB, // CHARACTER TABULATION
-        'v'  => VT,  // LINE TABULATION
+        'f'  => FF,        // FORM FEED
+        'n'  => LF,        // LINE FEED
+        'r'  => CR,        // CARRIAGE RETURN
+        't'  => TAB,       // CHARACTER TABULATION
+        'v'  => VT,        // LINE TABULATION
         _    => unreachable!(),
     }
 }
@@ -45,8 +63,8 @@ impl EscapeError {
         Self { kind, offset }
     }
 
-    pub fn kind(&self) -> EscapeErrorKind {
-        self.kind
+    pub fn kind(&self) -> &EscapeErrorKind {
+        &self.kind
     }
 
     pub fn offset(&self) -> usize {
@@ -265,24 +283,6 @@ pub fn escape(input: &[char], kind: EscapeSequenceKind) -> Result<Vec<char>, Esc
     Ok(output)
 }
 
-// NullCharacter: 0 [lookahead ∉ DecimalDigit]
-
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-pub enum EscapeSequenceKind {
-    // CharacterEscapeSequence
-    // NullCharacter
-    // HexEscapeSequence
-    // UnicodeEscapeSequence
-    String,
-    // LineTerminator
-    // CharacterEscapeSequence
-    // NullCharacter
-    // HexEscapeSequence
-    // UnicodeEscapeSequence
-    TemplateString,
-    // UnicodeEscapeSequence
-    Identifier,
-}
 
 #[inline]
 pub fn unescape_string(input: &[char]) -> Result<Vec<char>, EscapeError> {

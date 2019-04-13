@@ -16,8 +16,6 @@ extern crate log;
 extern crate unicode_xid;
 extern crate toolshed;
 
-
-pub mod ustring;
 pub mod rc_ref;
 
 
