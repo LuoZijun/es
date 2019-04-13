@@ -164,14 +164,11 @@
 <span id="164">164</span>
 <span id="165">165</span>
 <span id="166">166</span>
-<span id="167">167</span>
-<span id="168">168</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">FromStr</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryFrom</span>;
 
 
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PUNCT_SPREAD</span>: <span class="kw-2">&amp;</span>[<span class="ident">char</span>]        <span class="op">=</span> <span class="kw-2">&amp;</span>[ <span class="string">&#39;.&#39;</span>, <span class="string">&#39;.&#39;</span>, <span class="string">&#39;.&#39;</span>, ];
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PUNCT_DOTDOTDOT</span>: <span class="kw-2">&amp;</span>[<span class="ident">char</span>]     <span class="op">=</span> <span class="kw-2">&amp;</span>[ <span class="string">&#39;.&#39;</span>, <span class="string">&#39;.&#39;</span>, <span class="string">&#39;.&#39;</span>, ];
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PUNCT_FATARROW</span>: <span class="kw-2">&amp;</span>[<span class="ident">char</span>]      <span class="op">=</span> <span class="kw-2">&amp;</span>[ <span class="string">&#39;=&#39;</span>, <span class="string">&#39;&gt;&#39;</span>, ];
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PUNCT_INCREMENT</span>: <span class="kw-2">&amp;</span>[<span class="ident">char</span>]     <span class="op">=</span> <span class="kw-2">&amp;</span>[ <span class="string">&#39;+&#39;</span>, <span class="string">&#39;+&#39;</span>, ];
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PUNCT_DECREMENT</span>: <span class="kw-2">&amp;</span>[<span class="ident">char</span>]     <span class="op">=</span> <span class="kw-2">&amp;</span>[ <span class="string">&#39;-&#39;</span>, <span class="string">&#39;-&#39;</span>, ];
@@ -204,55 +201,53 @@
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#sec-punctuators</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Hash</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Punctuator</span> {
-    <span class="ident">BackTick</span>,    <span class="comment">// `</span>
-    <span class="ident">Question</span>,    <span class="comment">// ?</span>
-    <span class="ident">DotMark</span>,     <span class="comment">// .</span>
-    <span class="ident">Semicolon</span>,   <span class="comment">// ;</span>
-    <span class="ident">Colon</span>,       <span class="comment">// :</span>
-    <span class="ident">Comma</span>,       <span class="comment">// ,</span>
-    <span class="ident">Spread</span>,      <span class="comment">// ...</span>
+    <span class="ident">BackTick</span>,       <span class="comment">// `</span>
+    <span class="ident">Colon</span>,          <span class="comment">// :</span>
+    <span class="ident">Question</span>,       <span class="comment">// ?</span>
+    <span class="ident">Semicolon</span>,      <span class="comment">// ;</span>
+    <span class="ident">Comma</span>,          <span class="comment">// ,</span>
+    <span class="ident">Dot</span>,            <span class="comment">// .</span>
+    <span class="ident">DotDotDot</span>,      <span class="comment">// ... , Spread</span>
 
-    <span class="ident">LParen</span>,      <span class="comment">// (</span>
-    <span class="ident">RParen</span>,      <span class="comment">// )</span>
-    <span class="ident">LBracket</span>,    <span class="comment">// [</span>
-    <span class="ident">RBracket</span>,    <span class="comment">// ]</span>
-    <span class="ident">LBrace</span>,      <span class="comment">// {</span>
-    <span class="ident">RBrace</span>,      <span class="comment">// }</span>
+    <span class="ident">LParen</span>,         <span class="comment">// (</span>
+    <span class="ident">RParen</span>,         <span class="comment">// )</span>
+    <span class="ident">LBracket</span>,       <span class="comment">// [</span>
+    <span class="ident">RBracket</span>,       <span class="comment">// ]</span>
+    <span class="ident">LBrace</span>,         <span class="comment">// {</span>
+    <span class="ident">RBrace</span>,         <span class="comment">// }</span>
+    <span class="ident">FatArrow</span>,       <span class="comment">// =&gt;</span>
 
-    <span class="ident">FatArrow</span>,    <span class="comment">// =&gt;</span>
+    <span class="ident">Increment</span>,      <span class="comment">// ++ , Maybe unary operator</span>
+    <span class="ident">Decrement</span>,      <span class="comment">// -- , Maybe unary operator</span>
 
-    <span class="ident">Increment</span>,   <span class="comment">// ++</span>
-    <span class="ident">Decrement</span>,   <span class="comment">// --</span>
+    <span class="comment">// Logical operator</span>
+    <span class="ident">Not</span>,            <span class="comment">//  ! , unary operator</span>
+    <span class="ident">And</span>,            <span class="comment">// &amp;&amp;</span>
+    <span class="ident">Or</span>,             <span class="comment">// ||</span>
 
-    <span class="ident">Assign</span>,      <span class="comment">// =</span>
-
-    <span class="ident">Not</span>,         <span class="comment">// !</span>
-    <span class="ident">And</span>,         <span class="comment">// &amp;&amp;</span>
-    <span class="ident">Or</span>,          <span class="comment">// ||</span>
-
-    <span class="ident">Add</span>,         <span class="comment">// +</span>
-    <span class="ident">Sub</span>,         <span class="comment">// -</span>
-    <span class="ident">Mul</span>,         <span class="comment">// *</span>
-    <span class="ident">Div</span>,         <span class="comment">// /</span>
-    <span class="ident">Rem</span>,         <span class="comment">// %</span>
-    <span class="ident">Pow</span>,         <span class="comment">// **</span>
-
-    <span class="ident">BitNot</span>,         <span class="comment">// ~</span>
+    <span class="comment">// Binary operators</span>
+    <span class="ident">Add</span>,            <span class="comment">//  + , Maybe unary operator</span>
+    <span class="ident">Sub</span>,            <span class="comment">//  - , Maybe unary operator</span>
+    <span class="ident">Mul</span>,            <span class="comment">//  *</span>
+    <span class="ident">Div</span>,            <span class="comment">//  /</span>
+    <span class="ident">Rem</span>,            <span class="comment">//  %</span>
+    <span class="ident">Pow</span>,            <span class="comment">// **</span>
+    <span class="ident">BitNot</span>,         <span class="comment">// ~ , unary operator</span>
     <span class="ident">BitAnd</span>,         <span class="comment">// &amp;</span>
     <span class="ident">BitOr</span>,          <span class="comment">// |</span>
     <span class="ident">BitXor</span>,         <span class="comment">// ^</span>
-    
     <span class="ident">BitShl</span>,         <span class="comment">// &lt;&lt;</span>
     <span class="ident">BitShr</span>,         <span class="comment">// &gt;&gt;</span>
     <span class="ident">BitUShr</span>,        <span class="comment">// &gt;&gt;&gt;</span>
 
+    <span class="comment">// assignment operator</span>
+    <span class="ident">Assign</span>,         <span class="comment">//  =</span>
     <span class="ident">AddAssign</span>,      <span class="comment">// +=</span>
     <span class="ident">SubAssign</span>,      <span class="comment">// -=</span>
     <span class="ident">MulAssign</span>,      <span class="comment">// *=</span>
     <span class="ident">DivAssign</span>,      <span class="comment">// /=</span>
     <span class="ident">RemAssign</span>,      <span class="comment">// %=</span>
     <span class="ident">PowAssign</span>,      <span class="comment">// **=</span>
-
     <span class="ident">BitAndAssign</span>,   <span class="comment">// &amp;=</span>
     <span class="ident">BitOrAssign</span>,    <span class="comment">// |=</span>
     <span class="ident">BitXorAssign</span>,   <span class="comment">// ^=</span>
@@ -260,14 +255,15 @@
     <span class="ident">BitShrAssign</span>,   <span class="comment">// &gt;&gt;=</span>
     <span class="ident">BitUShrAssign</span>,  <span class="comment">// &gt;&gt;&gt;=</span>
 
-    <span class="ident">Eq</span>,          <span class="comment">// ==</span>
-    <span class="ident">StrictEq</span>,    <span class="comment">// ===</span>
-    <span class="ident">Gt</span>,          <span class="comment">// &gt;</span>
-    <span class="ident">Lt</span>,          <span class="comment">// &lt;</span>
-    <span class="ident">Neq</span>,         <span class="comment">// !=</span>
-    <span class="ident">StrictNeq</span>,   <span class="comment">// !==</span>
-    <span class="ident">GtEq</span>,        <span class="comment">// &gt;=</span>
-    <span class="ident">LtEq</span>,        <span class="comment">// &lt;=</span>
+    <span class="comment">// compare operator</span>
+    <span class="ident">Eq</span>,             <span class="comment">// ==</span>
+    <span class="ident">StrictEq</span>,       <span class="comment">// ===</span>
+    <span class="ident">Gt</span>,             <span class="comment">// &gt;</span>
+    <span class="ident">Lt</span>,             <span class="comment">// &lt;</span>
+    <span class="ident">Neq</span>,            <span class="comment">// !=</span>
+    <span class="ident">StrictNeq</span>,      <span class="comment">// !==</span>
+    <span class="ident">GtEq</span>,           <span class="comment">// &gt;=</span>
+    <span class="ident">LtEq</span>,           <span class="comment">// &lt;=</span>
 }
 
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Punctuator</span> {
@@ -279,11 +275,11 @@
         <span class="kw">match</span> <span class="ident">s</span> {
             <span class="string">&quot;`&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">BackTick</span>),
             <span class="string">&quot;?&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Question</span>),
-            <span class="string">&quot;.&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">DotMark</span>),
+            <span class="string">&quot;.&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Dot</span>),
             <span class="string">&quot;;&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Semicolon</span>),
             <span class="string">&quot;:&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Colon</span>),
             <span class="string">&quot;,&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Comma</span>),
-            <span class="string">&quot;...&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Spread</span>),
+            <span class="string">&quot;...&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">DotDotDot</span>),
             <span class="string">&quot;(&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">LParen</span>),
             <span class="string">&quot;)&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">RParen</span>),
             <span class="string">&quot;[&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">LBracket</span>),
