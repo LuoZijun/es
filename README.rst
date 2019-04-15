@@ -10,10 +10,10 @@ Work in progress (WIP).
 项目状态
 ----------
 
-*   [✅] 词法分析器 (Lexer)
-*   [❌] 语法分析器 (Parser)
-*   [❌] 编译器 (Compiler)
-*   [❌] 解释器 (Interpreter)
+*   ✅ 词法分析器 (Lexer)
+*   ❌ 语法分析器 (Parser)
+*   ❌ 编译器 (Compiler)
+*   ❌ 解释器 (Interpreter)
 
 
 原则
