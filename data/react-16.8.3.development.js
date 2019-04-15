@@ -434,7 +434,7 @@ var ReactCurrentOwner = {
   current: null
 };
 
-var BEFORE_SLASH_RE = /^(.*)[\\\/]/;
+// var BEFORE_SLASH_RE = /^(.*)[\\\/]/;
 
 var describeComponentFrame = function (name, source, ownerName) {
   var sourceInfo = '';
@@ -444,7 +444,7 @@ var describeComponentFrame = function (name, source, ownerName) {
     {
       // In DEV, include code for a common special case:
       // prefer "folder/index.js" instead of just "index.js".
-      if (/^index\./.test(fileName)) {
+      // if (/^index\./.test(fileName)) {
         var match = path.match(BEFORE_SLASH_RE);
         if (match) {
           var pathBeforeSlash = match[1];
@@ -940,7 +940,7 @@ function escape(key) {
 
 var didWarnAboutMaps = false;
 
-var userProvidedKeyEscapeRegex = /\/+/g;
+// var userProvidedKeyEscapeRegex = /\/+/g;
 function escapeUserProvidedKey(text) {
   return ('' + text).replace(userProvidedKeyEscapeRegex, '$&/');
 }
@@ -1530,7 +1530,7 @@ function getDeclarationErrorAddendum() {
 function getSourceInfoErrorAddendum(elementProps) {
   if (elementProps !== null && elementProps !== undefined && elementProps.__source !== undefined) {
     var source = elementProps.__source;
-    var fileName = source.fileName.replace(/^.*[\\\/]/, '');
+    // var fileName = source.fileName.replace(/^.*[\\\/]/, '');
     var lineNumber = source.lineNumber;
     return '\n\nCheck your code at ' + fileName + ':' + lineNumber + '.';
   }
