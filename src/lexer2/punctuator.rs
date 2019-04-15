@@ -33,7 +33,7 @@ pub const PUNCT_LTEQ: &[char]          = &[ '<', '=', ];
 
 // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-punctuators
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum PunctuatorKind {
+pub enum Punctuator {
     BackTick,       // `
     Colon,          // :
     Question,       // ?
@@ -99,11 +99,11 @@ pub enum PunctuatorKind {
     LtEq,           // <=
 }
 
-impl FromStr for PunctuatorKind {
+impl FromStr for Punctuator {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        use self::PunctuatorKind::*;
+        use self::Punctuator::*;
 
         match s {
             "`" => Ok(BackTick),

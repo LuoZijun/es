@@ -1,8 +1,6 @@
-#[cfg(test)]
-use crate::test;
 use crate::unicode_xid::UnicodeXID;
 
-use ast::float::{ Float,  };
+use ast::numberic::{ Float,  };
 
 use std::fmt;
 use std::cmp;

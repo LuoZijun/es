@@ -1,4 +1,8 @@
-use ast::float::{ Float,  };
+use ast::numberic::{ Float, Numberic, };
+
+const BINARY: u32 = 2;
+const OCTAL: u32  = 8;
+const HEX: u32    = 16;
 
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
@@ -29,98 +33,6 @@ impl ParseNumbericError {
         self.offset
     }
 }
-
-
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-pub enum Numberic {
-    I64(i64),
-    F64(Float),
-}
-
-impl Into<Float> for Numberic {
-    fn into(self: Numberic) -> Float {
-        match self {
-            Numberic::I64(n) => n.into(),
-            Numberic::F64(float) => float,
-        }
-    }
-}
-
-impl Into<f64> for Numberic {
-    fn into(self: Numberic) -> f64 {
-        match self {
-            Numberic::I64(n) => n as f64,
-            Numberic::F64(float) => float.0,
-        }
-    }
-}
-
-impl From<u8> for Numberic {
-    fn from(n: u8) -> Self {
-        Numberic::I64(n as i64)
-    }
-}
-impl From<u16> for Numberic {
-    fn from(n: u16) -> Self {
-        Numberic::I64(n as i64)
-    }
-}
-impl From<u32> for Numberic {
-    fn from(n: u32) -> Self {
-        Numberic::I64(n as i64)
-    }
-}
-impl From<u64> for Numberic {
-    fn from(n: u64) -> Self {
-        Numberic::I64(n as i64)
-    }
-}
-impl From<usize> for Numberic {
-    fn from(n: usize) -> Self {
-        Numberic::I64(n as i64)
-    }
-}
-impl From<i8> for Numberic {
-    fn from(n: i8) -> Self {
-        Numberic::I64(n as i64)
-    }
-}
-impl From<i16> for Numberic {
-    fn from(n: i16) -> Self {
-        Numberic::I64(n as i64)
-    }
-}
-impl From<i32> for Numberic {
-    fn from(n: i32) -> Self {
-        Numberic::I64(n as i64)
-    }
-}
-impl From<i64> for Numberic {
-    fn from(n: i64) -> Self {
-        Numberic::I64(n)
-    }
-}
-impl From<isize> for Numberic {
-    fn from(n: isize) -> Self {
-        Numberic::I64(n as i64)
-    }
-}
-impl From<f32> for Numberic {
-    fn from(n: f32) -> Self {
-        Numberic::F64(Float(n as f64))
-    }
-}
-impl From<f64> for Numberic {
-    fn from(n: f64) -> Self {
-        Numberic::F64(Float(n))
-    }
-}
-
-const ZERO: Numberic = Numberic::I64(0);
-const BINARY: u32 = 2;
-const OCTAL: u32  = 8;
-const HEX: u32    = 16;
-
 
 #[inline]
 pub fn from_chars_radix(digits: &[char], radix: u32, pre_offset: usize) -> Result<u64, ParseNumbericError> {
@@ -165,7 +77,7 @@ pub fn from_chars_radix(digits: &[char], radix: u32, pre_offset: usize) -> Resul
 
 
 #[inline]
-pub fn parse(input: &[char]) -> Result<Numberic, ParseNumbericError> {
+pub fn parse_numberic(input: &[char]) -> Result<Numberic, ParseNumbericError> {
     let input_len = input.len();
     let mut idx = 0usize;
 
@@ -239,7 +151,7 @@ pub fn parse(input: &[char]) -> Result<Numberic, ParseNumbericError> {
                     return Err(ParseNumbericError::new(NumbericErrorKind::InvalidDigit, idx));
                 },
                 None => {
-                    return Ok(ZERO);
+                    return Ok(Numberic::ZERO);
                 }
             }
         },
@@ -264,7 +176,7 @@ pub fn parse(input: &[char]) -> Result<Numberic, ParseNumbericError> {
         },
         '-' => {
             idx += 1;
-            return parse(&input[idx..]).map(|n| {
+            return parse_numberic(&input[idx..]).map(|n| {
                 match n {
                     Numberic::I64(int) => Numberic::I64(-int),
                     Numberic::F64(float) => Numberic::F64( Float(-(float.0)) ),
@@ -273,7 +185,7 @@ pub fn parse(input: &[char]) -> Result<Numberic, ParseNumbericError> {
         },
         '+' => {
             idx += 1;
-            return parse(&input[idx..]);
+            return parse_numberic(&input[idx..]);
         },
         _ => {
             return Err(ParseNumbericError::new(NumbericErrorKind::InvalidDigit, idx));
@@ -304,8 +216,8 @@ fn test_parse_float() {
         s.chars().collect::<Vec<char>>()
     };
     
-    assert_eq!(parse(&f("0.234235834589")), Ok(Numberic::F64( 0.234235834589f64.into() )));
-    assert_eq!(parse(&f("0.234235834589e1")), Ok(Numberic::F64( 0.234235834589e1f64.into() )));
+    assert_eq!(parse_numberic(&f("0.234235834589")), Ok(Numberic::F64( 0.234235834589f64.into() )));
+    assert_eq!(parse_numberic(&f("0.234235834589e1")), Ok(Numberic::F64( 0.234235834589e1f64.into() )));
 }
 
 #[test]
@@ -314,13 +226,13 @@ fn test_parse_int() {
         s.chars().collect::<Vec<char>>()
     };
 
-    assert_eq!(parse(&f("0")), Ok(Numberic::I64(0)));
-    assert_eq!(parse(&f("023424")).is_err(), true);
-    assert_eq!(parse(&f("12342342")), Ok(Numberic::I64(12342342)));
+    assert_eq!(parse_numberic(&f("0")), Ok(Numberic::I64(0)));
+    assert_eq!(parse_numberic(&f("023424")).is_err(), true);
+    assert_eq!(parse_numberic(&f("12342342")), Ok(Numberic::I64(12342342)));
 
-    assert_eq!(parse(&f("0b111111")), Ok(Numberic::I64(63)));
-    assert_eq!(parse(&f("0o124234126")), Ok(Numberic::I64(22100054)));
-    assert_eq!(parse(&f("0x69")), Ok(Numberic::I64(105)));
+    assert_eq!(parse_numberic(&f("0b111111")), Ok(Numberic::I64(63)));
+    assert_eq!(parse_numberic(&f("0o124234126")), Ok(Numberic::I64(22100054)));
+    assert_eq!(parse_numberic(&f("0x69")), Ok(Numberic::I64(105)));
 }
 
 #[bench]
@@ -329,7 +241,7 @@ fn bench_parse_ecmascript_float(b: &mut test::Bencher) {
 
     b.bytes = input.len() as u64;
     b.iter(|| {
-        let _ = parse(&input);
+        let _ = parse_numberic(&input);
     });
 }
 

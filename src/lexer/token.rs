@@ -1,100 +1,186 @@
-use super::keyword::Keyword;
-use super::punctuator::Punctuator;
+use ast::numberic::{ Float, Numberic, };
 
-use ast::float::{ Float,  };
-use ast::span::{ LineColumn, Span, };
+use super::span::{ Span, Loc, };
+use super::keyword::Keyword;
+use super::punctuator::PunctuatorKind;
 
 use std::fmt;
 use std::cmp;
 use std::hash;
 use std::str::FromStr;
-use std::convert::From;
-use std::convert::TryFrom;
 
 
+pub const LITERAL_NULL: &[char]   = &['n', 'u', 'l', 'l'];
+pub const LITERAL_TRUE: &[char]   = &['t', 'r', 'u', 'e'];
+pub const LITERAL_FALSE: &[char]  = &['f', 'a', 'l', 's', 'e'];
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum WhiteSpace {
-    TAB,
-    VT,
-    FF,
-    SP,
-    NBSP,
-    ZWNBSP,
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum StringDelimiter {
+    SingleQuote,
+    MultiQuote,
+    Template,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum LineTerminator {
-    CarriageReturn,     // CR   : \r
-    LineFeed,           // LF   : \n
-    EndOfLine,          // CR+LF: \r\n
-    LineSeparator,      // LS   : U+2028
-    ParagraphSeparator, // PS   : U+2029
-    // NextLine,           // NEL  : U+0085
+
+/// #!/xx/xxx
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct HashBang<'ast> {
+    pub span: Span,
+    pub loc: Loc,
+    pub value: &'ast [char],
 }
 
-// MemSize: 16 Bytes
+
+/// Keyword or IdentifierName
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub enum Token {
-    EndOfProgram,
-    UnexpectedToken,
-    UnexpectedEof,
+pub struct Identifier<'ast> {
+    pub span: Span,
+    pub loc: Loc,
+    pub raw: &'ast [char],
+    // if has_escaped_char { Some(cooked) } else { None }
+    pub cooked: Option<Vec<char>>,
+}
 
-    HashBang,
-    
-    SingleLineComment,
-    MultiLineComment,
-    
-    WhiteSpaces,
+impl<'ast> Identifier<'ast> {
+    pub fn to_keyword(&self) -> Option<Keyword> {
+        if self.cooked.is_some() {
+            return None;
+        }
+
+        Keyword::try_from(&self.raw).ok()
+    }
+
+    pub fn to_null(&self) -> Option<Token<'ast>> {
+        if self.cooked.is_some() {
+            return None;
+        }
+        
+        if self.raw == LITERAL_NULL {
+            Some(Token::LiteralNull(LiteralNull { span: self.span, loc: self.loc}))
+        } else {
+            None
+        }
+        
+    }
+
+    pub fn to_bool(&self) -> Option<Token<'ast>> {
+        if self.cooked.is_some() {
+            return None;
+        }
+        
+        let val = match self.raw {
+            LITERAL_TRUE => true,
+            LITERAL_FALSE => false,
+            _ => return None,
+        };
+
+        Some(Token::LiteralBoolean(LiteralBoolean { span: self.span, loc: self.loc, value: val }))
+    }
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct Comment<'ast> {
+    pub span: Span,
+    pub loc: Loc,
+    pub is_multi_line: bool,
+    pub value: &'ast [char],
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct LiteralNull {
+    pub span: Span,
+    pub loc: Loc,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct LiteralBoolean {
+    pub span: Span,
+    pub loc: Loc,
+    pub value: bool,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+pub struct LiteralString<'ast> {
+    pub span: Span,
+    pub loc: Loc,
+    // pub delimiter: StringDelimiter,
+    pub raw: &'ast [char],
+    // if has_escaped_char { Some(cooked) } else { None }
+    pub cooked: Option<Vec<char>>,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+pub struct LiteralNumeric<'ast> {
+    pub span: Span,
+    pub loc: Loc,
+    pub raw: &'ast [char],
+    pub value: Numberic,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+pub struct LiteralRegularExpression<'ast> {
+    pub span: Span,
+    pub loc: Loc,
+    pub body: &'ast [char],
+    pub flags: &'ast [char],
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+pub struct LiteralTemplate<'ast> {
+    pub span: Span,
+    pub loc: Loc,
+    pub raw: &'ast [char],
+    pub strings: Vec<LiteralString<'ast>>,
+    pub bounds: Vec<Token<'ast>>,
+}
+
+
+// #[derive(Debug, PartialEq, Eq, Hash, Clone)]
+// pub struct WhiteSpaces {
+//     pub span: Span,
+//     pub loc: Loc,
+// }
+
+// #[derive(Debug, PartialEq, Eq, Hash, Clone)]
+// pub struct LineTerminator {
+//     pub span: Span,
+//     pub loc: Loc,
+// }
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct Punctuator {
+    pub span: Span,
+    pub loc: Loc,
+    pub kind: PunctuatorKind,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+pub enum Token<'ast> {
+    // HashBang(HashBang<'ast>),
+    // WhiteSpaces,
+    // Comment(Comment<'ast>),
     LineTerminator,
+    /// including keyword
+    Identifier(Identifier<'ast>),
 
+    LiteralNull(LiteralNull),
+    LiteralBoolean(LiteralBoolean),
+    LiteralString(LiteralString<'ast>),
+    LiteralNumeric(LiteralNumeric<'ast>),
+    LiteralRegularExpression(LiteralRegularExpression<'ast>),
+    LiteralTemplate(LiteralTemplate<'ast>),
+
+    TemplateOpenning,
+    // InstanceOf,    // instanceof
+    // In,            // in
     Punctuator(Punctuator),
-    Keyword(Keyword),
-    Identifier(Vec<char>),
-    
-    LiteralNull,
-    LiteralBoolean(bool),
-    
-    LiteralString(Vec<char>),
-    // LiteralHexNumeric(u64),
-    // LiteralBinaryNumeric(u64),
-    // LiteralOctalNumeric(u64),
-    LiteralDecimalNumeric(u64),
-    LiteralFloatNumeric(Float),
-
-    // LiteralRegularExpression(RegularExpressionLiteral),
 }
 
-impl Token {
-    pub fn is_error(&self) -> bool {
-        use self::Token::*;
 
-        match *self {
-            UnexpectedToken | UnexpectedEof => true,
-            _ => false,
-        }
-    }
-
-    pub fn is_hashbang(&self) -> bool {
-        match *self {
-            Token::HashBang => true,
-            _ => false,
-        }
-    }
-
-    pub fn is_literal(&self) -> bool {
-        use self::Token::*;
-
-        match *self {
-            LiteralNull
-            | LiteralBoolean(_) 
-            | LiteralString(_)
-            | LiteralDecimalNumeric(_)
-            | LiteralFloatNumeric(_) => true,
-            _ => false,
-        }
-    }
-}
-
-pub type SpannedToken = Span<Token>;
+// // args: Punctuated<Expr, Comma>
+// pub struct Punctuated<T, P> {
+//     inner: Vec<(T, P)>,
+//     last: Option<Box<T>>,
+// }
 

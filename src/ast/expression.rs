@@ -4,7 +4,7 @@ use ast::IdentifierName;
 
 use ast::IdentifierReference;
 use ast::span::Span;
-use ast::float::{ Float,  };
+use ast::numberic::{ Float,  };
 // use ast::jsx::{ JSXFragment, JSXElement, };
 
 use std::any::Any;
@@ -203,8 +203,8 @@ pub struct RegularExpressionLiteral {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct TemplateLiteral {
-    pub strings: Vec<StringLiteral>,
-    pub bounds: Vec<Expression>,
+    pub strings: Vec<Span<StringLiteral>>,
+    pub bounds: Vec<SpannedExpression>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -220,7 +220,7 @@ pub struct ObjectLiteral {
 // ( Expression, + )
 #[derive(Debug, PartialEq, Clone)]
 pub struct ParenthesizedExpression {
-    pub elems: Vec<Expression>,
+    pub elems: Vec<SpannedExpression>,
 }
 
 // FunctionExpression
@@ -234,8 +234,8 @@ pub struct ParenthesizedExpression {
 // Left-Hand-Side Expressions
 #[derive(Debug, PartialEq, Clone)]
 pub struct MemberExpression {
-    pub left: Box<Expression>,
-    pub right: Box<Expression>,
+    pub left: Box<SpannedExpression>,
+    pub right: Box<SpannedExpression>,
     pub computed: bool,
 }
 
@@ -243,14 +243,14 @@ pub struct MemberExpression {
 // super [ Expression ]
 #[derive(Debug, PartialEq, Clone)]
 pub struct SuperMemberExpression {
-    pub right: Box<Expression>,
+    pub right: Box<SpannedExpression>,
     pub computed: bool,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct TaggedTemplateExpression {
-    pub tag: Box<Expression>,
-    pub template: TemplateLiteral,
+    pub tag: Box<SpannedExpression>,
+    pub template: Span<TemplateLiteral>,
 }
 
 
@@ -258,7 +258,7 @@ pub struct TaggedTemplateExpression {
 // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-CallExpression
 #[derive(Debug, PartialEq, Clone)]
 pub struct CallExpression {
-    pub callee: Box<Expression>,
+    pub callee: Box<SpannedExpression>,
     // TODO:
     pub arguments: Vec<char>,
 }
@@ -274,23 +274,23 @@ pub struct SuperCallExpression {
 // new abc.asd( ... )
 #[derive(Debug, PartialEq, Clone)]
 pub struct NewExpression {
-    pub callee: Box<Expression>,
+    pub callee: Box<SpannedExpression>,
     // TODO:
     pub arguments: Option<Vec<char>>,
 }
 
 
-
-
-
+// UNARY_OPERATORS
 #[derive(Debug, PartialEq, Clone)]
 pub enum PrefixOperator {
     Await,     // await
     Delete,    // delete
     Void,      // void
     TypeOf,    // typeof
-    Add,       // +
-    Sub,       // -
+    /// The unary positive operator +.
+    Pos,       // +
+    // The unary negation operator -.
+    Neg,       // -
     BitNot,    // ~
     Not,       // !
 
@@ -300,36 +300,34 @@ pub enum PrefixOperator {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum InfixOperator {
-    Pow,
-    Mul,
-    Div,
-    Rem,
-    Add,
-    Sub,
+    // BINARY_OPERATORS
+    Add,      // +
+    Sub,      // -
+    Mul,      // *
+    Div,      // /
+    Rem,      // %
+    Pow,      // **
+    BitShl,   // <<
+    BitShr,   // >>
+    BitUShr,  // >>>
+    And,      // &&
+    Or,       // ||
+    BitAnd,   // &
+    BitXor,   // ^
+    BitOr,    // |
 
-    BitShl,
-    BitShr,
-    BitUShr,
+    // COMPARE_OPERATORS
+    Gt,        // >
+    Lt,        // <
+    GtEq,      // >=
+    LtEq,      // <=
+    Eq,        // ==
+    Neq,       // !=
+    StrictEq,  // ===
+    StrictNeq, // !==
 
-    Gt,
-    Lt,
-    GtEq,
-    LtEq,
-
-    Eq,
-    Neq,
-    StrictEq,
-    StrictNeq,
-
-    BitAnd,
-    BitXor,
-    BitOr,
-
-    And,
-    Or,
-
-    InstanceOf,
-    In,
+    InstanceOf,  // instanceof
+    In,          // in
 }
 
 impl InfixOperator {
@@ -340,8 +338,7 @@ impl InfixOperator {
             Pow => 15,
             Mul | Div | Rem => 14,
             Add | Sub => 13,
-
-
+            
             BitShl | BitShr | BitUShr => 12,
 
             Gt | Lt | GtEq | LtEq | In | InstanceOf => 11,
@@ -366,19 +363,19 @@ pub enum PostfixOperator {
 
 
 // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
-#[derive(Debug, PartialEq, Clone)]
-pub enum Operator {
-    Prefix(PrefixOperator),
-    Infix(InfixOperator),
-    Postfix(PostfixOperator),
-}
+// #[derive(Debug, PartialEq, Clone)]
+// pub enum Operator {
+//     Prefix(PrefixOperator),
+//     Infix(InfixOperator),
+//     Postfix(PostfixOperator),
+// }
 
 
 // Unary
 #[derive(Debug, PartialEq, Clone)]
 pub struct PrefixExpression {
     pub operator: PrefixOperator,
-    pub operand: Box<Expression>,
+    pub operand: Box<SpannedExpression>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -391,7 +388,7 @@ pub struct InfixExpression {
 #[derive(Debug, PartialEq, Clone)]
 pub struct PostfixExpression {
     pub operator: PostfixOperator,
-    pub operand: Box<Expression>,
+    pub operand: Box<SpannedExpression>,
 }
 
 
@@ -399,9 +396,9 @@ pub struct PostfixExpression {
 // LogicalORExpression ? AssignmentExpression : AssignmentExpression 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ConditionalExpression {
-    pub condition: Box<Expression>,
-    pub and_then: Box<Expression>,
-    pub or_else: Box<Expression>,
+    pub condition: Box<SpannedExpression>,
+    pub and_then: Box<SpannedExpression>,
+    pub or_else: Box<SpannedExpression>,
 }
 
 
@@ -412,9 +409,9 @@ pub struct ConditionalExpression {
 #[derive(Debug, PartialEq, Clone)]
 pub struct YieldExpression {
     // no LineTerminator here
-    pub star: bool,                  // *
-    pub value: Box<Expression>, // AssignmentExpression
-                                     // * AssignmentExpression
+    pub star: bool,                    // *
+    pub value: Box<SpannedExpression>, // AssignmentExpression
+                                       // * AssignmentExpression
 }
 
 
@@ -440,9 +437,9 @@ pub enum AssignmentOperator {
 // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-AssignmentExpression
 #[derive(Debug, PartialEq, Clone)]
 pub struct AssignmentExpression {
-    pub left: Box<Expression>,
+    pub left: Box<SpannedExpression>,
     pub operator: AssignmentOperator,
-    pub right: Box<Expression>,
+    pub right: Box<SpannedExpression>,
 }
 
 // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-comma-operator

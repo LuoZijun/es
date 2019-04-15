@@ -21,6 +21,7 @@ pub enum EscapeSequenceKind {
     TemplateString,
     // UnicodeEscapeSequence
     Identifier,
+    JSXText,
 }
 
 

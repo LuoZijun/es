@@ -24,8 +24,9 @@ pub mod version;
 pub mod ast;
 
 pub mod lexer;
-// pub mod lexer0;
-// pub mod lexer1;
+pub mod lexer0;
+pub mod lexer1;
+pub mod lexer2;
 
 // pub mod parser;
 pub mod compiler;

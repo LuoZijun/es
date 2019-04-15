@@ -11,9 +11,6 @@ use std::mem;
 use std::env;
 use std::io::{ self, Read, };
 
-use std::rc::{ Rc, };
-use std::cell::{ Cell, RefCell, };
-
 
 fn main() {
     env::set_var("RUST_LOG", "ecmascript=trace,esc=trace");
@@ -24,5 +21,4 @@ fn main() {
 
     ecmascript::lexer::tokenize(&source);
     // ecmascript::parser::parse(&source);
-
 }
