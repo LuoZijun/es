@@ -1,0 +1,1 @@
+initSidebarItems({"static":[["MAX_NAME_LENGTH",""],["MINIMAL_ENTITIES",""],["NAMED_ENTITIES",""]],"trait":[["HTMLEntity",""]]});

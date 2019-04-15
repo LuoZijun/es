@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["BACKSPACE",""],["CR",""],["CR_LF",""],["FF",""],["LF",""],["LS",""],["NBSP",""],["PS",""],["SLASH",""],["SP",""],["TAB",""],["VT",""],["ZWJ",""],["ZWNBSP",""],["ZWNJ",""]],"enum":[["Category",""]],"static":[["ASCII",""]],"trait":[["ESChar",""]]});

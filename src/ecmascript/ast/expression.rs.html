@@ -481,9 +481,6 @@
 <span id="481">481</span>
 <span id="482">482</span>
 <span id="483">483</span>
-<span id="484">484</span>
-<span id="485">485</span>
-<span id="486">486</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">IdentifierName</span>;
 <span class="comment">// use super::class::ClassExpression;</span>
@@ -491,7 +488,7 @@
 
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">IdentifierReference</span>;
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">span</span>::<span class="ident">Span</span>;
-<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">float</span>::{ <span class="ident">Float</span>,  };
+<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Float</span>,  };
 <span class="comment">// use ast::jsx::{ JSXFragment, JSXElement, };</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">any</span>::<span class="ident">Any</span>;
@@ -690,8 +687,8 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TemplateLiteral</span> {
-    <span class="kw">pub</span> <span class="ident">strings</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">StringLiteral</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">bounds</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">strings</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&lt;</span><span class="ident">StringLiteral</span><span class="op">&gt;&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">bounds</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
@@ -707,7 +704,7 @@
 <span class="comment">// ( Expression, + )</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ParenthesizedExpression</span> {
-    <span class="kw">pub</span> <span class="ident">elems</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">elems</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
 }
 
 <span class="comment">// FunctionExpression</span>
@@ -721,8 +718,8 @@
 <span class="comment">// Left-Hand-Side Expressions</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MemberExpression</span> {
-    <span class="kw">pub</span> <span class="ident">left</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">right</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">left</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">right</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">computed</span>: <span class="ident">bool</span>,
 }
 
@@ -730,14 +727,14 @@
 <span class="comment">// super [ Expression ]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SuperMemberExpression</span> {
-    <span class="kw">pub</span> <span class="ident">right</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">right</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">computed</span>: <span class="ident">bool</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TaggedTemplateExpression</span> {
-    <span class="kw">pub</span> <span class="ident">tag</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">template</span>: <span class="ident">TemplateLiteral</span>,
+    <span class="kw">pub</span> <span class="ident">tag</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">template</span>: <span class="ident">Span</span><span class="op">&lt;</span><span class="ident">TemplateLiteral</span><span class="op">&gt;</span>,
 }
 
 
@@ -745,7 +742,7 @@
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#prod-CallExpression</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CallExpression</span> {
-    <span class="kw">pub</span> <span class="ident">callee</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">callee</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
     <span class="comment">// TODO:</span>
     <span class="kw">pub</span> <span class="ident">arguments</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;</span>,
 }
@@ -761,23 +758,23 @@
 <span class="comment">// new abc.asd( ... )</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NewExpression</span> {
-    <span class="kw">pub</span> <span class="ident">callee</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">callee</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
     <span class="comment">// TODO:</span>
     <span class="kw">pub</span> <span class="ident">arguments</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;&gt;</span>,
 }
 
 
-
-
-
+<span class="comment">// UNARY_OPERATORS</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">PrefixOperator</span> {
     <span class="ident">Await</span>,     <span class="comment">// await</span>
     <span class="ident">Delete</span>,    <span class="comment">// delete</span>
     <span class="ident">Void</span>,      <span class="comment">// void</span>
     <span class="ident">TypeOf</span>,    <span class="comment">// typeof</span>
-    <span class="ident">Add</span>,       <span class="comment">// +</span>
-    <span class="ident">Sub</span>,       <span class="comment">// -</span>
+    <span class="doccomment">/// The unary positive operator +.</span>
+    <span class="ident">Pos</span>,       <span class="comment">// +</span>
+    <span class="comment">// The unary negation operator -.</span>
+    <span class="ident">Neg</span>,       <span class="comment">// -</span>
     <span class="ident">BitNot</span>,    <span class="comment">// ~</span>
     <span class="ident">Not</span>,       <span class="comment">// !</span>
 
@@ -787,36 +784,34 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">InfixOperator</span> {
-    <span class="ident">Pow</span>,
-    <span class="ident">Mul</span>,
-    <span class="ident">Div</span>,
-    <span class="ident">Rem</span>,
-    <span class="ident">Add</span>,
-    <span class="ident">Sub</span>,
+    <span class="comment">// BINARY_OPERATORS</span>
+    <span class="ident">Add</span>,      <span class="comment">// +</span>
+    <span class="ident">Sub</span>,      <span class="comment">// -</span>
+    <span class="ident">Mul</span>,      <span class="comment">// *</span>
+    <span class="ident">Div</span>,      <span class="comment">// /</span>
+    <span class="ident">Rem</span>,      <span class="comment">// %</span>
+    <span class="ident">Pow</span>,      <span class="comment">// **</span>
+    <span class="ident">BitShl</span>,   <span class="comment">// &lt;&lt;</span>
+    <span class="ident">BitShr</span>,   <span class="comment">// &gt;&gt;</span>
+    <span class="ident">BitUShr</span>,  <span class="comment">// &gt;&gt;&gt;</span>
+    <span class="ident">And</span>,      <span class="comment">// &amp;&amp;</span>
+    <span class="ident">Or</span>,       <span class="comment">// ||</span>
+    <span class="ident">BitAnd</span>,   <span class="comment">// &amp;</span>
+    <span class="ident">BitXor</span>,   <span class="comment">// ^</span>
+    <span class="ident">BitOr</span>,    <span class="comment">// |</span>
 
-    <span class="ident">BitShl</span>,
-    <span class="ident">BitShr</span>,
-    <span class="ident">BitUShr</span>,
+    <span class="comment">// COMPARE_OPERATORS</span>
+    <span class="ident">Gt</span>,        <span class="comment">// &gt;</span>
+    <span class="ident">Lt</span>,        <span class="comment">// &lt;</span>
+    <span class="ident">GtEq</span>,      <span class="comment">// &gt;=</span>
+    <span class="ident">LtEq</span>,      <span class="comment">// &lt;=</span>
+    <span class="ident">Eq</span>,        <span class="comment">// ==</span>
+    <span class="ident">Neq</span>,       <span class="comment">// !=</span>
+    <span class="ident">StrictEq</span>,  <span class="comment">// ===</span>
+    <span class="ident">StrictNeq</span>, <span class="comment">// !==</span>
 
-    <span class="ident">Gt</span>,
-    <span class="ident">Lt</span>,
-    <span class="ident">GtEq</span>,
-    <span class="ident">LtEq</span>,
-
-    <span class="ident">Eq</span>,
-    <span class="ident">Neq</span>,
-    <span class="ident">StrictEq</span>,
-    <span class="ident">StrictNeq</span>,
-
-    <span class="ident">BitAnd</span>,
-    <span class="ident">BitXor</span>,
-    <span class="ident">BitOr</span>,
-
-    <span class="ident">And</span>,
-    <span class="ident">Or</span>,
-
-    <span class="ident">InstanceOf</span>,
-    <span class="ident">In</span>,
+    <span class="ident">InstanceOf</span>,  <span class="comment">// instanceof</span>
+    <span class="ident">In</span>,          <span class="comment">// in</span>
 }
 
 <span class="kw">impl</span> <span class="ident">InfixOperator</span> {
@@ -827,8 +822,7 @@
             <span class="ident">Pow</span> <span class="op">=&gt;</span> <span class="number">15</span>,
             <span class="ident">Mul</span> <span class="op">|</span> <span class="ident">Div</span> <span class="op">|</span> <span class="ident">Rem</span> <span class="op">=&gt;</span> <span class="number">14</span>,
             <span class="ident">Add</span> <span class="op">|</span> <span class="ident">Sub</span> <span class="op">=&gt;</span> <span class="number">13</span>,
-
-
+            
             <span class="ident">BitShl</span> <span class="op">|</span> <span class="ident">BitShr</span> <span class="op">|</span> <span class="ident">BitUShr</span> <span class="op">=&gt;</span> <span class="number">12</span>,
 
             <span class="ident">Gt</span> <span class="op">|</span> <span class="ident">Lt</span> <span class="op">|</span> <span class="ident">GtEq</span> <span class="op">|</span> <span class="ident">LtEq</span> <span class="op">|</span> <span class="ident">In</span> <span class="op">|</span> <span class="ident">InstanceOf</span> <span class="op">=&gt;</span> <span class="number">11</span>,
@@ -853,19 +847,19 @@
 
 
 <span class="comment">// https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Operator</span> {
-    <span class="ident">Prefix</span>(<span class="ident">PrefixOperator</span>),
-    <span class="ident">Infix</span>(<span class="ident">InfixOperator</span>),
-    <span class="ident">Postfix</span>(<span class="ident">PostfixOperator</span>),
-}
+<span class="comment">// #[derive(Debug, PartialEq, Clone)]</span>
+<span class="comment">// pub enum Operator {</span>
+<span class="comment">//     Prefix(PrefixOperator),</span>
+<span class="comment">//     Infix(InfixOperator),</span>
+<span class="comment">//     Postfix(PostfixOperator),</span>
+<span class="comment">// }</span>
 
 
 <span class="comment">// Unary</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PrefixExpression</span> {
     <span class="kw">pub</span> <span class="ident">operator</span>: <span class="ident">PrefixOperator</span>,
-    <span class="kw">pub</span> <span class="ident">operand</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">operand</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
@@ -878,7 +872,7 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PostfixExpression</span> {
     <span class="kw">pub</span> <span class="ident">operator</span>: <span class="ident">PostfixOperator</span>,
-    <span class="kw">pub</span> <span class="ident">operand</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">operand</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
 }
 
 
@@ -886,9 +880,9 @@
 <span class="comment">// LogicalORExpression ? AssignmentExpression : AssignmentExpression </span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ConditionalExpression</span> {
-    <span class="kw">pub</span> <span class="ident">condition</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">and_then</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">or_else</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">condition</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">and_then</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">or_else</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
 }
 
 
@@ -899,9 +893,9 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">YieldExpression</span> {
     <span class="comment">// no LineTerminator here</span>
-    <span class="kw">pub</span> <span class="ident">star</span>: <span class="ident">bool</span>,                  <span class="comment">// *</span>
-    <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>, <span class="comment">// AssignmentExpression</span>
-                                     <span class="comment">// * AssignmentExpression</span>
+    <span class="kw">pub</span> <span class="ident">star</span>: <span class="ident">bool</span>,                    <span class="comment">// *</span>
+    <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>, <span class="comment">// AssignmentExpression</span>
+                                       <span class="comment">// * AssignmentExpression</span>
 }
 
 
@@ -927,9 +921,9 @@
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#prod-AssignmentExpression</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AssignmentExpression</span> {
-    <span class="kw">pub</span> <span class="ident">left</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">left</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">operator</span>: <span class="ident">AssignmentOperator</span>,
-    <span class="kw">pub</span> <span class="ident">right</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">right</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">SpannedExpression</span><span class="op">&gt;</span>,
 }
 
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#sec-comma-operator</span>

@@ -245,96 +245,12 @@
 <span id="245">245</span>
 <span id="246">246</span>
 <span id="247">247</span>
-<span id="248">248</span>
-<span id="249">249</span>
-<span id="250">250</span>
-<span id="251">251</span>
-<span id="252">252</span>
-<span id="253">253</span>
-<span id="254">254</span>
-<span id="255">255</span>
-<span id="256">256</span>
-<span id="257">257</span>
-<span id="258">258</span>
-<span id="259">259</span>
-<span id="260">260</span>
-<span id="261">261</span>
-<span id="262">262</span>
-<span id="263">263</span>
-<span id="264">264</span>
-<span id="265">265</span>
-<span id="266">266</span>
-<span id="267">267</span>
-<span id="268">268</span>
-<span id="269">269</span>
-<span id="270">270</span>
-<span id="271">271</span>
-<span id="272">272</span>
-<span id="273">273</span>
-<span id="274">274</span>
-<span id="275">275</span>
-<span id="276">276</span>
-<span id="277">277</span>
-<span id="278">278</span>
-<span id="279">279</span>
-<span id="280">280</span>
-<span id="281">281</span>
-<span id="282">282</span>
-<span id="283">283</span>
-<span id="284">284</span>
-<span id="285">285</span>
-<span id="286">286</span>
-<span id="287">287</span>
-<span id="288">288</span>
-<span id="289">289</span>
-<span id="290">290</span>
-<span id="291">291</span>
-<span id="292">292</span>
-<span id="293">293</span>
-<span id="294">294</span>
-<span id="295">295</span>
-<span id="296">296</span>
-<span id="297">297</span>
-<span id="298">298</span>
-<span id="299">299</span>
-<span id="300">300</span>
-<span id="301">301</span>
-<span id="302">302</span>
-<span id="303">303</span>
-<span id="304">304</span>
-<span id="305">305</span>
-<span id="306">306</span>
-<span id="307">307</span>
-<span id="308">308</span>
-<span id="309">309</span>
-<span id="310">310</span>
-<span id="311">311</span>
-<span id="312">312</span>
-<span id="313">313</span>
-<span id="314">314</span>
-<span id="315">315</span>
-<span id="316">316</span>
-<span id="317">317</span>
-<span id="318">318</span>
-<span id="319">319</span>
-<span id="320">320</span>
-<span id="321">321</span>
-<span id="322">322</span>
-<span id="323">323</span>
-<span id="324">324</span>
-<span id="325">325</span>
-<span id="326">326</span>
-<span id="327">327</span>
-<span id="328">328</span>
-<span id="329">329</span>
-<span id="330">330</span>
-<span id="331">331</span>
-<span id="332">332</span>
-<span id="333">333</span>
-<span id="334">334</span>
-<span id="335">335</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">float</span>::{ <span class="ident">Float</span>,  };
+<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Float</span>, <span class="ident">Numberic</span>, };
+
+<span class="kw">const</span> <span class="ident">BINARY</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">2</span>;
+<span class="kw">const</span> <span class="ident">OCTAL</span>: <span class="ident">u32</span>  <span class="op">=</span> <span class="number">8</span>;
+<span class="kw">const</span> <span class="ident">HEX</span>: <span class="ident">u32</span>    <span class="op">=</span> <span class="number">16</span>;
 
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
@@ -365,98 +281,6 @@
         <span class="self">self</span>.<span class="ident">offset</span>
     }
 }
-
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Numberic</span> {
-    <span class="ident">I64</span>(<span class="ident">i64</span>),
-    <span class="ident">F64</span>(<span class="ident">Float</span>),
-}
-
-<span class="kw">impl</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Float</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>: <span class="ident">Numberic</span>) <span class="op">-&gt;</span> <span class="ident">Float</span> {
-        <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span>) <span class="op">=&gt;</span> <span class="ident">n</span>.<span class="ident">into</span>(),
-            <span class="ident">Numberic</span>::<span class="ident">F64</span>(<span class="ident">float</span>) <span class="op">=&gt;</span> <span class="ident">float</span>,
-        }
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>: <span class="ident">Numberic</span>) <span class="op">-&gt;</span> <span class="ident">f64</span> {
-        <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span>) <span class="op">=&gt;</span> <span class="ident">n</span> <span class="kw">as</span> <span class="ident">f64</span>,
-            <span class="ident">Numberic</span>::<span class="ident">F64</span>(<span class="ident">float</span>) <span class="op">=&gt;</span> <span class="ident">float</span>.<span class="number">0</span>,
-        }
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">i64</span>)
-    }
-}
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">u16</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">i64</span>)
-    }
-}
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">i64</span>)
-    }
-}
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">i64</span>)
-    }
-}
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">i64</span>)
-    }
-}
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">i8</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">i8</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">i64</span>)
-    }
-}
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">i16</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">i16</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">i64</span>)
-    }
-}
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">i32</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">i64</span>)
-    }
-}
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">i64</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span>)
-    }
-}
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">isize</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">isize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">i64</span>)
-    }
-}
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">f32</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">f32</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">F64</span>(<span class="ident">Float</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">f64</span>))
-    }
-}
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Numberic</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">f64</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Numberic</span>::<span class="ident">F64</span>(<span class="ident">Float</span>(<span class="ident">n</span>))
-    }
-}
-
-<span class="kw">const</span> <span class="ident">ZERO</span>: <span class="ident">Numberic</span> <span class="op">=</span> <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">0</span>);
-<span class="kw">const</span> <span class="ident">BINARY</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">2</span>;
-<span class="kw">const</span> <span class="ident">OCTAL</span>: <span class="ident">u32</span>  <span class="op">=</span> <span class="number">8</span>;
-<span class="kw">const</span> <span class="ident">HEX</span>: <span class="ident">u32</span>    <span class="op">=</span> <span class="number">16</span>;
-
 
 <span class="attribute">#[<span class="ident">inline</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_chars_radix</span>(<span class="ident">digits</span>: <span class="kw-2">&amp;</span>[<span class="ident">char</span>], <span class="ident">radix</span>: <span class="ident">u32</span>, <span class="ident">pre_offset</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span>, <span class="ident">ParseNumbericError</span><span class="op">&gt;</span> {
@@ -501,7 +325,7 @@
 
 
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">char</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Numberic</span>, <span class="ident">ParseNumbericError</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_numberic</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">char</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Numberic</span>, <span class="ident">ParseNumbericError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">input_len</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">len</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">idx</span> <span class="op">=</span> <span class="number">0usize</span>;
 
@@ -575,7 +399,7 @@
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ParseNumbericError</span>::<span class="ident">new</span>(<span class="ident">NumbericErrorKind</span>::<span class="ident">InvalidDigit</span>, <span class="ident">idx</span>));
                 },
                 <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
-                    <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">ZERO</span>);
+                    <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">ZERO</span>);
                 }
             }
         },
@@ -600,7 +424,7 @@
         },
         <span class="string">&#39;-&#39;</span> <span class="op">=&gt;</span> {
             <span class="ident">idx</span> <span class="op">+=</span> <span class="number">1</span>;
-            <span class="kw">return</span> <span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="ident">idx</span>..]).<span class="ident">map</span>(<span class="op">|</span><span class="ident">n</span><span class="op">|</span> {
+            <span class="kw">return</span> <span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="ident">idx</span>..]).<span class="ident">map</span>(<span class="op">|</span><span class="ident">n</span><span class="op">|</span> {
                 <span class="kw">match</span> <span class="ident">n</span> {
                     <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="ident">int</span>) <span class="op">=&gt;</span> <span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="op">-</span><span class="ident">int</span>),
                     <span class="ident">Numberic</span>::<span class="ident">F64</span>(<span class="ident">float</span>) <span class="op">=&gt;</span> <span class="ident">Numberic</span>::<span class="ident">F64</span>( <span class="ident">Float</span>(<span class="op">-</span>(<span class="ident">float</span>.<span class="number">0</span>)) ),
@@ -609,7 +433,7 @@
         },
         <span class="string">&#39;+&#39;</span> <span class="op">=&gt;</span> {
             <span class="ident">idx</span> <span class="op">+=</span> <span class="number">1</span>;
-            <span class="kw">return</span> <span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="ident">idx</span>..]);
+            <span class="kw">return</span> <span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="ident">idx</span>..]);
         },
         <span class="kw">_</span> <span class="op">=&gt;</span> {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ParseNumbericError</span>::<span class="ident">new</span>(<span class="ident">NumbericErrorKind</span>::<span class="ident">InvalidDigit</span>, <span class="ident">idx</span>));
@@ -640,8 +464,8 @@
         <span class="ident">s</span>.<span class="ident">chars</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;&gt;</span>()
     };
     
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0.234235834589&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">F64</span>( <span class="number">0.234235834589f64</span>.<span class="ident">into</span>() )));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0.234235834589e1&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">F64</span>( <span class="number">0.234235834589e1f64</span>.<span class="ident">into</span>() )));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0.234235834589&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">F64</span>( <span class="number">0.234235834589f64</span>.<span class="ident">into</span>() )));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0.234235834589e1&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">F64</span>( <span class="number">0.234235834589e1f64</span>.<span class="ident">into</span>() )));
 }
 
 <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -650,13 +474,13 @@
         <span class="ident">s</span>.<span class="ident">chars</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;&gt;</span>()
     };
 
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">0</span>)));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;023424&quot;</span>)).<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;12342342&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">12342342</span>)));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">0</span>)));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;023424&quot;</span>)).<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;12342342&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">12342342</span>)));
 
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0b111111&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">63</span>)));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0o124234126&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">22100054</span>)));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0x69&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">105</span>)));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0b111111&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">63</span>)));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0o124234126&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">22100054</span>)));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0x69&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">105</span>)));
 }
 
 <span class="attribute">#[<span class="ident">bench</span>]</span>
@@ -665,7 +489,7 @@
 
     <span class="ident">b</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
     <span class="ident">b</span>.<span class="ident">iter</span>(<span class="op">||</span> {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>);
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>);
     });
 }
 

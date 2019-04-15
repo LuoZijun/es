@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["EscapeErrorKind",""],["EscapeSequenceKind",""]],"fn":[["escape",""],["single_escape_character",""],["unescape_identifier",""],["unescape_string",""],["unescape_template",""]],"struct":[["EscapeError",""]]});

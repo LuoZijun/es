@@ -121,6 +121,8 @@
 <span id="121">121</span>
 <span id="122">122</span>
 <span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 
@@ -234,11 +236,13 @@
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Error</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="macro">writeln</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}: {:?}&quot;</span>, <span class="self">self</span>.<span class="ident">kind</span>, <span class="self">self</span>.<span class="ident">message</span>);
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="macro">writeln</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;    {}:{}:{}&quot;</span>, <span class="self">self</span>.<span class="ident">filename</span>(), <span class="self">self</span>.<span class="ident">line_number</span>(), <span class="self">self</span>.<span class="ident">column_number</span>());
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="macro">writeln</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}: {}&quot;</span>, <span class="self">self</span>.<span class="ident">kind</span>, <span class="self">self</span>.<span class="ident">message</span>);
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="macro">writeln</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot; --&gt; {}:{}:{}&quot;</span>, <span class="self">self</span>.<span class="ident">filename</span>(), <span class="self">self</span>.<span class="ident">line_number</span>(), <span class="self">self</span>.<span class="ident">column_number</span>());
 
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">line</span> {
-            <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">line</span>) <span class="op">=&gt;</span> { <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">line</span>); },
+            <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">line</span>) <span class="op">=&gt;</span> {
+                <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">line</span>);
+            },
             <span class="prelude-val">None</span> <span class="op">=&gt;</span> { },
         }
 
