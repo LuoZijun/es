@@ -13,6 +13,12 @@
 extern crate log;
 extern crate unicode_xid;
 extern crate toolshed;
+#[macro_use]
+extern crate serde;
+#[macro_use]
+extern crate serde_json;
+extern crate vlq;
+
 
 pub mod rc_ref;
 

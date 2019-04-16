@@ -11,18 +11,22 @@ include = [
 ]
 
 [workspace]
-members = [ ]
+members = [
+
+]
 
 [dependencies]
 log = "0.4"
 unicode-xid = "0.1"
 toolshed = "0.8"
-# memchr = "2.2"
+vlq = "0.5"
+serde = "1.0"
+serde_json = "1.0"
 
+# memchr = "2.2"
 # time = "0.1"
 # gc = "0.3"
 # gc_derive = "0.3"
-
 # bitflags = "0.1"
 
 rustyline = { version = "3.0", optional = true }
