@@ -8,7 +8,6 @@ use toolshed::Arena;
 
 use ecmascript::lexer::htmlentity::HTMLEntity;
 use ecmascript::lexer::Lexer;
-use ecmascript::lexer::token::Token;
 use ecmascript::lexer::escape::{ unescape_string, };
 use ecmascript::lexer::numberic::{ parse_numberic, };
 
