@@ -31,6 +31,26 @@ pub struct HashBang<'ast> {
     pub value: &'ast [char],
 }
 
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+pub struct WhiteSpaces {
+    pub span: Span,
+    pub loc: Loc,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+pub struct LineTerminator {
+    pub span: Span,
+    pub loc: Loc,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct Comment<'ast> {
+    pub span: Span,
+    pub loc: Loc,
+    pub is_multi_line: bool,
+    pub value: &'ast [char],
+}
+
 
 /// Keyword or IdentifierName
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
@@ -79,13 +99,7 @@ impl<'ast> Identifier<'ast> {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-pub struct Comment<'ast> {
-    pub span: Span,
-    pub loc: Loc,
-    pub is_multi_line: bool,
-    pub value: &'ast [char],
-}
+
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralNull {
@@ -135,25 +149,13 @@ pub struct LiteralTemplate<'ast> {
     pub bounds: Vec<Token<'ast>>,
 }
 
-
-// #[derive(Debug, PartialEq, Eq, Hash, Clone)]
-// pub struct WhiteSpaces {
-//     pub span: Span,
-//     pub loc: Loc,
-// }
-
-// #[derive(Debug, PartialEq, Eq, Hash, Clone)]
-// pub struct LineTerminator {
-//     pub span: Span,
-//     pub loc: Loc,
-// }
-
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Punctuator {
     pub span: Span,
     pub loc: Loc,
     pub kind: PunctuatorKind,
 }
+
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum Token<'ast> {
@@ -172,8 +174,6 @@ pub enum Token<'ast> {
     LiteralTemplate(LiteralTemplate<'ast>),
 
     TemplateOpenning,
-    // InstanceOf,    // instanceof
-    // In,            // in
     Punctuator(Punctuator),
 }
 
@@ -183,4 +183,3 @@ pub enum Token<'ast> {
 //     inner: Vec<(T, P)>,
 //     last: Option<Box<T>>,
 // }
-
