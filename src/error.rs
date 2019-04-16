@@ -4,10 +4,8 @@ use std::fmt;
 // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-native-error-types-used-in-this-standard
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum ErrorKind {
-    LexicalError,
-    ParseError,
     SyntaxError,
-
+    
     EvalError,
     RangeError,
     ReferenceError,
@@ -23,7 +21,7 @@ impl fmt::Display for ErrorKind {
         use self::ErrorKind::*;
 
         match *self {
-            LexicalError | ParseError | SyntaxError => write!(f, "SyntaxError"),
+            SyntaxError => write!(f, "SyntaxError"),
             EvalError => write!(f, "EvalError"),
             RangeError => write!(f, "RangeError"),
             ReferenceError => write!(f, "ReferenceError"),
