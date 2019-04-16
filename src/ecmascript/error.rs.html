@@ -121,8 +121,6 @@
 <span id="121">121</span>
 <span id="122">122</span>
 <span id="123">123</span>
-<span id="124">124</span>
-<span id="125">125</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 
@@ -130,10 +128,8 @@
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#sec-native-error-types-used-in-this-standard</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Hash</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ErrorKind</span> {
-    <span class="ident">LexicalError</span>,
-    <span class="ident">ParseError</span>,
     <span class="ident">SyntaxError</span>,
-
+    
     <span class="ident">EvalError</span>,
     <span class="ident">RangeError</span>,
     <span class="ident">ReferenceError</span>,
@@ -149,7 +145,7 @@
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">ErrorKind</span>::<span class="kw-2">*</span>;
 
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">LexicalError</span> <span class="op">|</span> <span class="ident">ParseError</span> <span class="op">|</span> <span class="ident">SyntaxError</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;SyntaxError&quot;</span>),
+            <span class="ident">SyntaxError</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;SyntaxError&quot;</span>),
             <span class="ident">EvalError</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;EvalError&quot;</span>),
             <span class="ident">RangeError</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;RangeError&quot;</span>),
             <span class="ident">ReferenceError</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;ReferenceError&quot;</span>),
