@@ -8,6 +8,7 @@ use toolshed::Arena;
 
 use ecmascript::lexer::htmlentity::HTMLEntity;
 use ecmascript::lexer::Lexer;
+use ecmascript::lexer::token::Token;
 use ecmascript::lexer::escape::{ unescape_string, };
 use ecmascript::lexer::numberic::{ parse_numberic, };
 
@@ -114,14 +115,21 @@ fn bench_tokenization(b: &mut test::Bencher) {
     let code = arena.alloc_vec(source.chars().collect::<Vec<char>>());
     let filename = arena.alloc_str("src/main.js");
     let mut lexer = Lexer::new(&arena, &code, &filename);
-
+    
     b.bytes = source.len() as u64;
     b.iter(|| {
-        let mut count: usize = 0;
         loop {
             match lexer.consume() {
-                Ok(Some(_token)) => {
-                    count += 1;
+                Ok(Some(token)) => {
+                    match token {
+                        Token::LiteralString(_lit_s) => {
+                            // count += lit_s.raw.len();
+                            // std::io::stdout().write(format!("{:?}\n", lit_s).as_bytes());
+                        },
+                        _ => {
+
+                        },
+                    }
                 },
                 Ok(None) => {
                     break;
@@ -131,9 +139,7 @@ fn bench_tokenization(b: &mut test::Bencher) {
                 }
             }
         }
-        
-        lexer.loc().start + count
-    })
+    });
 }
 
 
