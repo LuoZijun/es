@@ -33,8 +33,19 @@ impl UString {
         self.inner.ends_with(&other.inner)
     }
 
+    #[cfg(nightly)]
     pub fn repeat(&self, num: usize) -> Self {
         Self { inner: self.inner.repeat(num) }
+    }
+
+    #[cfg(not(nightly))]
+    pub fn repeat(&mut self, num: usize) -> Self {
+        let mut data = Vec::with_capacity(self.inner.len() * num);
+        for _ in 0..num {
+            data.extend_from_slice(&self.inner);
+        }
+
+        Self { inner: data }
     }
 
     pub fn indexOf(&self, s: &Self) -> Option<usize> {

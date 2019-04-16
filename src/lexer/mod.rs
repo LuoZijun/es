@@ -1197,33 +1197,3 @@ pub fn tokenize(source: &str) {
     // println!("{:?}", lexer.unexpected_eof());
     // println!("{:?}", lexer.error(Custom("无效的数字序列")));
 }
-
-
-#[bench]
-fn bench_tokenize(b: &mut test::Bencher) {
-    let source = include_str!("../../data/react-16.8.3.development.js");
-
-    let arena = Arena::new();
-    let code = arena.alloc_vec(source.chars().collect::<Vec<char>>());
-    let filename = arena.alloc_str("src/main.js");
-    let mut lexer = Lexer::new(&arena, &code, &filename);
-
-    b.bytes = source.len() as u64;
-    b.iter(|| {
-        let mut count: usize = 0;
-        loop {
-            match lexer.consume() {
-                Ok(Some(token)) => {
-                    count += 1;
-                },
-                Ok(None) => {
-                    // println!("EOF.");
-                    break;
-                },
-                Err(e) => {
-                    panic!("{:?}", e);
-                }
-            }
-        }
-    })
-}

@@ -1486,34 +1486,3 @@ pub fn tokenize(source: &str) {
         }
     }
 }
-
-#[bench]
-fn bench_tokenization(b: &mut test::Bencher) {
-    // let source = include_str!("../../data/react-16.8.3.development.js");
-    let source = include_str!("../../data/colors.js");
-    let mut code = source.chars().collect::<Vec<char>>();
-    code.push('\0'); // EOF
-
-    b.bytes = source.len() as _;
-
-    b.iter(|| {
-        let mut lexer = Lexer::new(&code);
-
-        loop {
-            lexer.consume();
-            let token = &lexer.token;
-
-            match token {
-                Token::UnexpectedEof | Token::UnexpectedToken => {
-                    panic!("{:?}", token);
-                },
-                Token::EndOfProgram => {
-                    break;
-                },
-                _ => {
-
-                }
-            }
-        }
-    })
-}

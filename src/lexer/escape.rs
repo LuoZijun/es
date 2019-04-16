@@ -348,28 +348,3 @@ fn test_unescape_identifier() {
     let output = unescape_identifier(&input);
     assert_eq!(output, Ok("a".chars().collect::<Vec<char>>()));
 }
-
-
-#[bench]
-fn bench_unescape_ecmascript_string(b: &mut test::Bencher) {
-    let input: Vec<char> = r#"我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-我\u{69}\u0069\x69\n\b\v\t\r\n\a\send.\
-"#.chars().collect::<Vec<char>>();
-
-    b.bytes = input.len() as u64;
-    b.iter(|| {
-        let _ = unescape_string(&input);
-    });
-}

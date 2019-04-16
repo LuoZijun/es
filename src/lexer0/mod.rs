@@ -1,5 +1,3 @@
-#[cfg(test)]
-use crate::test;
 use crate::unicode_xid::UnicodeXID;
 
 
@@ -1391,34 +1389,6 @@ impl<'a> Lexer<'a> {
         }
     }
 }
-
-#[bench]
-fn bench_tokenization(b: &mut test::Bencher) {
-    let source = include_str!("../../data/react-16.8.3.development.js");
-    let mut code = source.chars().collect::<Vec<char>>();
-    code.push('\0'); // EOF
-
-    b.bytes = source.len() as _;
-
-    b.iter(|| {
-        let mut lexer = Lexer::new(&code);
-        loop {
-            let token = lexer.consume();
-            let kind = token.item;
-
-            if kind == TokenKind::UnexpectedToken {
-                break;
-            }
-            if kind == TokenKind::UnexpectedEof {
-                break;
-            }
-            if kind == TokenKind::EndOfProgram {
-                break;
-            }
-        }
-    })
-}
-
 
 pub fn tokenize(source: &str) {
     let mut code = source.chars().collect::<Vec<char>>();

@@ -235,13 +235,3 @@ fn test_parse_int() {
     assert_eq!(parse_numberic(&f("0x69")), Ok(Numberic::I64(105)));
 }
 
-#[bench]
-fn bench_parse_ecmascript_float(b: &mut test::Bencher) {
-    let input = "0x1232345".chars().collect::<Vec<char>>();
-
-    b.bytes = input.len() as u64;
-    b.iter(|| {
-        let _ = parse_numberic(&input);
-    });
-}
-
