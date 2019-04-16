@@ -44,6 +44,7 @@ pub const KEYWORD_PROTECTED: &[char]  = &['p', 'r', 'o', 't', 'e', 'c', 't', 'e'
 pub const KEYWORD_INTERFACE: &[char]  = &['i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e'];
 pub const KEYWORD_PRIVATE: &[char]    = &['p', 'r', 'i', 'v', 'a', 't', 'e'];
 pub const KEYWORD_PUBLIC: &[char]     = &['p', 'u', 'b', 'l', 'i', 'c'];
+pub const KEYWORD_PACKAGE: &[char]    = &['p', 'a', 'c', 'k', 'a', 'g', 'e'];
 
 
 // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-keywords
@@ -160,10 +161,11 @@ impl Keyword {
             KEYWORD_STATIC => Ok(Static),
             KEYWORD_ENUM => Ok(Enum),
             KEYWORD_IMPLEMENTS => Ok(Implements),
-            KEYWORD_PROTECTED => Ok(Package),
-            KEYWORD_INTERFACE => Ok(Protected),
-            KEYWORD_PRIVATE => Ok(Interface),
-            KEYWORD_PUBLIC => Ok(Private),
+            KEYWORD_PACKAGE => Ok(Package),
+            KEYWORD_PROTECTED => Ok(Protected),
+            KEYWORD_INTERFACE => Ok(Interface),
+            KEYWORD_PRIVATE => Ok(Private),
+            KEYWORD_PUBLIC => Ok(Public),
             _ => Err(()),
         }
     }
