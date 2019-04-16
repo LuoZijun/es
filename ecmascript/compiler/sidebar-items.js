@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["bytecode",""],["transform",""]]});
+initSidebarItems({"mod":[["bytecode",""],["sourcemap",""],["transform",""]]});
