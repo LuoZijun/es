@@ -114,24 +114,17 @@ fn bench_tokenization(b: &mut test::Bencher) {
     let arena = Arena::new();
     let code = arena.alloc_vec(source.chars().collect::<Vec<char>>());
     let filename = arena.alloc_str("src/main.js");
-    let mut lexer = Lexer::new(&arena, &code, &filename);
     
     b.bytes = source.len() as u64;
     b.iter(|| {
+        let mut lexer = Lexer::new(&arena, &code, &filename);
         loop {
             match lexer.consume() {
-                Ok(Some(token)) => {
-                    match token {
-                        Token::LiteralString(_lit_s) => {
-                            // count += lit_s.raw.len();
-                            // std::io::stdout().write(format!("{:?}\n", lit_s).as_bytes());
-                        },
-                        _ => {
-
-                        },
-                    }
+                Ok(Some(_token)) => {
+                    
                 },
                 Ok(None) => {
+                    // EOF
                     break;
                 },
                 Err(e) => {
