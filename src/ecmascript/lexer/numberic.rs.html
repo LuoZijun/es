@@ -235,16 +235,6 @@
 <span id="235">235</span>
 <span id="236">236</span>
 <span id="237">237</span>
-<span id="238">238</span>
-<span id="239">239</span>
-<span id="240">240</span>
-<span id="241">241</span>
-<span id="242">242</span>
-<span id="243">243</span>
-<span id="244">244</span>
-<span id="245">245</span>
-<span id="246">246</span>
-<span id="247">247</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Float</span>, <span class="ident">Numberic</span>, };
 
@@ -481,16 +471,6 @@
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0b111111&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">63</span>)));
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0o124234126&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">22100054</span>)));
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>(<span class="string">&quot;0x69&quot;</span>)), <span class="prelude-val">Ok</span>(<span class="ident">Numberic</span>::<span class="ident">I64</span>(<span class="number">105</span>)));
-}
-
-<span class="attribute">#[<span class="ident">bench</span>]</span>
-<span class="kw">fn</span> <span class="ident">bench_parse_ecmascript_float</span>(<span class="ident">b</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
-    <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="string">&quot;0x1232345&quot;</span>.<span class="ident">chars</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;&gt;</span>();
-
-    <span class="ident">b</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-    <span class="ident">b</span>.<span class="ident">iter</span>(<span class="op">||</span> {
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">parse_numberic</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>);
-    });
 }
 
 </pre></div>
