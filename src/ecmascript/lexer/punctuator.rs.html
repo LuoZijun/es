@@ -162,8 +162,6 @@
 <span id="162">162</span>
 <span id="163">163</span>
 <span id="164">164</span>
-<span id="165">165</span>
-<span id="166">166</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">FromStr</span>;
 
@@ -201,7 +199,6 @@
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#sec-punctuators</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Hash</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">PunctuatorKind</span> {
-    <span class="ident">BackTick</span>,       <span class="comment">// `</span>
     <span class="ident">Colon</span>,          <span class="comment">// :</span>
     <span class="ident">Question</span>,       <span class="comment">// ?</span>
     <span class="ident">Semicolon</span>,      <span class="comment">// ;</span>
@@ -273,7 +270,6 @@
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">PunctuatorKind</span>::<span class="kw-2">*</span>;
 
         <span class="kw">match</span> <span class="ident">s</span> {
-            <span class="string">&quot;`&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">BackTick</span>),
             <span class="string">&quot;?&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Question</span>),
             <span class="string">&quot;.&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Dot</span>),
             <span class="string">&quot;;&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Semicolon</span>),
