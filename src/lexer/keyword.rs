@@ -49,7 +49,7 @@ pub const KEYWORD_PACKAGE: &[char]    = &['p', 'a', 'c', 'k', 'a', 'g', 'e'];
 
 // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-keywords
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum Keyword {
+pub enum KeywordKind {
     Async,
     Await,
     Break,
@@ -101,10 +101,10 @@ pub enum Keyword {
     Public,
 }
 
-impl Keyword {
+impl KeywordKind {
     pub fn is_future_reserved(&self) -> bool {
         // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-FutureReservedWord
-        use self::Keyword::*;
+        use self::KeywordKind::*;
 
         match *self {
             Enum => true,
@@ -119,7 +119,7 @@ impl Keyword {
     }
 
     pub fn try_from(value: &[char]) -> Result<Self, ()> {
-        use self::Keyword::*;
+        use self::KeywordKind::*;
 
         match value {
             KEYWORD_ASYNC => Ok(Async),
@@ -171,11 +171,11 @@ impl Keyword {
     }
 }
 
-impl FromStr for Keyword {
+impl FromStr for KeywordKind {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        use self::Keyword::*;
+        use self::KeywordKind::*;
 
         match s {
             "async" => Ok(Async),

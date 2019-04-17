@@ -24,7 +24,6 @@ use lexer::eschar::{
 use lexer::span::{ LineColumn, Span, Loc, };
 use lexer::numberic::parse_numberic;
 use lexer::escape::{ unescape_string, unescape_template, unescape_identifier, };
-use lexer::keyword::Keyword;
 use lexer::punctuator::PunctuatorKind;
 use lexer::token::{
     Comment, HashBang, LiteralTemplate, LiteralRegularExpression,

@@ -1,7 +1,7 @@
 use ast::numberic::{ Float, Numberic, };
 
 use super::span::{ Span, Loc, };
-use super::keyword::Keyword;
+use super::keyword::KeywordKind;
 use super::punctuator::PunctuatorKind;
 
 use std::fmt;
@@ -63,38 +63,21 @@ pub struct Identifier<'ast> {
 }
 
 impl<'ast> Identifier<'ast> {
-    pub fn to_keyword(&self) -> Option<Keyword> {
+    pub fn to_keyword_or_literal(&self) -> Option<Token<'ast>> {
         if self.cooked.is_some() {
-            return None;
-        }
-
-        Keyword::try_from(&self.raw).ok()
-    }
-
-    pub fn to_null(&self) -> Option<Token<'ast>> {
-        if self.cooked.is_some() {
+            // NOTE: Keyword, LiteralNull, LiteralBoolean 不能含有转义字符
             return None;
         }
         
-        if self.raw == LITERAL_NULL {
-            Some(Token::LiteralNull(LiteralNull { span: self.span, loc: self.loc}))
-        } else {
-            None
+        match self.raw {
+            LITERAL_NULL  => Some(Token::LiteralNull(LiteralNull { span: self.span, loc: self.loc})),
+            LITERAL_TRUE  => Some(Token::LiteralBoolean(LiteralBoolean { span: self.span, loc: self.loc, value: true })),
+            LITERAL_FALSE => Some(Token::LiteralBoolean(LiteralBoolean { span: self.span, loc: self.loc, value: false })),
+            _ => match KeywordKind::try_from(&self.raw) {
+                Ok(kw_kind) => Some(Token::Keyword(Keyword { span: self.span, loc: self.loc, kind: kw_kind })),
+                Err(_) => None,
+            }
         }
-    }
-
-    pub fn to_bool(&self) -> Option<Token<'ast>> {
-        if self.cooked.is_some() {
-            return None;
-        }
-        
-        let val = match self.raw {
-            LITERAL_TRUE => true,
-            LITERAL_FALSE => false,
-            _ => return None,
-        };
-
-        Some(Token::LiteralBoolean(LiteralBoolean { span: self.span, loc: self.loc, value: val }))
     }
 }
 
@@ -155,25 +138,34 @@ pub struct Punctuator {
     pub kind: PunctuatorKind,
 }
 
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct Keyword {
+    pub span: Span,
+    pub loc: Loc,
+    pub kind: KeywordKind,
+}
+
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum Token<'ast> {
     // HashBang(HashBang<'ast>),
     // WhiteSpaces,
     // Comment(Comment<'ast>),
+    
     LineTerminator,
     /// include Keyword, LiteralNull, LiteralTrue, LiteralFalse
     Identifier(Identifier<'ast>),
-    
+    Keyword(Keyword),
     LiteralNull(LiteralNull),
     LiteralBoolean(LiteralBoolean),
+    Punctuator(Punctuator),
+
     LiteralString(LiteralString<'ast>),
     LiteralNumeric(LiteralNumeric<'ast>),
     LiteralRegularExpression(LiteralRegularExpression<'ast>),
     LiteralTemplate(LiteralTemplate<'ast>),
 
     TemplateOpenning,
-    Punctuator(Punctuator),
 }
 
 
