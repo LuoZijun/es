@@ -31,7 +31,7 @@ pub struct Parser<'ast> {
     arena: &'ast Arena,
     lexer: Lexer<'ast>,
     pub token_pool: Vec<Token<'ast>>,
-    
+
     pub body: Vec<SpannedStatement>,
     pub tokens: Vec<Token<'ast>>,
 }
@@ -113,9 +113,55 @@ impl<'ast> Parser<'ast> {
         unimplemented!()
     }
 
-
     pub fn parse(&mut self) -> Result<(), Error> {
-        unimplemented!()
+        loop {
+            match self.token()? {
+                None => {
+                    // NOTE: 只是 Token 流已正常结束 (EOF)
+                    break;
+                },
+                Some(token) => {
+                    match token {
+                        Token::Keyword(_)
+                        | Token::LiteralNull(_)
+                        | Token::LiteralBoolean(_) => {
+                            // NOTE: 在 Lexer 层，这些会被当作 Identifier 处理。
+                            unreachable!()
+                        },
+                        Token::LiteralRegularExpression(_)
+                        | Token::LiteralTemplate(_) => {
+                            // NOTE: 考虑到这些 Token 边界有歧义，需要上下文来处理。
+                            //       所以 Token 将会由 Parser 生成，而不是 Lexer.
+                            unreachable!()
+                        },
+                        Token::LineTerminator => {
+                            unimplemented!()
+                        },
+                        Token::Identifier(ident) => {
+                            // NOTE: 当一个表达式的第一个 Token 是 Identifier 时，
+                            //       如果这个 Identifier 能够被转换成 Keyword/LiteralNull/LiteralBoolean ,
+                            //       那么它会被视作 Keyword/LiteralNull/LiteralBoolean Token.
+                            unimplemented!()
+                        },
+                        Token::Punctuator(punct) => {
+                            unimplemented!()
+                        },
+                        Token::LiteralString(lit_str) => {
+                            unimplemented!()
+                        },
+                        Token::LiteralNumeric(lit_num) => {
+                            unimplemented!()
+                        },
+                        Token::TemplateOpenning => {
+                            // NOTE: 这将会指示 Parser 生成一个 LiteralTemplate Token.
+                            unimplemented!()
+                        },
+                    }
+                },
+            }
+        }
+        
+        Ok(())
     }
 }
 
