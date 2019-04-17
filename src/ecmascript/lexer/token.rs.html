@@ -242,7 +242,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="ident">Identifier</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_keyword_or_literal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">cooked</span>.<span class="ident">is_some</span>() {
-            <span class="comment">// NOTE: Keyword, LiteralNull, LiteralBoolean 不能含有转义字符</span>
+            <span class="comment">// NOTE: 含有转义序列的 Ident 不能作为 Keyword, LiteralNull, LiteralBoolean</span>
             <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
         
@@ -328,7 +328,7 @@
     <span class="comment">// HashBang(HashBang&lt;&#39;ast&gt;),</span>
     <span class="comment">// WhiteSpaces,</span>
     <span class="comment">// Comment(Comment&lt;&#39;ast&gt;),</span>
-    
+
     <span class="ident">LineTerminator</span>,
     <span class="doccomment">/// include Keyword, LiteralNull, LiteralTrue, LiteralFalse</span>
     <span class="ident">Identifier</span>(<span class="ident">Identifier</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
