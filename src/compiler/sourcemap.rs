@@ -50,7 +50,7 @@ pub struct SourceMap<'a> {
     source_root: Option<PathBuf>,
     sources: Vec<PathBuf>,
     sources_content: &'a [&'a str],
-    names: &'a [&'a char],
+    names: &'a [&'a [char]],
     mappings: Cursor<Vec<u8>>,
 }
 
@@ -60,7 +60,7 @@ impl<'a> SourceMap<'a> {
     pub fn new<T>(dst_filepath: T,
                   src_filepaths: Vec<PathBuf>,
                   src_contents: &'a [&'a str],
-                  src_idents: &'a [&'a char],) -> Self
+                  src_idents: &'a [&'a [char]],) -> Self
     where
         T: Into<PathBuf> 
     {
@@ -123,7 +123,9 @@ impl<'a> Serialize for SourceMap<'a> {
 
         s.serialize_field("sources", &self.sources)?;
         s.serialize_field("sourcesContent", &self.sources_content)?;
-        s.serialize_field("names", &self.names)?;
+            
+        let names = self.names.iter().map(|name| name.iter().collect::<String>()).collect::<Vec<String>>();
+        s.serialize_field("names", &names)?;
 
         let mappings = unsafe {
             String::from_utf8_unchecked(self.mappings.get_ref().to_owned())
@@ -142,9 +144,28 @@ fn test_serialize() {
     use crate::toolshed::{ Arena, };
     use crate::serde_json;
 
-    let source = "这是一份源代码。";
-    let arena = Arena::new();
-    let code = arena.alloc_vec(source.chars().collect::<Vec<char>>());
-    let filename = arena.alloc_str("src/main.js");
+    use std::io::{ Write, Cursor, };
+    use std::path::{Path, PathBuf};
 
+
+    let arena = Arena::new();
+
+    let file = "dist/main.js".into();
+    let source_root = None;
+    let sources = vec![];
+    let sources_content = arena.alloc_vec(vec![ arena.alloc_str("这是一份源代码:)") ]);
+
+    let names = arena.alloc_vec(vec![
+        arena.alloc_vec("let".chars().collect::<Vec<char>>()),
+    ]);
+    let mappings = Cursor::new(Vec::new());
+
+    let source_map = SourceMap { file, source_root, sources, sources_content, names, mappings };
+
+    let res = serde_json::to_string(&source_map);
+    assert_eq!(res.is_ok(), true);
+
+    let res = res.unwrap();
+    let json = r#"{"version":3,"file":"dist/main.js","sourceRoot":"","sources":[],"sourcesContent":["这是一份源代码:)"],"names":["let"],"mappings":""}"#;
+    assert_eq!(res, json);
 }
