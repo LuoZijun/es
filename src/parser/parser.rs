@@ -56,6 +56,11 @@ impl<'ast> Parser<'ast> {
     }
 
     pub fn token(&mut self) -> Result<Option<Token<'ast>>, Error> {
+        if self.token_pool.len() > 0 {
+            // WARN: 请确保 添加 Token 至待处理队列时，不是使用的 `push/append` 之类的方法。
+            return Ok(Some(self.token_pool.pop().unwrap()));
+        }
+        
         self.lexer.consume()
     }
 
@@ -144,7 +149,13 @@ impl<'ast> Parser<'ast> {
                             unimplemented!()
                         },
                         Token::Punctuator(punct) => {
-                            unimplemented!()
+                            match punct.kind {
+                                PunctuatorKind::Div => {
+                                    // NOTE: 这将会指示 Parser 生成 一个 LiteralRegularExpression Token.
+                                    unimplemented!()
+                                },
+                                _ => unimplemented!()
+                            }
                         },
                         Token::LiteralString(lit_str) => {
                             unimplemented!()
@@ -160,7 +171,7 @@ impl<'ast> Parser<'ast> {
                 },
             }
         }
-        
+
         Ok(())
     }
 }
