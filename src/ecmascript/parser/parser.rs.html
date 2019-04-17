@@ -183,6 +183,17 @@
 <span id="183">183</span>
 <span id="184">184</span>
 <span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -242,6 +253,11 @@
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">token</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">token_pool</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="comment">// WARN: 请确保 添加 Token 至待处理队列时，不是使用的 `push/append` 之类的方法。</span>
+            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">token_pool</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>()));
+        }
+        
         <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">consume</span>()
     }
 
@@ -330,7 +346,13 @@
                             <span class="macro">unimplemented</span><span class="macro">!</span>()
                         },
                         <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
-                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                            <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
+                                <span class="ident">PunctuatorKind</span>::<span class="ident">Div</span> <span class="op">=&gt;</span> {
+                                    <span class="comment">// NOTE: 这将会指示 Parser 生成 一个 LiteralRegularExpression Token.</span>
+                                    <span class="macro">unimplemented</span><span class="macro">!</span>()
+                                },
+                                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unimplemented</span><span class="macro">!</span>()
+                            }
                         },
                         <span class="ident">Token</span>::<span class="ident">LiteralString</span>(<span class="ident">lit_str</span>) <span class="op">=&gt;</span> {
                             <span class="macro">unimplemented</span><span class="macro">!</span>()
@@ -346,7 +368,7 @@
                 },
             }
         }
-        
+
         <span class="prelude-val">Ok</span>(())
     }
 }
