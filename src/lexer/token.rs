@@ -81,7 +81,6 @@ impl<'ast> Identifier<'ast> {
         } else {
             None
         }
-        
     }
 
     pub fn to_bool(&self) -> Option<Token<'ast>> {
@@ -163,9 +162,9 @@ pub enum Token<'ast> {
     // WhiteSpaces,
     // Comment(Comment<'ast>),
     LineTerminator,
-    /// including keyword
+    /// include Keyword, LiteralNull, LiteralTrue, LiteralFalse
     Identifier(Identifier<'ast>),
-
+    
     LiteralNull(LiteralNull),
     LiteralBoolean(LiteralBoolean),
     LiteralString(LiteralString<'ast>),

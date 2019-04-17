@@ -29,9 +29,13 @@ use std::path::{Path, PathBuf};
 // http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js
 // http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.map
 
+const VERSION: u8      = 3u8;
+const COMMA: &[u8]     = b",";
+const SEMICOLON: &[u8] = b";";
 
-#[derive(Debug)]
-pub struct Pos {
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct Position {
     pub dst_column: usize,          // A
     pub src_file_index: usize,      // B
     pub src_line: usize,            // C
@@ -42,7 +46,6 @@ pub struct Pos {
 
 #[derive(Debug)]
 pub struct SourceMap<'a> {
-    version: u8,
     file: PathBuf,
     source_root: Option<PathBuf>,
     sources: Vec<PathBuf>,
@@ -52,7 +55,7 @@ pub struct SourceMap<'a> {
 }
 
 impl<'a> SourceMap<'a> {
-    pub const LATEST_VERSION: u8 = 3u8;
+    
 
     pub fn new<T>(dst_filepath: T,
                   src_filepaths: Vec<PathBuf>,
@@ -62,7 +65,6 @@ impl<'a> SourceMap<'a> {
         T: Into<PathBuf> 
     {
         Self {
-            version: Self::LATEST_VERSION,
             file: dst_filepath.into(),
             source_root: None,
             sources: src_filepaths,
@@ -73,14 +75,19 @@ impl<'a> SourceMap<'a> {
     }
 
     pub fn add_line(&mut self) {
-        self.mappings.write(&[b';']);
+        self.mappings.write(SEMICOLON);
     }
 
-    pub fn add_pos(&mut self, pos: Pos) {
-        if self.mappings.get_ref().len() > 0 {
-            self.mappings.write(&[b',']);
-        }
+    pub fn add_pos(&mut self, pos: Position) {
+        let is_beginning = match self.mappings.get_ref().last() {
+            Some(last) => last == &SEMICOLON[0],
+            None => true,
+        };
 
+        if !is_beginning {
+            self.mappings.write(COMMA);
+        }
+        
         vlq::encode(pos.dst_column as i64, &mut self.mappings).expect("Ooops ...");
         vlq::encode(pos.src_file_index as i64, &mut self.mappings).expect("Ooops ...");
         vlq::encode(pos.src_line as i64, &mut self.mappings).expect("Ooops ...");
@@ -106,7 +113,7 @@ impl<'a> Serialize for SourceMap<'a> {
     {
         let mut s = serializer.serialize_struct("", 1)?;
         
-        s.serialize_field("version", &self.version)?;
+        s.serialize_field("version", &VERSION)?;
         s.serialize_field("file", &self.file)?;
         
         match self.source_root {
