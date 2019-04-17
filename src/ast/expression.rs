@@ -112,7 +112,7 @@ impl<'ast> Expression<'ast> {
 }
 
 // ... target
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct SpreadExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -129,7 +129,7 @@ pub struct LiteralTemplateExpression<'ast> {
 }
 
 // [ ]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct ArrayLiteral {
     pub loc: Loc,
     pub span: Span,
@@ -137,7 +137,7 @@ pub struct ArrayLiteral {
 }
 
 // { }
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct ObjectLiteral {
     pub loc: Loc,
     pub span: Span,
@@ -145,7 +145,7 @@ pub struct ObjectLiteral {
 }
 
 // ( Expression, + )
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct ParenthesizedExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -161,7 +161,7 @@ pub struct ParenthesizedExpression<'ast> {
 
 
 // Left-Hand-Side Expressions
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct MemberExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -170,7 +170,7 @@ pub struct MemberExpression<'ast> {
     pub computed: bool,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct TaggedTemplateExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -178,14 +178,14 @@ pub struct TaggedTemplateExpression<'ast> {
     pub template: LiteralTemplateExpression<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct NewTargetExpression {
     pub loc: Loc,
     pub span: Span,
 }
 
 // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-CallExpression
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct CallExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -197,7 +197,7 @@ pub struct CallExpression<'ast> {
 
 // new abc( ... )
 // new abc.asd( ... )
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct NewExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -208,7 +208,7 @@ pub struct NewExpression<'ast> {
 
 // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
 // Unary
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct PrefixExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -216,7 +216,7 @@ pub struct PrefixExpression<'ast> {
     pub operand: Expression<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct InfixExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -227,7 +227,7 @@ pub struct InfixExpression<'ast> {
 
 // --
 // ++
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct PostfixExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -238,7 +238,7 @@ pub struct PostfixExpression<'ast> {
 
 // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-ConditionalExpression
 // LogicalORExpression ? AssignmentExpression : AssignmentExpression 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct ConditionalExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -250,7 +250,7 @@ pub struct ConditionalExpression<'ast> {
 // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-YieldExpression
 // yield AssignmentExpression
 // yield *AssignmentExpression
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct YieldExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -261,7 +261,7 @@ pub struct YieldExpression<'ast> {
 }
 
 // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-AssignmentExpression
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct AssignmentExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -272,7 +272,7 @@ pub struct AssignmentExpression<'ast> {
 
 // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-comma-operator
 // Expression, +
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct CommaExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -281,7 +281,7 @@ pub struct CommaExpression<'ast> {
 }
 
 
-// #[derive(Debug, PartialEq, Clone)]
+// #[derive(Debug, PartialEq, Clone, Copy)]
 // pub struct BindingElement {
 //     // Identifier           Option<Initializer>
 //     // ArrayBindingPattern  Initializer
@@ -290,14 +290,14 @@ pub struct CommaExpression<'ast> {
 //     pub initializer: Option<Box<Expression>>,
 // }
 
-// #[derive(Debug, PartialEq, Clone)]
+// #[derive(Debug, PartialEq, Clone, Copy)]
 // pub struct ArrayBindingPattern {
 //     pub elems: Vec<Option<BindingElement>>,
 //     pub rest_elem: Option<Box<Expression>>,
 // }
 
 
-// #[derive(Debug, PartialEq, Clone)]
+// #[derive(Debug, PartialEq, Clone, Copy)]
 // pub struct BindingProperty {
 //     // Identifier           Option<Initializer>
 //     // ArrayBindingPattern  Initializer
@@ -306,7 +306,7 @@ pub struct CommaExpression<'ast> {
 //     pub initializer: Option<Box<Expression>>,
 // }
 
-// #[derive(Debug, PartialEq, Clone)]
+// #[derive(Debug, PartialEq, Clone, Copy)]
 // pub struct ObjectBindingPattern {
 //     pub properties: Vec<BindingProperty>,
 //     pub rest_property: Option<Box<Expression>>,  // BindingIdentifier

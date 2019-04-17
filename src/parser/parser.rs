@@ -200,14 +200,14 @@ pub fn parse(source: &str, filename: &str) {
             for token in parser.tokens {
                 println!("    {:?}", token);
             }
-            println!("\n\n\n");
+            println!("\n");
 
             println!("StatementList:");
             for stmt in parser.body {
                 println!("    {:?}", stmt);
             }
-            println!("\n\n\n");
-            
+            println!("\n");
+
             trace!("EOF.");
         },
         Err(e) => {

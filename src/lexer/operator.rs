@@ -9,7 +9,7 @@ pub enum OperatorKind {
 
 
 // UNARY_OPERATORS
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum PrefixOperator {
     Await,     // await
     Delete,    // delete
@@ -26,7 +26,7 @@ pub enum PrefixOperator {
     Decrement, // --
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum InfixOperator {
     // BINARY_OPERATORS
     Add,      // +
@@ -58,13 +58,13 @@ pub enum InfixOperator {
     In,          // in
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum PostfixOperator {
     Increment, // ++
     Decrement, // --
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum AssignmentOperator {
     Assign,         //    =
     AddAssign,      //   +=

@@ -162,14 +162,15 @@ impl<'ast> Parser<'ast> {
         loc.end = end_loc.end;
         span.end = end_span.end;
 
+        let strings_ref = self.arena.alloc_vec(strings);
+
         // 生成新的 Token
         let raw = &self.lexer.source()[loc.start..loc.end];
-        let strings2 = self.arena.alloc_vec(strings.clone());
         let bounds2 = self.arena.alloc_vec(bound_tokens);
-        let new_token = Token::LiteralTemplate(LiteralTemplate { loc, span, raw, strings: strings2, bounds: bounds2 });
+        let new_token = Token::LiteralTemplate(LiteralTemplate { loc, span, raw, strings: strings_ref, bounds: bounds2 });
         self.tokens.push(new_token);
-
-        Ok(LiteralTemplateExpression { loc, span, strings: strings2, bounds: self.arena.alloc_vec(bounds) })
+        
+        Ok(LiteralTemplateExpression { loc, span, strings: strings_ref, bounds: self.arena.alloc_vec(bounds) })
     }
 
     pub fn parse_primitive_literal(&mut self) -> Result<Expression<'ast>, Error> {
