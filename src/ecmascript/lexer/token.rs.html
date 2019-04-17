@@ -182,7 +182,6 @@
 <span id="182">182</span>
 <span id="183">183</span>
 <span id="184">184</span>
-<span id="185">185</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Float</span>, <span class="ident">Numberic</span>, };
 
@@ -267,7 +266,6 @@
         } <span class="kw">else</span> {
             <span class="prelude-val">None</span>
         }
-        
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_bool</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span> {
@@ -349,9 +347,9 @@
     <span class="comment">// WhiteSpaces,</span>
     <span class="comment">// Comment(Comment&lt;&#39;ast&gt;),</span>
     <span class="ident">LineTerminator</span>,
-    <span class="doccomment">/// including keyword</span>
+    <span class="doccomment">/// include Keyword, LiteralNull, LiteralTrue, LiteralFalse</span>
     <span class="ident">Identifier</span>(<span class="ident">Identifier</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
-
+    
     <span class="ident">LiteralNull</span>(<span class="ident">LiteralNull</span>),
     <span class="ident">LiteralBoolean</span>(<span class="ident">LiteralBoolean</span>),
     <span class="ident">LiteralString</span>(<span class="ident">LiteralString</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),

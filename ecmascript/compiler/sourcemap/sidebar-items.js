@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Pos",""],["SourceMap",""]]});
+initSidebarItems({"struct":[["Position",""],["SourceMap",""]]});
