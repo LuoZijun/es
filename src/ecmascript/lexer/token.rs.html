@@ -174,19 +174,11 @@
 <span id="174">174</span>
 <span id="175">175</span>
 <span id="176">176</span>
-<span id="177">177</span>
-<span id="178">178</span>
-<span id="179">179</span>
-<span id="180">180</span>
-<span id="181">181</span>
-<span id="182">182</span>
-<span id="183">183</span>
-<span id="184">184</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Float</span>, <span class="ident">Numberic</span>, };
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">span</span>::{ <span class="ident">Span</span>, <span class="ident">Loc</span>, };
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">keyword</span>::<span class="ident">Keyword</span>;
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">keyword</span>::<span class="ident">KeywordKind</span>;
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">punctuator</span>::<span class="ident">PunctuatorKind</span>;
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
@@ -248,38 +240,21 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="ident">Identifier</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_keyword</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Keyword</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_keyword_or_literal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">cooked</span>.<span class="ident">is_some</span>() {
-            <span class="kw">return</span> <span class="prelude-val">None</span>;
-        }
-
-        <span class="ident">Keyword</span>::<span class="ident">try_from</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">raw</span>).<span class="ident">ok</span>()
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_null</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">cooked</span>.<span class="ident">is_some</span>() {
+            <span class="comment">// NOTE: Keyword, LiteralNull, LiteralBoolean 不能含有转义字符</span>
             <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
         
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">raw</span> <span class="op">==</span> <span class="ident">LITERAL_NULL</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">Token</span>::<span class="ident">LiteralNull</span>(<span class="ident">LiteralNull</span> { <span class="ident">span</span>: <span class="self">self</span>.<span class="ident">span</span>, <span class="ident">loc</span>: <span class="self">self</span>.<span class="ident">loc</span>}))
-        } <span class="kw">else</span> {
-            <span class="prelude-val">None</span>
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">raw</span> {
+            <span class="ident">LITERAL_NULL</span>  <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">Token</span>::<span class="ident">LiteralNull</span>(<span class="ident">LiteralNull</span> { <span class="ident">span</span>: <span class="self">self</span>.<span class="ident">span</span>, <span class="ident">loc</span>: <span class="self">self</span>.<span class="ident">loc</span>})),
+            <span class="ident">LITERAL_TRUE</span>  <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">Token</span>::<span class="ident">LiteralBoolean</span>(<span class="ident">LiteralBoolean</span> { <span class="ident">span</span>: <span class="self">self</span>.<span class="ident">span</span>, <span class="ident">loc</span>: <span class="self">self</span>.<span class="ident">loc</span>, <span class="ident">value</span>: <span class="bool-val">true</span> })),
+            <span class="ident">LITERAL_FALSE</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">Token</span>::<span class="ident">LiteralBoolean</span>(<span class="ident">LiteralBoolean</span> { <span class="ident">span</span>: <span class="self">self</span>.<span class="ident">span</span>, <span class="ident">loc</span>: <span class="self">self</span>.<span class="ident">loc</span>, <span class="ident">value</span>: <span class="bool-val">false</span> })),
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">KeywordKind</span>::<span class="ident">try_from</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">raw</span>) {
+                <span class="prelude-val">Ok</span>(<span class="ident">kw_kind</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">Keyword</span> { <span class="ident">span</span>: <span class="self">self</span>.<span class="ident">span</span>, <span class="ident">loc</span>: <span class="self">self</span>.<span class="ident">loc</span>, <span class="ident">kind</span>: <span class="ident">kw_kind</span> })),
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            }
         }
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_bool</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">cooked</span>.<span class="ident">is_some</span>() {
-            <span class="kw">return</span> <span class="prelude-val">None</span>;
-        }
-        
-        <span class="kw">let</span> <span class="ident">val</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">raw</span> {
-            <span class="ident">LITERAL_TRUE</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-            <span class="ident">LITERAL_FALSE</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
-        };
-
-        <span class="prelude-val">Some</span>(<span class="ident">Token</span>::<span class="ident">LiteralBoolean</span>(<span class="ident">LiteralBoolean</span> { <span class="ident">span</span>: <span class="self">self</span>.<span class="ident">span</span>, <span class="ident">loc</span>: <span class="self">self</span>.<span class="ident">loc</span>, <span class="ident">value</span>: <span class="ident">val</span> }))
     }
 }
 
@@ -340,25 +315,34 @@
     <span class="kw">pub</span> <span class="ident">kind</span>: <span class="ident">PunctuatorKind</span>,
 }
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Keyword</span> {
+    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
+    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
+    <span class="kw">pub</span> <span class="ident">kind</span>: <span class="ident">KeywordKind</span>,
+}
+
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="comment">// HashBang(HashBang&lt;&#39;ast&gt;),</span>
     <span class="comment">// WhiteSpaces,</span>
     <span class="comment">// Comment(Comment&lt;&#39;ast&gt;),</span>
+    
     <span class="ident">LineTerminator</span>,
     <span class="doccomment">/// include Keyword, LiteralNull, LiteralTrue, LiteralFalse</span>
     <span class="ident">Identifier</span>(<span class="ident">Identifier</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
-    
+    <span class="ident">Keyword</span>(<span class="ident">Keyword</span>),
     <span class="ident">LiteralNull</span>(<span class="ident">LiteralNull</span>),
     <span class="ident">LiteralBoolean</span>(<span class="ident">LiteralBoolean</span>),
+    <span class="ident">Punctuator</span>(<span class="ident">Punctuator</span>),
+
     <span class="ident">LiteralString</span>(<span class="ident">LiteralString</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">LiteralNumeric</span>(<span class="ident">LiteralNumeric</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">LiteralRegularExpression</span>(<span class="ident">LiteralRegularExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">LiteralTemplate</span>(<span class="ident">LiteralTemplate</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
 
     <span class="ident">TemplateOpenning</span>,
-    <span class="ident">Punctuator</span>(<span class="ident">Punctuator</span>),
 }
 
 
