@@ -181,7 +181,7 @@
 
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Version</span> {
-    <span class="comment">// fn age(self) -&gt; ECMAScriptVersion;</span>
+    <span class="kw">fn</span> <span class="ident">age</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ECMAScriptVersion</span>;
     <span class="kw">fn</span> <span class="ident">standard_since</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ECMAScriptVersion</span>;
     <span class="kw">fn</span> <span class="ident">deprecated_since</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ECMAScriptVersion</span><span class="op">&gt;</span>;
     <span class="kw">fn</span> <span class="ident">is_deprecated_at</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">target</span>: <span class="ident">ECMAScriptVersion</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {

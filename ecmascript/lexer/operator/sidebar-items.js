@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["InfixOperator",""],["OperatorKind",""],["PostfixOperator",""],["PrefixOperator",""]]});
+initSidebarItems({"enum":[["AssignmentOperator",""],["InfixOperator",""],["OperatorKind",""],["PostfixOperator",""],["PrefixOperator",""]]});

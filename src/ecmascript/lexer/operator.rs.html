@@ -64,6 +64,24 @@
 <span id="64">64</span>
 <span id="65">65</span>
 <span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
 </pre><div class="example-wrap"><pre class="rust ">
 
 
@@ -83,9 +101,9 @@
     <span class="ident">Void</span>,      <span class="comment">// void</span>
     <span class="ident">TypeOf</span>,    <span class="comment">// typeof</span>
     <span class="doccomment">/// The unary positive operator +.</span>
-    <span class="ident">Pos</span>,       <span class="comment">// +</span>
-    <span class="comment">// The unary negation operator -.</span>
-    <span class="ident">Neg</span>,       <span class="comment">// -</span>
+    <span class="ident">Positive</span>,  <span class="comment">// +</span>
+    <span class="doccomment">/// The unary negation operator -.</span>
+    <span class="ident">Negative</span>,  <span class="comment">// -</span>
     <span class="ident">BitNot</span>,    <span class="comment">// ~</span>
     <span class="ident">Not</span>,       <span class="comment">// !</span>
 
@@ -129,6 +147,24 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">PostfixOperator</span> {
     <span class="ident">Increment</span>, <span class="comment">// ++</span>
     <span class="ident">Decrement</span>, <span class="comment">// --</span>
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">AssignmentOperator</span> {
+    <span class="ident">Assign</span>,         <span class="comment">//    =</span>
+    <span class="ident">AddAssign</span>,      <span class="comment">//   +=</span>
+    <span class="ident">SubAssign</span>,      <span class="comment">//   -=</span>
+    <span class="ident">MulAssign</span>,      <span class="comment">//   *=</span>
+    <span class="ident">DivAssign</span>,      <span class="comment">//   /=</span>
+    <span class="ident">RemAssign</span>,      <span class="comment">//   %=</span>
+    <span class="ident">PowAssign</span>,      <span class="comment">//  **=</span>
+
+    <span class="ident">BitAndAssign</span>,   <span class="comment">//   &amp;=</span>
+    <span class="ident">BitOrAssign</span>,    <span class="comment">//   |=</span>
+    <span class="ident">BitXorAssign</span>,   <span class="comment">//   ^=</span>
+    <span class="ident">BitShlAssign</span>,   <span class="comment">//  &lt;&lt;=</span>
+    <span class="ident">BitShrAssign</span>,   <span class="comment">//  &gt;&gt;=</span>
+    <span class="ident">BitUShrAssign</span>,  <span class="comment">// &gt;&gt;&gt;=</span>
 }
 
 </pre></div>

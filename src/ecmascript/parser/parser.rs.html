@@ -194,11 +194,32 @@
 <span id="194">194</span>
 <span id="195">195</span>
 <span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
-<span class="kw">use</span> <span class="ident">error</span>::{ <span class="ident">ErrorKind</span>, <span class="ident">Error</span>, };
 <span class="kw">use</span> <span class="ident">version</span>::<span class="ident">ECMAScriptVersion</span>;
+<span class="kw">use</span> <span class="ident">error</span>::{ <span class="ident">ErrorKind</span>, <span class="ident">Error</span>, };
 
 <span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">Lexer</span>;
 <span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">token</span>::<span class="ident">Token</span>;
@@ -208,11 +229,12 @@
 
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Numberic</span>, <span class="ident">Float</span>, };
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">statement</span>::{ 
-    <span class="ident">SpannedStatement</span>, <span class="ident">Statement</span>, <span class="ident">StatementList</span>,
-    <span class="ident">VariableStatement</span>, <span class="ident">LexicalDeclaration</span>, <span class="ident">LexicalDeclarationKind</span>, <span class="ident">LexicalBinding</span>,
-
+    <span class="ident">Statement</span>, <span class="ident">StatementList</span>,
+    <span class="ident">VariableStatement</span>, <span class="ident">LexicalDeclarationKind</span>, <span class="ident">LexicalBinding</span>,
 };
-<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">expression</span>::{ <span class="ident">SpannedExpression</span>, <span class="ident">Expression</span>, };
+<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">expression</span>::{
+    <span class="ident">Expression</span>, <span class="ident">LiteralTemplateExpression</span>,
+};
 
 <span class="kw">use</span> <span class="self">self</span>::<span class="ident">ParserErrorKind</span>::<span class="kw-2">*</span>;
 
@@ -225,11 +247,12 @@
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
-    <span class="ident">arena</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">Arena</span>,
-    <span class="ident">lexer</span>: <span class="ident">Lexer</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">token_pool</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">arena</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">Arena</span>,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">lexer</span>: <span class="ident">Lexer</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
+    
+    <span class="kw">pub</span> <span class="ident">token</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
 
-    <span class="kw">pub</span> <span class="ident">body</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SpannedStatement</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">body</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
     <span class="kw">pub</span> <span class="ident">tokens</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
 }
 
@@ -237,132 +260,141 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">arena</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">Arena</span>, <span class="ident">source</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> [<span class="ident">char</span>], <span class="ident">filename</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">lexer</span> <span class="op">=</span> <span class="ident">Lexer</span>::<span class="ident">new</span>(<span class="ident">arena</span>, <span class="ident">source</span>, <span class="ident">filename</span>);
 
-        <span class="self">Self</span> { <span class="ident">arena</span>, <span class="ident">lexer</span>, <span class="ident">body</span>: <span class="macro">vec</span><span class="macro">!</span>[], <span class="ident">token_pool</span>: <span class="macro">vec</span><span class="macro">!</span>[], <span class="ident">tokens</span>: <span class="macro">vec</span><span class="macro">!</span>[] }
+        <span class="self">Self</span> { <span class="ident">arena</span>, <span class="ident">lexer</span>, <span class="ident">body</span>: <span class="macro">vec</span><span class="macro">!</span>[], <span class="ident">token</span>: <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="number">1</span>), <span class="ident">tokens</span>: <span class="macro">vec</span><span class="macro">!</span>[] }
     }
     
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">error</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Error</span> {
+        <span class="comment">// TODO</span>
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">error_line</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+        <span class="comment">// TODO</span>
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unexpected_token</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Error</span> {
-        <span class="macro">unimplemented</span><span class="macro">!</span>()
+        <span class="comment">// TODO</span>
+        <span class="macro">debug</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">token</span>);
+        <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">error</span>(<span class="ident">LexerErrorKind</span>::<span class="ident">Custom</span>(<span class="string">&quot;Unexpected Token&quot;</span>))
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">token</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">token_pool</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
-            <span class="comment">// WARN: 请确保 添加 Token 至待处理队列时，不是使用的 `push/append` 之类的方法。</span>
-            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">token_pool</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>()));
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">token</span>.<span class="ident">pop</span>())
+        } <span class="kw">else</span> {
+            <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">consume</span>()
         }
-        
-        <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">consume</span>()
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">token2</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="comment">// NOTE: 不允许 EOF 的出现</span>
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">consume</span>() {
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">token</span>() {
             <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">token</span>)) <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">token</span>),
             <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">error</span>(<span class="ident">LexerErrorKind</span>::<span class="ident">UnexpectedEOF</span>)),
             <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>),
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">process</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SpannedStatement</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="comment">// match token.item {</span>
-        <span class="comment">//     Token::Keyword(Keyword::Var)</span>
-        <span class="comment">//     | Token::Keyword(Keyword::Let)</span>
-        <span class="comment">//     | Token::Keyword(Keyword::Const)</span>
-        <span class="comment">//     | Token::Keyword(Keyword::Function)</span>
-        <span class="comment">//     | Token::Keyword(Keyword::Class)</span>
-        <span class="comment">//     | Token::Keyword(Keyword::Async) </span>
-
-        <span class="comment">//     | Token::Punctuator(Punctuator::Semicolon)</span>
-        <span class="comment">//     | Token::Keyword(Keyword::Debugger)</span>
-        <span class="comment">//      =&gt; {</span>
-        <span class="comment">//         // Stmt</span>
-        <span class="comment">//         return self.parse_statement(token);</span>
-        <span class="comment">//     },</span>
-
-        <span class="comment">//     Token::LiteralNull</span>
-        <span class="comment">//     | Token::LiteralBoolean(_)</span>
-        <span class="comment">//     | Token::LiteralString(_)</span>
-        <span class="comment">//     | Token::LiteralDecimalNumeric(_)</span>
-        <span class="comment">//     | Token::LiteralFloatNumeric(_)</span>
-        <span class="comment">//     | Token::Identifier(_)</span>
-
-        <span class="comment">//     | Token::Punctuator(Punctuator::BackTick)</span>
-        <span class="comment">//     | Token::Punctuator(Punctuator::LParen)</span>
-        <span class="comment">//     | Token::Punctuator(Punctuator::LBracket)</span>
-        <span class="comment">//     | Token::Punctuator(Punctuator::LBrace)</span>
-
-        <span class="comment">//     =&gt; {</span>
-        <span class="comment">//         // expr</span>
-        <span class="comment">//         let spanned_expr = self.parse_expression(token)?;</span>
-        <span class="comment">//         let start = spanned_expr.start;</span>
-        <span class="comment">//         let end = spanned_expr.end;</span>
-        <span class="comment">//         let item = Statement::Expression(Box::new(spanned_expr.item));</span>
-        <span class="comment">//         let stmt = Span { start, end, item, };</span>
-                
-        <span class="comment">//         Ok(stmt)</span>
-        <span class="comment">//     },</span>
-        <span class="comment">//     _ =&gt; {</span>
-        <span class="comment">//         Err(self.unexpected_token(token))</span>
-        <span class="comment">//     },</span>
-        <span class="comment">// }</span>
-        <span class="macro">unimplemented</span><span class="macro">!</span>()
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">alloc</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">T</span> {
+        <span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">item</span>)
     }
 
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">process</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="macro">unimplemented</span><span class="macro">!</span>()
+    }
+    
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">loop</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">token</span>()<span class="question-mark">?</span> {
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
-                    <span class="comment">// NOTE: 只是 Token 流已正常结束 (EOF)</span>
-                    <span class="kw">break</span>;
-                },
+                <span class="prelude-val">None</span>        <span class="op">=&gt;</span> <span class="kw">break</span>,
                 <span class="prelude-val">Some</span>(<span class="ident">token</span>) <span class="op">=&gt;</span> {
                     <span class="kw">match</span> <span class="ident">token</span> {
+                        <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> <span class="kw">continue</span>,
+
                         <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="kw">_</span>)
                         <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralNull</span>(<span class="kw">_</span>)
-                        <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralBoolean</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
-                            <span class="comment">// NOTE: 在 Lexer 层，这些会被当作 Identifier 处理。</span>
-                            <span class="macro">unreachable</span><span class="macro">!</span>()
-                        },
+                        <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralBoolean</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+
                         <span class="ident">Token</span>::<span class="ident">LiteralRegularExpression</span>(<span class="kw">_</span>)
-                        <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralTemplate</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
-                            <span class="comment">// NOTE: 考虑到这些 Token 边界有歧义，需要上下文来处理。</span>
-                            <span class="comment">//       所以 Token 将会由 Parser 生成，而不是 Lexer.</span>
-                            <span class="macro">unreachable</span><span class="macro">!</span>()
-                        },
-                        <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> {
-                            <span class="macro">unimplemented</span><span class="macro">!</span>()
-                        },
+                        <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralTemplate</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+
                         <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> {
-                            <span class="comment">// NOTE: 当一个表达式的第一个 Token 是 Identifier 时，</span>
-                            <span class="comment">//       如果这个 Identifier 能够被转换成 Keyword/LiteralNull/LiteralBoolean ,</span>
-                            <span class="comment">//       那么它会被视作 Keyword/LiteralNull/LiteralBoolean Token.</span>
-                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                            <span class="kw">match</span> <span class="ident">ident</span>.<span class="ident">to_keyword_or_literal</span>() {
+                                <span class="prelude-val">Some</span>(<span class="ident">token</span>) <span class="op">=&gt;</span> {
+                                    <span class="kw">match</span> <span class="ident">token</span> {
+                                        <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">kw</span>) <span class="op">=&gt;</span> {
+                                            <span class="kw">match</span> <span class="ident">kw</span>.<span class="ident">kind</span> {
+                                                <span class="ident">KeywordKind</span>::<span class="ident">Var</span>
+                                                <span class="op">|</span> <span class="ident">KeywordKind</span>::<span class="ident">Let</span>
+                                                <span class="op">|</span> <span class="ident">KeywordKind</span>::<span class="ident">Const</span>
+                                                <span class="op">|</span> <span class="ident">KeywordKind</span>::<span class="ident">Function</span>
+                                                <span class="op">|</span> <span class="ident">KeywordKind</span>::<span class="ident">Class</span>
+                                                <span class="op">|</span> <span class="ident">KeywordKind</span>::<span class="ident">Debugger</span> <span class="op">=&gt;</span> {
+                                                    <span class="comment">// self.parse_statement(token)?;</span>
+                                                    <span class="macro">unimplemented</span><span class="macro">!</span>()
+                                                },
+                                                <span class="ident">KeywordKind</span>::<span class="ident">This</span>
+                                                <span class="op">|</span> <span class="ident">KeywordKind</span>::<span class="ident">Super</span>
+                                                <span class="op">|</span> <span class="ident">KeywordKind</span>::<span class="ident">Delete</span>
+                                                <span class="op">|</span> <span class="ident">KeywordKind</span>::<span class="ident">Void</span>
+                                                <span class="op">|</span> <span class="ident">KeywordKind</span>::<span class="ident">TypeOf</span> <span class="op">=&gt;</span> {
+                                                    <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token</span>)<span class="question-mark">?</span>;
+                                                    <span class="kw">let</span> <span class="ident">stmt</span> <span class="op">=</span> <span class="ident">Statement</span>::<span class="ident">Expression</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">expr</span>));
+                                                    <span class="self">self</span>.<span class="ident">body</span>.<span class="ident">push</span>(<span class="ident">stmt</span>);
+                                                },
+                                                <span class="kw">_</span> <span class="op">=&gt;</span> {
+                                                    <span class="macro">unimplemented</span><span class="macro">!</span>()
+                                                }
+                                            }
+                                        },
+                                        <span class="ident">Token</span>::<span class="ident">LiteralNull</span>(<span class="kw">_</span>)
+                                        <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralBoolean</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
+                                            <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token</span>)<span class="question-mark">?</span>;
+                                            <span class="kw">let</span> <span class="ident">stmt</span> <span class="op">=</span> <span class="ident">Statement</span>::<span class="ident">Expression</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">expr</span>));
+                                            <span class="self">self</span>.<span class="ident">body</span>.<span class="ident">push</span>(<span class="ident">stmt</span>);
+                                        },
+                                        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                                    }
+                                },
+                                <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
+                                    <span class="comment">// ident</span>
+                                    <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="ident">ident</span>);
+                                    <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token</span>)<span class="question-mark">?</span>;
+                                    <span class="kw">let</span> <span class="ident">stmt</span> <span class="op">=</span> <span class="ident">Statement</span>::<span class="ident">Expression</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">expr</span>));
+                                    <span class="self">self</span>.<span class="ident">body</span>.<span class="ident">push</span>(<span class="ident">stmt</span>);
+                                }
+                            }
                         },
                         <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
                             <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
-                                <span class="ident">PunctuatorKind</span>::<span class="ident">Div</span> <span class="op">=&gt;</span> {
-                                    <span class="comment">// NOTE: 这将会指示 Parser 生成 一个 LiteralRegularExpression Token.</span>
+                                <span class="ident">PunctuatorKind</span>::<span class="ident">Semicolon</span> <span class="op">=&gt;</span> {
+                                    <span class="comment">// self.parse_statement(token)?;</span>
                                     <span class="macro">unimplemented</span><span class="macro">!</span>()
                                 },
-                                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unimplemented</span><span class="macro">!</span>()
+                                <span class="ident">PunctuatorKind</span>::<span class="ident">Div</span>
+                                <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">Add</span>
+                                <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">Sub</span>
+                                <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">Increment</span>
+                                <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">Decrement</span>
+                                <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">Not</span>
+                                <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">BitNot</span> <span class="op">=&gt;</span> {
+                                    <span class="comment">// unary operator</span>
+                                    <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token</span>)<span class="question-mark">?</span>;
+                                    <span class="kw">let</span> <span class="ident">stmt</span> <span class="op">=</span> <span class="ident">Statement</span>::<span class="ident">Expression</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">expr</span>));
+                                    <span class="self">self</span>.<span class="ident">body</span>.<span class="ident">push</span>(<span class="ident">stmt</span>);
+                                },
+                                <span class="kw">_</span> <span class="op">=&gt;</span> {
+                                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token</span>));
+                                }
                             }
                         },
-                        <span class="ident">Token</span>::<span class="ident">LiteralString</span>(<span class="ident">lit_str</span>) <span class="op">=&gt;</span> {
-                            <span class="macro">unimplemented</span><span class="macro">!</span>()
-                        },
-                        <span class="ident">Token</span>::<span class="ident">LiteralNumeric</span>(<span class="ident">lit_num</span>) <span class="op">=&gt;</span> {
-                            <span class="macro">unimplemented</span><span class="macro">!</span>()
-                        },
-                        <span class="ident">Token</span>::<span class="ident">TemplateOpenning</span> <span class="op">=&gt;</span> {
-                            <span class="comment">// NOTE: 这将会指示 Parser 生成一个 LiteralTemplate Token.</span>
-                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        <span class="ident">Token</span>::<span class="ident">LiteralString</span>(<span class="kw">_</span>)
+                        <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralNumeric</span>(<span class="kw">_</span>)
+                        <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">TemplateOpenning</span> <span class="op">=&gt;</span> {
+                            <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token</span>)<span class="question-mark">?</span>;
+                            <span class="kw">let</span> <span class="ident">stmt</span> <span class="op">=</span> <span class="ident">Statement</span>::<span class="ident">Expression</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">expr</span>));
+                            <span class="self">self</span>.<span class="ident">body</span>.<span class="ident">push</span>(<span class="ident">stmt</span>);
                         },
                     }
                 },
@@ -382,8 +414,18 @@
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Parser</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">arena</span>, <span class="kw-2">&amp;</span><span class="ident">code</span>, <span class="kw-2">&amp;</span><span class="ident">filename</span>);
     <span class="kw">match</span> <span class="ident">parser</span>.<span class="ident">parse</span>() {
         <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
-            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;TokenList:\n{:?}&quot;</span>, <span class="ident">parser</span>.<span class="ident">tokens</span>);
-            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;StatementList:\n{:?}&quot;</span>, <span class="ident">parser</span>.<span class="ident">body</span>);
+            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;TokenList:&quot;</span>);
+            <span class="kw">for</span> <span class="ident">token</span> <span class="kw">in</span> <span class="ident">parser</span>.<span class="ident">tokens</span> {
+                <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;    {:?}&quot;</span>, <span class="ident">token</span>);
+            }
+            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;\n\n\n&quot;</span>);
+
+            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;StatementList:&quot;</span>);
+            <span class="kw">for</span> <span class="ident">stmt</span> <span class="kw">in</span> <span class="ident">parser</span>.<span class="ident">body</span> {
+                <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;    {:?}&quot;</span>, <span class="ident">stmt</span>);
+            }
+            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;\n\n\n&quot;</span>);
+            
             <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;EOF.&quot;</span>);
         },
         <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
