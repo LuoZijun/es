@@ -418,14 +418,14 @@
             <span class="kw">for</span> <span class="ident">token</span> <span class="kw">in</span> <span class="ident">parser</span>.<span class="ident">tokens</span> {
                 <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;    {:?}&quot;</span>, <span class="ident">token</span>);
             }
-            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;\n\n\n&quot;</span>);
+            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;\n&quot;</span>);
 
             <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;StatementList:&quot;</span>);
             <span class="kw">for</span> <span class="ident">stmt</span> <span class="kw">in</span> <span class="ident">parser</span>.<span class="ident">body</span> {
                 <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;    {:?}&quot;</span>, <span class="ident">stmt</span>);
             }
-            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;\n\n\n&quot;</span>);
-            
+            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;\n&quot;</span>);
+
             <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;EOF.&quot;</span>);
         },
         <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {

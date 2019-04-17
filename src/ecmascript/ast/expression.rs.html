@@ -426,7 +426,7 @@
 }
 
 <span class="comment">// ... target</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SpreadExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -443,7 +443,7 @@
 }
 
 <span class="comment">// [ ]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ArrayLiteral</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -451,7 +451,7 @@
 }
 
 <span class="comment">// { }</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ObjectLiteral</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -459,7 +459,7 @@
 }
 
 <span class="comment">// ( Expression, + )</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ParenthesizedExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -475,7 +475,7 @@
 
 
 <span class="comment">// Left-Hand-Side Expressions</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MemberExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -484,7 +484,7 @@
     <span class="kw">pub</span> <span class="ident">computed</span>: <span class="ident">bool</span>,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TaggedTemplateExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -492,14 +492,14 @@
     <span class="kw">pub</span> <span class="ident">template</span>: <span class="ident">LiteralTemplateExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NewTargetExpression</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
 }
 
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#prod-CallExpression</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CallExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -511,7 +511,7 @@
 
 <span class="comment">// new abc( ... )</span>
 <span class="comment">// new abc.asd( ... )</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NewExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -522,7 +522,7 @@
 
 <span class="comment">// https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table</span>
 <span class="comment">// Unary</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PrefixExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -530,7 +530,7 @@
     <span class="kw">pub</span> <span class="ident">operand</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InfixExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -541,7 +541,7 @@
 
 <span class="comment">// --</span>
 <span class="comment">// ++</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PostfixExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -552,7 +552,7 @@
 
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#prod-ConditionalExpression</span>
 <span class="comment">// LogicalORExpression ? AssignmentExpression : AssignmentExpression </span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ConditionalExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -564,7 +564,7 @@
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#prod-YieldExpression</span>
 <span class="comment">// yield AssignmentExpression</span>
 <span class="comment">// yield *AssignmentExpression</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">YieldExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -575,7 +575,7 @@
 }
 
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#prod-AssignmentExpression</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AssignmentExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -586,7 +586,7 @@
 
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#sec-comma-operator</span>
 <span class="comment">// Expression, +</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CommaExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
@@ -595,7 +595,7 @@
 }
 
 
-<span class="comment">// #[derive(Debug, PartialEq, Clone)]</span>
+<span class="comment">// #[derive(Debug, PartialEq, Clone, Copy)]</span>
 <span class="comment">// pub struct BindingElement {</span>
 <span class="comment">//     // Identifier           Option&lt;Initializer&gt;</span>
 <span class="comment">//     // ArrayBindingPattern  Initializer</span>
@@ -604,14 +604,14 @@
 <span class="comment">//     pub initializer: Option&lt;Box&lt;Expression&gt;&gt;,</span>
 <span class="comment">// }</span>
 
-<span class="comment">// #[derive(Debug, PartialEq, Clone)]</span>
+<span class="comment">// #[derive(Debug, PartialEq, Clone, Copy)]</span>
 <span class="comment">// pub struct ArrayBindingPattern {</span>
 <span class="comment">//     pub elems: Vec&lt;Option&lt;BindingElement&gt;&gt;,</span>
 <span class="comment">//     pub rest_elem: Option&lt;Box&lt;Expression&gt;&gt;,</span>
 <span class="comment">// }</span>
 
 
-<span class="comment">// #[derive(Debug, PartialEq, Clone)]</span>
+<span class="comment">// #[derive(Debug, PartialEq, Clone, Copy)]</span>
 <span class="comment">// pub struct BindingProperty {</span>
 <span class="comment">//     // Identifier           Option&lt;Initializer&gt;</span>
 <span class="comment">//     // ArrayBindingPattern  Initializer</span>
@@ -620,7 +620,7 @@
 <span class="comment">//     pub initializer: Option&lt;Box&lt;Expression&gt;&gt;,</span>
 <span class="comment">// }</span>
 
-<span class="comment">// #[derive(Debug, PartialEq, Clone)]</span>
+<span class="comment">// #[derive(Debug, PartialEq, Clone, Copy)]</span>
 <span class="comment">// pub struct ObjectBindingPattern {</span>
 <span class="comment">//     pub properties: Vec&lt;BindingProperty&gt;,</span>
 <span class="comment">//     pub rest_property: Option&lt;Box&lt;Expression&gt;&gt;,  // BindingIdentifier</span>

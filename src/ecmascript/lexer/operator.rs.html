@@ -94,7 +94,7 @@
 
 
 <span class="comment">// UNARY_OPERATORS</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">PrefixOperator</span> {
     <span class="ident">Await</span>,     <span class="comment">// await</span>
     <span class="ident">Delete</span>,    <span class="comment">// delete</span>
@@ -111,7 +111,7 @@
     <span class="ident">Decrement</span>, <span class="comment">// --</span>
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">InfixOperator</span> {
     <span class="comment">// BINARY_OPERATORS</span>
     <span class="ident">Add</span>,      <span class="comment">// +</span>
@@ -143,13 +143,13 @@
     <span class="ident">In</span>,          <span class="comment">// in</span>
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">PostfixOperator</span> {
     <span class="ident">Increment</span>, <span class="comment">// ++</span>
     <span class="ident">Decrement</span>, <span class="comment">// --</span>
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">AssignmentOperator</span> {
     <span class="ident">Assign</span>,         <span class="comment">//    =</span>
     <span class="ident">AddAssign</span>,      <span class="comment">//   +=</span>

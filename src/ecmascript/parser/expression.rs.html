@@ -435,6 +435,7 @@
 <span id="435">435</span>
 <span id="436">436</span>
 <span id="437">437</span>
+<span id="438">438</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -600,14 +601,15 @@
         <span class="ident">loc</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">end_loc</span>.<span class="ident">end</span>;
         <span class="ident">span</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">end_span</span>.<span class="ident">end</span>;
 
+        <span class="kw">let</span> <span class="ident">strings_ref</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc_vec</span>(<span class="ident">strings</span>);
+
         <span class="comment">// 生成新的 Token</span>
         <span class="kw">let</span> <span class="ident">raw</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">source</span>()[<span class="ident">loc</span>.<span class="ident">start</span>..<span class="ident">loc</span>.<span class="ident">end</span>];
-        <span class="kw">let</span> <span class="ident">strings2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc_vec</span>(<span class="ident">strings</span>.<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">bounds2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc_vec</span>(<span class="ident">bound_tokens</span>);
-        <span class="kw">let</span> <span class="ident">new_token</span> <span class="op">=</span> <span class="ident">Token</span>::<span class="ident">LiteralTemplate</span>(<span class="ident">LiteralTemplate</span> { <span class="ident">loc</span>, <span class="ident">span</span>, <span class="ident">raw</span>, <span class="ident">strings</span>: <span class="ident">strings2</span>, <span class="ident">bounds</span>: <span class="ident">bounds2</span> });
+        <span class="kw">let</span> <span class="ident">new_token</span> <span class="op">=</span> <span class="ident">Token</span>::<span class="ident">LiteralTemplate</span>(<span class="ident">LiteralTemplate</span> { <span class="ident">loc</span>, <span class="ident">span</span>, <span class="ident">raw</span>, <span class="ident">strings</span>: <span class="ident">strings_ref</span>, <span class="ident">bounds</span>: <span class="ident">bounds2</span> });
         <span class="self">self</span>.<span class="ident">tokens</span>.<span class="ident">push</span>(<span class="ident">new_token</span>);
-
-        <span class="prelude-val">Ok</span>(<span class="ident">LiteralTemplateExpression</span> { <span class="ident">loc</span>, <span class="ident">span</span>, <span class="ident">strings</span>: <span class="ident">strings2</span>, <span class="ident">bounds</span>: <span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc_vec</span>(<span class="ident">bounds</span>) })
+        
+        <span class="prelude-val">Ok</span>(<span class="ident">LiteralTemplateExpression</span> { <span class="ident">loc</span>, <span class="ident">span</span>, <span class="ident">strings</span>: <span class="ident">strings_ref</span>, <span class="ident">bounds</span>: <span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc_vec</span>(<span class="ident">bounds</span>) })
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_primitive_literal</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
