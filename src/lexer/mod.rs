@@ -70,7 +70,7 @@ macro_rules! bump_or_with_error {
 
 #[derive(Debug)]
 pub enum LexerErrorKind {
-    UnexpectedToken,
+    UnexpectedCharacter,
     UnexpectedEOF,
     Custom(&'static str),
 }
@@ -192,9 +192,9 @@ impl<'ast> Lexer<'ast> {
     pub fn error(&self, lexer_error_kind: LexerErrorKind) -> Error {
         let kind = ErrorKind::SyntaxError;
         let message = match lexer_error_kind {
-            LexerErrorKind::UnexpectedToken => {
+            LexerErrorKind::UnexpectedCharacter => {
                 let ch = if self.eof() { *self.source.last().unwrap() } else { self.character() };
-                format!("Unexpected Token: `{}` ", ch.escape_default().collect::<String>())
+                format!("Unexpected Character `{}` ", ch.escape_default().collect::<String>())
             },
             LexerErrorKind::UnexpectedEOF => {
                 format!("Unexpected EOF")
@@ -296,7 +296,7 @@ impl<'ast> Lexer<'ast> {
                         },
                         c => {
                             if !c.is_es_hex_digit() {
-                                return Err(self.error(UnexpectedToken));
+                                return Err(self.error(UnexpectedCharacter));
                             }
 
                             bump_or_with_error!(self, UnexpectedEOF);
@@ -306,22 +306,22 @@ impl<'ast> Lexer<'ast> {
             },
             _ => {
                 if !c.is_es_hex_digit() {
-                    return Err(self.error(UnexpectedToken));
+                    return Err(self.error(UnexpectedCharacter));
                 }
 
                 bump_or_with_error!(self, UnexpectedEOF);
                 if !self.character().is_es_hex_digit() {
-                    return Err(self.error(UnexpectedToken));
+                    return Err(self.error(UnexpectedCharacter));
                 }
 
                 bump_or_with_error!(self, UnexpectedEOF);
                 if !self.character().is_es_hex_digit() {
-                    return Err(self.error(UnexpectedToken));
+                    return Err(self.error(UnexpectedCharacter));
                 }
 
                 bump_or_with_error!(self, UnexpectedEOF);
                 if !self.character().is_es_hex_digit() {
-                    return Err(self.error(UnexpectedToken));
+                    return Err(self.error(UnexpectedCharacter));
                 }
             }
         }
@@ -333,12 +333,12 @@ impl<'ast> Lexer<'ast> {
     fn scan_hex_escape_seq(&mut self) -> Result<(), Error> {
         bump_or_with_error!(self, UnexpectedEOF);
         if !self.character().is_es_hex_digit() {
-            return Err(self.error(UnexpectedToken));
+            return Err(self.error(UnexpectedCharacter));
         }
 
         bump_or_with_error!(self, UnexpectedEOF);
         if !self.character().is_es_hex_digit() {
-            return Err(self.error(UnexpectedToken));
+            return Err(self.error(UnexpectedCharacter));
         }
 
         Ok(())
@@ -366,7 +366,7 @@ impl<'ast> Lexer<'ast> {
                         '0' => {
                             bump_or_with_error!(self, UnexpectedEOF);
                             if self.character().is_es_decimal_digit() {
-                                return Err(self.error(UnexpectedToken));
+                                return Err(self.error(UnexpectedCharacter));
                             }
                         },
                         'x' => {
@@ -399,7 +399,7 @@ impl<'ast> Lexer<'ast> {
                         break;
                     } else {
                         if c.is_es_line_terminator() {
-                            return Err(self.error(UnexpectedToken));
+                            return Err(self.error(UnexpectedCharacter));
                         }
 
                         bump_or_with_error!(self, UnexpectedEOF);
@@ -428,7 +428,7 @@ impl<'ast> Lexer<'ast> {
                     // while offset > 0 {
 
                     // }
-                    return Err(self.error(UnexpectedToken));
+                    return Err(self.error(UnexpectedCharacter));
                 }
             }
         }
@@ -513,7 +513,7 @@ impl<'ast> Lexer<'ast> {
                 let c = self.character();
                 match c {
                     '0' ... '9' => {
-                        return Err(self.error(UnexpectedToken));
+                        return Err(self.error(UnexpectedCharacter));
                     },
                     'b' | 'B' => {
                         bump_or_with_error!(self, UnexpectedEOF);
@@ -629,7 +629,7 @@ impl<'ast> Lexer<'ast> {
                 // while offset > 0 {
 
                 // }
-                Err(self.error(UnexpectedToken))
+                Err(self.error(UnexpectedCharacter))
             }
         }
     }
@@ -659,7 +659,7 @@ impl<'ast> Lexer<'ast> {
                             }
                         },
                         _ => {
-                            return Err(self.error(UnexpectedToken));
+                            return Err(self.error(UnexpectedCharacter));
                         }
                     }
                 },
@@ -695,7 +695,7 @@ impl<'ast> Lexer<'ast> {
                     // while offset > 0 {
 
                     // }
-                    return Err(self.error(UnexpectedToken));
+                    return Err(self.error(UnexpectedCharacter));
                 }
             }
         }
@@ -706,7 +706,7 @@ impl<'ast> Lexer<'ast> {
                     self.offset = self.token_start_offset;
                     self.line = self.token_start_line;
                     self.column = self.token_start_column;
-                    return Err(self.error(UnexpectedToken));
+                    return Err(self.error(UnexpectedCharacter));
                 }
 
                 for part in &s[1..] {
@@ -714,7 +714,7 @@ impl<'ast> Lexer<'ast> {
                         self.offset = self.token_start_offset;
                         self.line = self.token_start_line;
                         self.column = self.token_start_column;
-                        return Err(self.error(UnexpectedToken));
+                        return Err(self.error(UnexpectedCharacter));
                     }
                 }
             },
@@ -777,12 +777,12 @@ impl<'ast> Lexer<'ast> {
                 
                 match self.character() {
                     '.' => {
-                        bump_or_with_error!(self, UnexpectedToken);
+                        bump_or_with_error!(self, UnexpectedCharacter);
 
                         if self.character() == '.' {
                             bump_with_punct!(DotDotDot)
                         } else {
-                            return Err(self.error(UnexpectedToken));
+                            return Err(self.error(UnexpectedCharacter));
                         }
                     },
                     _ => Ok(Some(punct!(Dot)))
@@ -1035,13 +1035,13 @@ impl<'ast> Lexer<'ast> {
                 '#' => {
                     // HashBang: #!
                     if self.line != 0 || self.column != 0 {
-                        return Err(self.error(UnexpectedToken));
+                        return Err(self.error(UnexpectedCharacter));
                     }
 
                     bump_or_with_error!(self, UnexpectedEOF);
 
                     if self.character() != '!' {
-                        return Err(self.error(UnexpectedToken));
+                        return Err(self.error(UnexpectedCharacter));
                     }
                     
                     loop {
@@ -1105,7 +1105,7 @@ impl<'ast> Lexer<'ast> {
                         return self.read_identifier();
                     }
 
-                    return Err(self.error(UnexpectedToken));
+                    return Err(self.error(UnexpectedCharacter));
                 },
             }
         }
@@ -1165,9 +1165,6 @@ pub fn tokenize(source: &str) {
     let arena = Arena::new();
     let code = arena.alloc_vec(source.chars().collect::<Vec<char>>());
     let filename = arena.alloc_str("src/main.js");
-
-    let foo: &[f64] = arena.alloc_vec(vec![0.0f64, 100.1]);
-    let foo2: Vec<f64> = foo.to_owned();
 
     let mut lexer = Lexer::new(&arena, &code, &filename);
 

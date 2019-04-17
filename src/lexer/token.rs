@@ -65,7 +65,7 @@ pub struct Identifier<'ast> {
 impl<'ast> Identifier<'ast> {
     pub fn to_keyword_or_literal(&self) -> Option<Token<'ast>> {
         if self.cooked.is_some() {
-            // NOTE: Keyword, LiteralNull, LiteralBoolean 不能含有转义字符
+            // NOTE: 含有转义序列的 Ident 不能作为 Keyword, LiteralNull, LiteralBoolean
             return None;
         }
         
@@ -151,7 +151,7 @@ pub enum Token<'ast> {
     // HashBang(HashBang<'ast>),
     // WhiteSpaces,
     // Comment(Comment<'ast>),
-    
+
     LineTerminator,
     /// include Keyword, LiteralNull, LiteralTrue, LiteralFalse
     Identifier(Identifier<'ast>),
