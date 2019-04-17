@@ -10,6 +10,7 @@ pub mod token;
 pub mod operator;
 pub mod utf8;
 
+
 use crate::toolshed::{ Arena, };
 use crate::unicode_xid::UnicodeXID;
 
@@ -30,6 +31,8 @@ use lexer::token::{
     Token, Punctuator, Identifier, 
     LiteralNumeric, LiteralString, LiteralBoolean, LiteralNull, 
 };
+
+use parser::Parser;
 
 use self::LexerErrorKind::*;
 
@@ -81,10 +84,10 @@ pub struct Lexer<'ast> {
     source: &'ast [char],
     filename: &'ast str,
     
-    offset: usize,
-    line_offset: usize,
-    line: usize,
-    column: usize,
+    pub offset: usize,
+    pub line_offset: usize,
+    pub line: usize,
+    pub column: usize,
 
     token_start_offset: usize,
     token_start_line_offset: usize,
@@ -114,10 +117,20 @@ impl<'ast> Lexer<'ast> {
     }
 
     #[inline]
+    pub fn source(&self) -> &'ast [char] {
+        &self.source
+    }
+
+    #[inline]
     pub fn filename(&self) -> &'ast str {
         self.filename
     }
     
+    #[inline]
+    pub fn offset(&self) -> usize {
+        self.offset
+    }
+
     #[inline]
     pub fn mark_token_start(&mut self) {
         self.token_start_offset = self.offset;
@@ -167,6 +180,7 @@ impl<'ast> Lexer<'ast> {
         }
     }
 
+    #[inline]
     pub fn error_line(&self) -> String {
         let mut idx = self.line_offset;
         for c in &self.source[self.line_offset..] {
@@ -182,7 +196,7 @@ impl<'ast> Lexer<'ast> {
         let prefix_width = format!("{}", self.line).len() + 1;
         let prefix = " ".repeat(prefix_width);
 
-        let line_number = format!("{:<width$}", self.line, width=prefix_width);
+        let line_number = format!("{:<width$}", self.line + 1, width=prefix_width);
 
         format!("{}|\n{}| {}\n{}| {}^", prefix, line_number, code_line, prefix, 
             " ".repeat(self.column))
@@ -239,7 +253,7 @@ impl<'ast> Lexer<'ast> {
     }
     
     #[inline]
-    fn eof(&self) -> bool {
+    pub fn eof(&self) -> bool {
         if self.offset >= self.source.len() {
             true
         } else {
@@ -411,12 +425,12 @@ impl<'ast> Lexer<'ast> {
         let loc = self.loc();
         let span = self.span();
         let raw = &self.source[loc.start..loc.end-1];
-        let mut cooked: Option<Vec<char>> = None;
+        let mut cooked: Option<&'ast [char]> = None;
 
         if has_escape_character {
             match unescape_string(raw) {
                 Ok(s) => {
-                    cooked = Some(s);
+                    cooked = Some(self.arena.alloc_vec(s));
                 },
                 Err(e) => {
                     let mut offset = e.offset();
@@ -678,12 +692,12 @@ impl<'ast> Lexer<'ast> {
         let loc = self.loc();
         let span = self.span();
         let raw = &self.source[loc.start..loc.end];
-        let mut cooked: Option<Vec<char>> = None;
+        let mut cooked: Option<&'ast [char]> = None;
         
         if has_escape_character {
             match unescape_identifier(raw) {
                 Ok(s) => {
-                    cooked = Some(s);
+                    cooked = Some(self.arena.alloc_vec(s));
                 },
                 Err(e) => {
                     let mut offset = e.offset();
@@ -1019,8 +1033,205 @@ impl<'ast> Lexer<'ast> {
     }
 
     #[inline]
-    pub fn read_operator(&mut self) -> Result<Option<Token<'ast>>, Error> {
-        unimplemented!()
+    pub fn read_literal_regular_expression(&mut self) -> Result<Option<Token<'ast>>, Error> {
+        if self.eof() {
+            return Err(self.error(UnexpectedEOF));
+        }
+
+        loop {
+            let c = self.character();
+            match c {
+                '/' => {
+                    break;
+                },
+                '\\' => {
+                    bump_or_with_error!(self, UnexpectedEOF);
+                    let c = self.character();
+                    if c.is_es_line_terminator() {
+                        return Err(self.error(UnexpectedCharacter));
+                    }
+
+                    bump_or_with_error!(self, UnexpectedEOF);
+                },
+                _ => {
+                    if c.is_es_line_terminator() {
+                        return Err(self.error(UnexpectedCharacter));
+                    }
+
+                    bump_or_with_error!(self, UnexpectedEOF);
+                }
+            }
+        }
+        
+        let body_start = self.token_start_offset + 1;
+        let body_end   = self.offset;
+
+        let body = &self.source[body_start..body_end];
+
+        // read flags
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2
+        // g, i, m, s, u, y
+        let flags = match self.bump() {
+            Ok(_) => {
+                
+                let start = self.offset;
+
+                loop {
+                    let c = self.character();
+                    
+                    // It is a Syntax Error if identifierPart contains a Unicode escape sequence.
+                    if !c.is_es_identifier_part() {
+                        break;
+                    }
+
+                    if !c.is_ascii_alphabetic() {
+                        warn!("regular flags must is one of `a-Z` or `A-Z`. ");
+                        return Err(self.error(UnexpectedCharacter));
+                    }
+
+                    if let Err(_) = self.bump() {
+                        break;
+                    }
+                }
+
+                let end = self.offset;
+
+                if end == start {
+                    None
+                } else {
+                    let flags = &self.source[start..end];
+                    Some(flags)
+                }
+            },
+            Err(_) => None,
+        };
+
+        let span = self.span();
+        let loc = self.loc();
+        let item = LiteralRegularExpression { span, loc, body, flags };
+        let token = Token::LiteralRegularExpression(item);
+        
+        Ok(Some(token))
+    }
+
+    #[inline]
+    pub fn read_literal_template_string(&mut self) -> Result<(LiteralString<'ast>, bool), Error> {
+        // NOTE: 可以和 read_literal_string 函数合并，绝大部分代码是相同的。
+        if self.eof() {
+            return Err(self.error(UnexpectedEOF));
+        }
+
+        self.mark_token_start();
+
+        let mut has_escape_character = false;
+        
+        let start = self.offset;
+
+        #[allow(unused_assignments)]
+        let mut end: usize = start;
+
+        let mut is_end: bool = false;
+
+        loop {
+            let c = self.character();
+            match c {
+                '\\' => {
+                    if !has_escape_character {
+                        has_escape_character = true;
+                    }
+
+                    bump_or_with_error!(self, UnexpectedEOF);
+                    match self.character() {
+                        '0' => {
+                            bump_or_with_error!(self, UnexpectedEOF);
+                            if self.character().is_es_decimal_digit() {
+                                return Err(self.error(UnexpectedCharacter));
+                            }
+                        },
+                        'x' => {
+                            self.scan_hex_escape_seq()?;
+                            bump_or_with_error!(self, UnexpectedEOF);
+                        },
+                        'u' => {
+                            self.scan_unicode_escape_seq()?;
+                            bump_or_with_error!(self, UnexpectedEOF);
+                        },
+                        CR => {
+                            bump_or_with_error!(self, UnexpectedEOF);
+                            if self.character() == LF {
+                                bump_or_with_error!(self, UnexpectedEOF);
+                            }
+                            self.bump_line();
+                        },
+                        LF | LS | PS => {
+                            bump_or_with_error!(self, UnexpectedEOF);
+                            self.bump_line();
+                        },
+                        _ => {
+                            bump_or_with_error!(self, UnexpectedEOF);
+                        }
+                    }
+                },
+                CR => {
+                    bump_or_with_error!(self, UnexpectedEOF);
+                    if self.character() == LF {
+                        bump_or_with_error!(self, UnexpectedEOF);
+                    }
+                    self.bump_line();
+                },
+                LF | LS | PS => {
+                    bump_or_with_error!(self, UnexpectedEOF);
+                    self.bump_line();
+                },
+                '`' => {
+                    end = self.offset;
+                    let _ = self.bump();
+
+                    is_end = true;
+
+                    break;
+                },
+                '$' => {
+                    bump_or_with_error!(self, UnexpectedEOF);
+                    if self.character() == '{' {
+                        bump_or_with_error!(self, UnexpectedEOF);
+
+                        end = self.offset - 2;
+                        break;
+                    }
+                },
+                _ => {
+                    bump_or_with_error!(self, UnexpectedEOF);
+                }
+            }
+        }
+
+        let loc = self.loc();
+        let span = self.span();
+        let raw = &self.source[start..end];
+        let mut cooked: Option<&'ast [char]> = None;
+
+        if has_escape_character {
+            match unescape_template(raw) {
+                Ok(s) => {
+                    cooked = Some(self.arena.alloc_vec(s));
+                },
+                Err(e) => {
+                    let mut offset = e.offset();
+                    self.offset = self.token_start_offset + offset;
+                    self.line = self.token_start_line;
+                    self.column = self.token_start_column;
+                    // FIXME: fix offset ?
+                    // repr
+                    // while offset > 0 {
+
+                    // }
+                    return Err(self.error(UnexpectedCharacter));
+                }
+            }
+        }
+
+        Ok((LiteralString { loc, span, raw, cooked }, is_end))
     }
 
     #[inline]
@@ -1069,8 +1280,8 @@ impl<'ast> Lexer<'ast> {
                     // 指示模版开始，在 Parser 里面处理。
                     self.mark_token_start();
 
-                    // let loc = self.loc();
-                    // let span = self.span();
+                    bump_or_with_error!(self, UnexpectedEOF);
+
                     return Ok(Some(Token::TemplateOpenning))
                 },
                 '0' ... '9' => {
@@ -1097,6 +1308,7 @@ impl<'ast> Lexer<'ast> {
                     // Unicode
                     // Slow
                     if c.is_whitespace() {
+                        // unicode whitespace
                         bump_or_with_token!(self, None);
                         continue;
                     }
@@ -1111,6 +1323,7 @@ impl<'ast> Lexer<'ast> {
         }
     }
 
+    #[inline]
     pub fn lookahead(&mut self, ch: char) -> bool {
         match self.source.get(self.offset+1) {
             Some(c) => c == &ch,
@@ -1118,6 +1331,7 @@ impl<'ast> Lexer<'ast> {
         }
     }
 
+    #[inline]
     pub fn lookahead2(&mut self, seqs: [char; 2]) -> bool {
         match self.source.get(self.offset+1) {
             Some(c) => {
@@ -1134,6 +1348,7 @@ impl<'ast> Lexer<'ast> {
         }
     }
 
+    #[inline]
     pub fn lookahead3(&mut self, seqs: [char; 3]) -> bool {
         match self.source.get(self.offset+1) {
             Some(c) => {
@@ -1161,11 +1376,11 @@ impl<'ast> Lexer<'ast> {
 }
 
 
-pub fn tokenize(source: &str) {
+pub fn tokenize(source: &str, filename: &str) {
     let arena = Arena::new();
     let code = arena.alloc_vec(source.chars().collect::<Vec<char>>());
-    let filename = arena.alloc_str("src/main.js");
-
+    let filename = arena.alloc_str(filename);
+    
     let mut lexer = Lexer::new(&arena, &code, &filename);
 
     loop {
@@ -1174,7 +1389,7 @@ pub fn tokenize(source: &str) {
                 println!("{:?}", token);
             },
             Ok(None) => {
-                println!("EOF.");
+                trace!("EOF.");
                 break;
             },
             Err(e) => {
@@ -1183,13 +1398,4 @@ pub fn tokenize(source: &str) {
             }
         }
     }
-    
-
-    // lexer.line = 2;
-    // lexer.column = 7;
-    // lexer.line_offset = 20;
-
-    // println!("{:?}", lexer.unexpected_token());
-    // println!("{:?}", lexer.unexpected_eof());
-    // println!("{:?}", lexer.error(Custom("无效的数字序列")));
 }

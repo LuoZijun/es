@@ -1,7 +1,7 @@
 // document: https://facebook.github.io/jsx/
 
 
-use super::expression::AssignmentExpression;
+use ast::expression::AssignmentExpression;
 
 
 // React only.

@@ -1,24 +1,17 @@
 use std::collections::{ VecDeque, HashMap, };
 
-pub mod span;
 pub mod numberic;
 pub mod ustring;
+
 pub mod statement;
 pub mod expression;
+
 // pub mod declaration;
-
 // pub mod jsx;
-
 // pub mod pattern;
 // pub mod module;
-
 // pub mod function;
 // pub mod class;
-
-
-pub type IdentifierName = Vec<char>;
-pub type IdentifierReference = Vec<char>;
-
 
 
 #[derive(Debug, PartialEq, Clone)]

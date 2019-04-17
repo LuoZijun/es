@@ -1,7 +1,7 @@
 use crate::toolshed::{ Arena, };
 
-use error::{ ErrorKind, Error, };
 use version::ECMAScriptVersion;
+use error::{ ErrorKind, Error, };
 
 use lexer::Lexer;
 use lexer::token::Token;
@@ -11,11 +11,12 @@ use lexer::LexerErrorKind;
 
 use ast::numberic::{ Numberic, Float, };
 use ast::statement::{ 
-    SpannedStatement, Statement, StatementList,
-    VariableStatement, LexicalDeclaration, LexicalDeclarationKind, LexicalBinding,
-
+    Statement, StatementList,
+    VariableStatement, LexicalDeclarationKind, LexicalBinding,
 };
-use ast::expression::{ SpannedExpression, Expression, };
+use ast::expression::{
+    Expression, LiteralTemplateExpression,
+};
 
 use self::ParserErrorKind::*;
 
@@ -28,11 +29,12 @@ pub enum ParserErrorKind {
 }
 
 pub struct Parser<'ast> {
-    arena: &'ast Arena,
-    lexer: Lexer<'ast>,
-    pub token_pool: Vec<Token<'ast>>,
+    pub(crate) arena: &'ast Arena,
+    pub(crate) lexer: Lexer<'ast>,
+    
+    pub token: Vec<Token<'ast>>,
 
-    pub body: Vec<SpannedStatement>,
+    pub body: Vec<Statement<'ast>>,
     pub tokens: Vec<Token<'ast>>,
 }
 
@@ -40,132 +42,141 @@ impl<'ast> Parser<'ast> {
     pub fn new(arena: &'ast Arena, source: &'ast [char], filename: &'ast str) -> Self {
         let lexer = Lexer::new(arena, source, filename);
 
-        Self { arena, lexer, body: vec![], token_pool: vec![], tokens: vec![] }
+        Self { arena, lexer, body: vec![], token: Vec::with_capacity(1), tokens: vec![] }
     }
     
     pub fn error(&mut self) -> Error {
+        // TODO
         unimplemented!()
     }
 
     pub fn error_line(&mut self) -> String {
+        // TODO
         unimplemented!()
     }
 
     pub fn unexpected_token(&mut self, token: Token<'ast>) -> Error {
-        unimplemented!()
+        // TODO
+        debug!("{:?}", token);
+        self.lexer.error(LexerErrorKind::Custom("Unexpected Token"))
     }
 
     pub fn token(&mut self) -> Result<Option<Token<'ast>>, Error> {
-        if self.token_pool.len() > 0 {
-            // WARN: 请确保 添加 Token 至待处理队列时，不是使用的 `push/append` 之类的方法。
-            return Ok(Some(self.token_pool.pop().unwrap()));
+        if self.token.len() > 0 {
+            Ok(self.token.pop())
+        } else {
+            self.lexer.consume()
         }
-        
-        self.lexer.consume()
     }
 
     pub fn token2(&mut self) -> Result<Token<'ast>, Error> {
         // NOTE: 不允许 EOF 的出现
-        match self.lexer.consume() {
+        match self.token() {
             Ok(Some(token)) => Ok(token),
             Ok(None) => Err(self.lexer.error(LexerErrorKind::UnexpectedEOF)),
             Err(e) => Err(e),
         }
     }
 
-    pub fn process(&mut self) -> Result<SpannedStatement, Error> {
-        // match token.item {
-        //     Token::Keyword(Keyword::Var)
-        //     | Token::Keyword(Keyword::Let)
-        //     | Token::Keyword(Keyword::Const)
-        //     | Token::Keyword(Keyword::Function)
-        //     | Token::Keyword(Keyword::Class)
-        //     | Token::Keyword(Keyword::Async) 
-
-        //     | Token::Punctuator(Punctuator::Semicolon)
-        //     | Token::Keyword(Keyword::Debugger)
-        //      => {
-        //         // Stmt
-        //         return self.parse_statement(token);
-        //     },
-
-        //     Token::LiteralNull
-        //     | Token::LiteralBoolean(_)
-        //     | Token::LiteralString(_)
-        //     | Token::LiteralDecimalNumeric(_)
-        //     | Token::LiteralFloatNumeric(_)
-        //     | Token::Identifier(_)
-
-        //     | Token::Punctuator(Punctuator::BackTick)
-        //     | Token::Punctuator(Punctuator::LParen)
-        //     | Token::Punctuator(Punctuator::LBracket)
-        //     | Token::Punctuator(Punctuator::LBrace)
-
-        //     => {
-        //         // expr
-        //         let spanned_expr = self.parse_expression(token)?;
-        //         let start = spanned_expr.start;
-        //         let end = spanned_expr.end;
-        //         let item = Statement::Expression(Box::new(spanned_expr.item));
-        //         let stmt = Span { start, end, item, };
-                
-        //         Ok(stmt)
-        //     },
-        //     _ => {
-        //         Err(self.unexpected_token(token))
-        //     },
-        // }
-        unimplemented!()
+    pub fn alloc<T: Copy>(&mut self, item: T) -> &'ast T {
+        self.arena.alloc(item)
     }
 
+    pub fn process(&mut self) -> Result<Statement<'ast>, Error> {
+        unimplemented!()
+    }
+    
     pub fn parse(&mut self) -> Result<(), Error> {
         loop {
             match self.token()? {
-                None => {
-                    // NOTE: 只是 Token 流已正常结束 (EOF)
-                    break;
-                },
+                None        => break,
                 Some(token) => {
                     match token {
+                        Token::LineTerminator => continue,
+
                         Token::Keyword(_)
                         | Token::LiteralNull(_)
-                        | Token::LiteralBoolean(_) => {
-                            // NOTE: 在 Lexer 层，这些会被当作 Identifier 处理。
-                            unreachable!()
-                        },
+                        | Token::LiteralBoolean(_) => unreachable!(),
+
                         Token::LiteralRegularExpression(_)
-                        | Token::LiteralTemplate(_) => {
-                            // NOTE: 考虑到这些 Token 边界有歧义，需要上下文来处理。
-                            //       所以 Token 将会由 Parser 生成，而不是 Lexer.
-                            unreachable!()
-                        },
-                        Token::LineTerminator => {
-                            unimplemented!()
-                        },
+                        | Token::LiteralTemplate(_) => unreachable!(),
+
                         Token::Identifier(ident) => {
-                            // NOTE: 当一个表达式的第一个 Token 是 Identifier 时，
-                            //       如果这个 Identifier 能够被转换成 Keyword/LiteralNull/LiteralBoolean ,
-                            //       那么它会被视作 Keyword/LiteralNull/LiteralBoolean Token.
-                            unimplemented!()
+                            match ident.to_keyword_or_literal() {
+                                Some(token) => {
+                                    match token {
+                                        Token::Keyword(kw) => {
+                                            match kw.kind {
+                                                KeywordKind::Var
+                                                | KeywordKind::Let
+                                                | KeywordKind::Const
+                                                | KeywordKind::Function
+                                                | KeywordKind::Class
+                                                | KeywordKind::Debugger => {
+                                                    // self.parse_statement(token)?;
+                                                    unimplemented!()
+                                                },
+                                                KeywordKind::This
+                                                | KeywordKind::Super
+                                                | KeywordKind::Delete
+                                                | KeywordKind::Void
+                                                | KeywordKind::TypeOf => {
+                                                    let expr = self.parse_expression(token)?;
+                                                    let stmt = Statement::Expression(self.alloc(expr));
+                                                    self.body.push(stmt);
+                                                },
+                                                _ => {
+                                                    unimplemented!()
+                                                }
+                                            }
+                                        },
+                                        Token::LiteralNull(_)
+                                        | Token::LiteralBoolean(_) => {
+                                            let expr = self.parse_expression(token)?;
+                                            let stmt = Statement::Expression(self.alloc(expr));
+                                            self.body.push(stmt);
+                                        },
+                                        _ => unreachable!(),
+                                    }
+                                },
+                                None => {
+                                    // ident
+                                    let token = Token::Identifier(ident);
+                                    let expr = self.parse_expression(token)?;
+                                    let stmt = Statement::Expression(self.alloc(expr));
+                                    self.body.push(stmt);
+                                }
+                            }
                         },
                         Token::Punctuator(punct) => {
                             match punct.kind {
-                                PunctuatorKind::Div => {
-                                    // NOTE: 这将会指示 Parser 生成 一个 LiteralRegularExpression Token.
+                                PunctuatorKind::Semicolon => {
+                                    // self.parse_statement(token)?;
                                     unimplemented!()
                                 },
-                                _ => unimplemented!()
+                                PunctuatorKind::Div
+                                | PunctuatorKind::Add
+                                | PunctuatorKind::Sub
+                                | PunctuatorKind::Increment
+                                | PunctuatorKind::Decrement
+                                | PunctuatorKind::Not
+                                | PunctuatorKind::BitNot => {
+                                    // unary operator
+                                    let expr = self.parse_expression(token)?;
+                                    let stmt = Statement::Expression(self.alloc(expr));
+                                    self.body.push(stmt);
+                                },
+                                _ => {
+                                    return Err(self.unexpected_token(token));
+                                }
                             }
                         },
-                        Token::LiteralString(lit_str) => {
-                            unimplemented!()
-                        },
-                        Token::LiteralNumeric(lit_num) => {
-                            unimplemented!()
-                        },
-                        Token::TemplateOpenning => {
-                            // NOTE: 这将会指示 Parser 生成一个 LiteralTemplate Token.
-                            unimplemented!()
+                        Token::LiteralString(_)
+                        | Token::LiteralNumeric(_)
+                        | Token::TemplateOpenning => {
+                            let expr = self.parse_expression(token)?;
+                            let stmt = Statement::Expression(self.alloc(expr));
+                            self.body.push(stmt);
                         },
                     }
                 },
@@ -185,8 +196,18 @@ pub fn parse(source: &str, filename: &str) {
     let mut parser = Parser::new(&arena, &code, &filename);
     match parser.parse() {
         Ok(_) => {
-            println!("TokenList:\n{:?}", parser.tokens);
-            println!("StatementList:\n{:?}", parser.body);
+            println!("TokenList:");
+            for token in parser.tokens {
+                println!("    {:?}", token);
+            }
+            println!("\n\n\n");
+
+            println!("StatementList:");
+            for stmt in parser.body {
+                println!("    {:?}", stmt);
+            }
+            println!("\n\n\n");
+            
             trace!("EOF.");
         },
         Err(e) => {

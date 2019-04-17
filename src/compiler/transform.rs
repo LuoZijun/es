@@ -9,8 +9,8 @@ pub trait Transform {
     fn transform(&mut self, target: ECMAScriptVersion) -> Self::Item;
 }
 
-impl Transform for Statement {
-    type Item = Statement;
+impl<'ast> Transform for Statement<'ast> {
+    type Item = Statement<'ast>;
 
     fn transform(&mut self, target: ECMAScriptVersion) -> Self::Item {
         unimplemented!()

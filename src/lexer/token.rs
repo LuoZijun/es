@@ -31,13 +31,13 @@ pub struct HashBang<'ast> {
     pub value: &'ast [char],
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct WhiteSpaces {
     pub span: Span,
     pub loc: Loc,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LineTerminator {
     pub span: Span,
     pub loc: Loc,
@@ -53,13 +53,13 @@ pub struct Comment<'ast> {
 
 
 /// Keyword or IdentifierName
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Identifier<'ast> {
     pub span: Span,
     pub loc: Loc,
     pub raw: &'ast [char],
     // if has_escaped_char { Some(cooked) } else { None }
-    pub cooked: Option<Vec<char>>,
+    pub cooked: Option<&'ast [char]>,
 }
 
 impl<'ast> Identifier<'ast> {
@@ -96,17 +96,17 @@ pub struct LiteralBoolean {
     pub value: bool,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralString<'ast> {
     pub span: Span,
     pub loc: Loc,
     // pub delimiter: StringDelimiter,
     pub raw: &'ast [char],
     // if has_escaped_char { Some(cooked) } else { None }
-    pub cooked: Option<Vec<char>>,
+    pub cooked: Option<&'ast [char]>,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralNumeric<'ast> {
     pub span: Span,
     pub loc: Loc,
@@ -114,21 +114,21 @@ pub struct LiteralNumeric<'ast> {
     pub value: Numberic,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralRegularExpression<'ast> {
     pub span: Span,
     pub loc: Loc,
     pub body: &'ast [char],
-    pub flags: &'ast [char],
+    pub flags: Option<&'ast [char]>,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralTemplate<'ast> {
     pub span: Span,
     pub loc: Loc,
     pub raw: &'ast [char],
-    pub strings: Vec<LiteralString<'ast>>,
-    pub bounds: Vec<Token<'ast>>,
+    pub strings: &'ast [ LiteralString<'ast> ],
+    pub bounds: &'ast [ &'ast [ Token<'ast> ] ],
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
@@ -146,7 +146,7 @@ pub struct Keyword {
 }
 
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Token<'ast> {
     // HashBang(HashBang<'ast>),
     // WhiteSpaces,

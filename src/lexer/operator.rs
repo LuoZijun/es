@@ -16,9 +16,9 @@ pub enum PrefixOperator {
     Void,      // void
     TypeOf,    // typeof
     /// The unary positive operator +.
-    Pos,       // +
-    // The unary negation operator -.
-    Neg,       // -
+    Positive,  // +
+    /// The unary negation operator -.
+    Negative,  // -
     BitNot,    // ~
     Not,       // !
 
@@ -62,5 +62,23 @@ pub enum InfixOperator {
 pub enum PostfixOperator {
     Increment, // ++
     Decrement, // --
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub enum AssignmentOperator {
+    Assign,         //    =
+    AddAssign,      //   +=
+    SubAssign,      //   -=
+    MulAssign,      //   *=
+    DivAssign,      //   /=
+    RemAssign,      //   %=
+    PowAssign,      //  **=
+
+    BitAndAssign,   //   &=
+    BitOrAssign,    //   |=
+    BitXorAssign,   //   ^=
+    BitShlAssign,   //  <<=
+    BitShrAssign,   //  >>=
+    BitUShrAssign,  // >>>=
 }
 

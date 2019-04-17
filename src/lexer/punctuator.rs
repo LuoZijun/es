@@ -64,12 +64,12 @@ pub enum PunctuatorKind {
     Div,            //  /
     Rem,            //  %
     Pow,            // **
-    BitNot,         // ~ , unary operator
-    BitAnd,         // &
-    BitOr,          // |
-    BitXor,         // ^
-    BitShl,         // <<
-    BitShr,         // >>
+    BitNot,         //  ~ , unary operator
+    BitAnd,         //  &
+    BitOr,          //  |
+    BitXor,         //  ^
+    BitShl,         //  <<
+    BitShr,         //  >>
     BitUShr,        // >>>
 
     // assignment operator

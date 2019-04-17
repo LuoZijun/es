@@ -109,7 +109,7 @@ impl fmt::Debug for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let _ = writeln!(f, "{}: {}", self.kind, self.message);
-        let _ = writeln!(f, " --> {}:{}:{}", self.filename(), self.line_number(), self.column_number());
+        let _ = writeln!(f, " --> {}:{}:{}", self.filename(), self.line_number() + 1, self.column_number());
 
         match self.line {
             Some(ref line) => {

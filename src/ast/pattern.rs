@@ -1,8 +1,8 @@
 use ast::IdentifierName;
-use ast::expression::AssignmentExpression;
+use ast::expression::{ Expression, AssignmentExpression, };
 
 
-pub type BindingIdentifier = String;
+pub type BindingIdentifier = IdentifierName;
 
 
 #[derive(Debug, PartialEq, Clone)]
@@ -15,28 +15,28 @@ pub enum BindingPattern {
 // Object
 #[derive(Debug, PartialEq, Clone)]
 pub enum PropertyName {
-    // IdentifierName
-    Identifier(IdentifierName),
-    // StringLiteral
-    String(String),
-    // NumericLiteral
-    Numeric(f64),
-    Computed(AssignmentExpression),
+    Identifier(Vec<char>),  // IdentifierName
+    String(Box<Vec<char>>), // StringLiteral
+    Numeric(f64),           // NumericLiteral
+    Computed(Box<Expression>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct SingleNameBinding {
     pub identifier: BindingIdentifier,
-    pub initializer: Option<AssignmentExpression>,
+    pub initializer: Option<Box<Expression>>,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct NamedPropertyBinding {
+    pub name: PropertyName,
+    pub value: BindingElement,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum BindingProperty {
     SingleNameBinding(SingleNameBinding),
-    KeyValue {
-        key: PropertyName,
-        value: BindingElement,
-    },
+    NamedPropertyBinding(NamedPropertyBinding),
 }
 
 #[derive(Debug, PartialEq, Clone)]

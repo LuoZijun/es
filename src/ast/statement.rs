@@ -1,53 +1,54 @@
-// pub use super::class::ClassDeclaration;
-// pub use super::function::FunctionDeclaration;
 
-use ast::span::Span;
+use lexer::span::{ Loc, Span, LineColumn, };
+use lexer::token::{
+    Identifier, LiteralNull, LiteralBoolean, LiteralString, LiteralNumeric,
+    LiteralRegularExpression, 
+    Punctuator, Keyword,
+};
 use ast::expression::{ Expression, };
+// use ast::class::ClassDeclaration;
+// use ast::function::FunctionDeclaration;
 
 
-pub type SpannedStatement = Span<Statement>;
-pub type StatementList = Vec<Statement>;
+pub type StatementList<'ast> = Vec<Statement<'ast>>;
 
 
-#[derive(Debug, PartialEq, Clone)]
-pub enum Statement {
-    Variable(Box<VariableStatement>),
-    LetOrConst(Box<LexicalDeclaration>),
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum Statement<'ast> {
+    Empty(&'ast EmptyStatement),
+    Debugger(&'ast DebuggerStatement),
     
+    Expression(&'ast Expression<'ast>),
+
+    Variable(&'ast VariableStatement<'ast>),
     // Function(FunctionDeclaration),
     // Class(ClassDeclaration),
 
-    Expression(Box<Expression>),
-
-    Empty,
-    Block(Box<BlockStatement>),
-    If(Box<IfStatement>),
+    Block(&'ast BlockStatement<'ast>),
+    If(&'ast IfStatement<'ast>),
 
     // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-iteration-statements
-    DoWhile(Box<DoWhileStatement>),
-    While(Box<WhileStatement>),
-    For(Box<ForStatement>),
-    ForIn(Box<ForInStatement>),
-    ForOf(Box<ForOfStatement>),
-    ForAwaitOf(Box<ForAwaitOfStatement>),
+    DoWhile(&'ast DoWhileStatement<'ast>),
+    While(&'ast WhileStatement<'ast>),
+    For(&'ast ForStatement<'ast>),
+    ForIn(&'ast ForInStatement<'ast>),
+    ForOf(&'ast ForOfStatement<'ast>),
+    ForAwaitOf(&'ast ForAwaitOfStatement<'ast>),
 
-    Continue(Box<ContinueStatement>),
-    Break(Box<BreakStatement>),
-    Return(Box<ReturnStatement>),
-    With(Box<WithStatement>),
-    Switch(Box<SwitchStatement>),
-    Labelled(Box<LabelledStatement>),
-    Throw(Box<ThrowStatement>),
-    Try(Box<TryStatement>),
-    
-    Debugger,
+    Continue(&'ast ContinueStatement<'ast>),
+    Break(&'ast BreakStatement<'ast>),
+    Return(&'ast ReturnStatement<'ast>),
+    With(&'ast WithStatement<'ast>),
+    Switch(&'ast SwitchStatement<'ast>),
+    Labelled(&'ast LabelledStatement<'ast>),
+    Throw(&'ast ThrowStatement<'ast>),
+    Try(&'ast TryStatement<'ast>),
 }
 
-impl Statement {
+impl<'ast> Statement<'ast> {
     pub fn is_declaration(&self) -> bool {
         match *self {
             Statement::Variable(_)
-            | Statement::LetOrConst(_)
             // | Statement::Function(_)
             // | Statement::Class(_)
             => true,
@@ -106,25 +107,50 @@ impl Statement {
 
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+pub struct EmptyStatement {
+    pub loc: Loc,
+    pub span: Span,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct DebuggerStatement {
+    pub loc: Loc,
+    pub span: Span,
+}
+
+
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum LexicalDeclarationKind {
+    Var,
     Let,
     Const,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct LexicalBinding {
-    pub name: Box<Expression>,
-    pub initializer: Option<Box<Expression>>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct LexicalBinding<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub name: Expression<'ast>,
+    pub initializer: Option<Expression<'ast>>,
 }
 
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct LexicalDeclaration {
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct VariableStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
     pub kind: LexicalDeclarationKind,
-    pub declarators: Vec<LexicalBinding>,
+    pub declarators: &'ast [LexicalBinding<'ast>],
 }
 
-impl LexicalDeclaration {
+impl<'ast> VariableStatement<'ast> {
+    pub fn is_var(&self) -> bool {
+        match self.kind {
+            LexicalDeclarationKind::Var => true,
+            _ => false,
+        }
+    }
+
     pub fn is_let(&self) -> bool {
         match self.kind {
             LexicalDeclarationKind::Let => true,
@@ -141,136 +167,146 @@ impl LexicalDeclaration {
 }
 
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct VariableStatement {
-    pub declarators: Vec<LexicalBinding>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct BlockStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub body: &'ast [Statement<'ast>],
 }
 
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct BlockStatement {
-    pub body: Vec<Statement>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct IfStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub condition: Expression<'ast>,
+    pub and_then: Statement<'ast>,
+    pub or_else: Statement<'ast>,
 }
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct EmptyStatement;
-
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct IfStatement {
-    pub condition: Expression,
-    pub and_then: Box<Statement>,
-    pub or_else: Box<Statement>,
-}
-
 
 // Iteration Statements
-#[derive(Debug, PartialEq, Clone)]
-pub struct DoWhileStatement {
-    pub condition: Box<Expression>,
-    pub body: Box<Statement>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct DoWhileStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub condition: Expression<'ast>,
+    pub body: Statement<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct WhileStatement {
-    pub condition: Box<Expression>,
-    pub body: Box<Statement>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct WhileStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub condition: Expression<'ast>,
+    pub body: Statement<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub enum ForStatementInit {
-    LetOrConst(LexicalDeclaration),
-    Variable(VariableStatement),
-    Expression(Box<Expression>),
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct ForStatement {
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ForStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
     // initialization
-    pub init: Option<ForStatementInit>,
-    pub condition: Option<Box<Expression>>,
-    pub finally: Option<Box<Expression>>,
-    pub body: Box<Statement>,
+    pub init: Option<Statement<'ast>>,       // var/let/const/expr
+    pub condition: Option<Expression<'ast>>,
+    pub finally: Option<Expression<'ast>>,
+    pub body: Statement<'ast>,
 }
 
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct ForInStatement {
-    pub left: Box<Expression>,
-    pub right: Box<Expression>,
-    pub body: Box<Statement>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ForInStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub left: Expression<'ast>,
+    pub right: Expression<'ast>,
+    pub body: Statement<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct ForOfStatement {
-    pub left: Box<Expression>,
-    pub right: Box<Expression>,
-    pub body: Box<Statement>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ForOfStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub left: Expression<'ast>,
+    pub right: Expression<'ast>,
+    pub body: Statement<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct ForAwaitOfStatement {
-    pub left: Box<Expression>,
-    pub right: Box<Expression>,
-    pub body: Box<Statement>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ForAwaitOfStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub left: Expression<'ast>,
+    pub right: Expression<'ast>,
+    pub body: Statement<'ast>,
 }
 
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct ContinueStatement {
-    pub label: Option<String>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ContinueStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub label: Option<Identifier<'ast>>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct BreakStatement {
-    pub label: Option<String>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct BreakStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub label: Option<Identifier<'ast>>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct ReturnStatement {
-    pub value: Option<Box<Expression>>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ReturnStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub value: Option<Expression<'ast>>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct WithStatement {
-    pub condition: Box<Expression>,
-    pub then: Box<Statement>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct WithStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub condition: Expression<'ast>,
+    pub then: Statement<'ast>,
 }
 
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct SwitchStatementCaseClause {
-    pub value: Box<Expression>,
-    pub body: Vec<Statement>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct SwitchStatementCaseClause<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub value: Expression<'ast>,
+    pub body: Statement<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct SwitchStatement {
-    pub value: Box<Expression>,
-    pub clauses: Vec<SwitchStatementCaseClause>,
-    pub default_clause: SwitchStatementCaseClause,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct SwitchStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub value: Expression<'ast>,
+    pub clauses: &'ast [SwitchStatementCaseClause<'ast>],
+    pub default_clause: SwitchStatementCaseClause<'ast>,
 }
 
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct LabelledStatement {
-    pub label: String,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct LabelledStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub label: Identifier<'ast>,
     // FunctionDeclaration is not allowed.
-    pub item: Box<Statement>,
+    pub item: Statement<'ast>,
 }
 
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ThrowStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub value: Expression<'ast>,
+}
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ThrowStatement {
-    pub value: Box<Expression>,
+pub struct TryStatement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub body: BlockStatement<'ast>,
+    pub catch_parameter: Option<Expression<'ast>>,
+    pub catch_body: BlockStatement<'ast>,
+    pub finally: Option<BlockStatement<'ast>>,
 }
-
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct TryStatement {
-    pub body: BlockStatement,
-    pub catch_parameter: Option<Box<Expression>>,
-    pub catch_body: BlockStatement,
-    pub finally: Option<BlockStatement>,
-}
-
