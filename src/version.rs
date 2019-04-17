@@ -84,7 +84,7 @@ impl fmt::Display for ECMAScriptVersion {
 
 
 pub trait Version {
-    // fn age(self) -> ECMAScriptVersion;
+    fn age(self) -> ECMAScriptVersion;
     fn standard_since(&self) -> ECMAScriptVersion;
     fn deprecated_since(&self) -> Option<ECMAScriptVersion>;
     fn is_deprecated_at(&self, target: ECMAScriptVersion) -> bool {
