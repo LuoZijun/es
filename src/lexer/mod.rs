@@ -1330,53 +1330,12 @@ impl<'ast> Lexer<'ast> {
             None => false,
         }
     }
-
-    #[inline]
-    pub fn lookahead2(&mut self, seqs: [char; 2]) -> bool {
-        match self.source.get(self.offset+1) {
-            Some(c) => {
-                if c == &seqs[0] {
-                    match self.source.get(self.offset+2) {
-                        Some(c) => c == &seqs[1],
-                        None => false,
-                    }
-                } else {
-                    false
-                }
-            },
-            None => false,
-        }
-    }
-
-    #[inline]
-    pub fn lookahead3(&mut self, seqs: [char; 3]) -> bool {
-        match self.source.get(self.offset+1) {
-            Some(c) => {
-                if c == &seqs[0] {
-                    match self.source.get(self.offset+2) {
-                        Some(c) => {
-                            if c == &seqs[1] {
-                                match self.source.get(self.offset+3) {
-                                    Some(c) => c == &seqs[2],
-                                    None => false,
-                                }
-                            } else {
-                                false
-                            }
-                        },
-                        None => false,
-                    }
-                } else {
-                    false
-                }
-            },
-            None => false,
-        }
-    }
 }
 
 
 pub fn tokenize(source: &str, filename: &str) {
+    // WARN: 因为 正则表达式 和 模版字面量 这两个 Token 需要上下文才能界定边界，
+    //       所以请确保源代码当中不含 这些 字面量。
     let arena = Arena::new();
     let code = arena.alloc_vec(source.chars().collect::<Vec<char>>());
     let filename = arena.alloc_str(filename);

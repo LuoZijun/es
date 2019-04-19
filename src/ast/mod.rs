@@ -14,12 +14,12 @@ pub mod expression;
 // pub mod class;
 
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct Module {
-    pub imports: HashMap<String, String>,
-    pub exports: HashMap<String, String>,
-    // pub body: Vec<statement::Statement>,
-}
+// #[derive(Debug, PartialEq, Clone)]
+// pub struct Module {
+//     pub imports: HashMap<String, String>,
+//     pub exports: HashMap<String, String>,
+//     // pub body: Vec<statement::Statement>,
+// }
 
 
 #[derive(Debug)]

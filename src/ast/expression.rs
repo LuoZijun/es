@@ -15,6 +15,20 @@ use ast::numberic::{ Float, Numberic, };
 pub type ExpressionList<'ast> = Vec<Expression<'ast>>;
 
 
+// https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+pub enum Direction {
+    LeftToRight,
+    RightToLeft,
+}
+
+impl Default for Direction {
+    fn default() -> Self {
+        Direction::LeftToRight
+    }
+}
+
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Expression<'ast> {
     This(&'ast Keyword),
@@ -22,7 +36,9 @@ pub enum Expression<'ast> {
     // NOTE: 特殊表达式，`Spread` 和 `Super` 无法独立成为一个表达式，必须要依附于其它表达式类型。
     Spread(&'ast SpreadExpression<'ast>),
     Super(&'ast Keyword),
-
+    // BindingElement(&'ast BindingElement<'ast>),
+    // BindingProperty(&'ast BindingProperty<'ast>),
+    
     Identifier(&'ast Identifier<'ast>),
     Null(&'ast LiteralNull),
     Boolean(&'ast LiteralBoolean),

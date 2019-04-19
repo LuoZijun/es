@@ -10,7 +10,7 @@ use lexer::keyword::KeywordKind;
 use lexer::LexerErrorKind;
 
 use parser::parser::Parser;
-use parser::parser::ParserErrorKind;
+use parser::parser::ParserErrorKind::{ self, * };
 
 use ast::numberic::{ Numberic, Float, };
 use ast::statement::{ 
@@ -21,15 +21,12 @@ use ast::expression::{
     Expression, LiteralTemplateExpression,
 };
 
-use self::ParserErrorKind::*;
-
-
 // 运算符优先级
 // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
 
 
 impl<'ast> Parser<'ast> {
-    pub fn parse_expression(&mut self, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
+    pub fn parse_expression(&mut self, token: Token<'ast>, precedence: u8) -> Result<Expression<'ast>, Error> {
         let left_expr = match token {
             Token::TemplateOpenning => {
                 let item = self.parse_literal_template()?;
@@ -114,7 +111,7 @@ impl<'ast> Parser<'ast> {
 
             // Read bound
             let next_token = self.token2()?;
-            let expr = self.parse_expression(next_token)?;
+            let expr = self.parse_expression(next_token, 0)?;
 
             let last_offset = self.lexer.offset();
             let last_line_offset = self.lexer.line_offset;
