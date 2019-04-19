@@ -142,7 +142,7 @@ impl<'ast> Expression<'ast> {
             Expression::Numeric(inner) => inner.span,
             Expression::RegularExpression(inner) => inner.span,
             Expression::Template(inner) => inner.span,
-            
+
             // ArrayLiteral(inner) => inner.span,
             // ObjectLiteral(inner) => inner.span,
 
@@ -173,7 +173,45 @@ impl<'ast> Expression<'ast> {
     }
 
     pub fn is_numeric_literal(&self) -> bool {
-        unimplemented!()
+        match *self {
+            Expression::Numeric(_) => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_identifier(&self) -> bool {
+        match *self {
+            Expression::Identifier(_) => true,
+            _ => false,
+        }
+    }
+    
+    pub fn is_prefix_increment(&self) -> bool {
+        match *self {
+            Expression::Prefix(inner) => inner.operator == PrefixOperator::Increment,
+            _ => false,
+        }
+    }
+
+    pub fn is_prefix_decrement(&self) -> bool {
+        match *self {
+            Expression::Prefix(inner) => inner.operator == PrefixOperator::Decrement,
+            _ => false,
+        }
+    }
+
+    pub fn is_postfix_increment(&self) -> bool {
+        match *self {
+            Expression::Postfix(inner) => inner.operator == PostfixOperator::Increment,
+            _ => false,
+        }
+    }
+
+    pub fn is_postfix_decrement(&self) -> bool {
+        match *self {
+            Expression::Postfix(inner) => inner.operator == PostfixOperator::Decrement,
+            _ => false,
+        }
     }
 
     pub fn is_primary_expression(&self) -> bool {

@@ -56,7 +56,7 @@ impl<'ast> Statement<'ast> {
             Statement::Variable(inner) => inner.loc,
             // Function(FunctionDeclaration),
             // Class(ClassDeclaration),
-            
+
             Statement::Block(inner) => inner.loc,
             Statement::If(inner) => inner.loc,
 
@@ -235,7 +235,7 @@ impl<'ast> VariableStatement<'ast> {
 pub struct BlockStatement<'ast> {
     pub loc: Loc,
     pub span: Span,
-    pub body: &'ast [Statement<'ast>],
+    pub body: &'ast [ Statement<'ast> ],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -345,7 +345,7 @@ pub struct SwitchStatement<'ast> {
     pub loc: Loc,
     pub span: Span,
     pub value: Expression<'ast>,
-    pub clauses: &'ast [SwitchStatementCaseClause<'ast>],
+    pub clauses: &'ast [ SwitchStatementCaseClause<'ast> ],
     pub default_clause: SwitchStatementCaseClause<'ast>,
 }
 

@@ -12,99 +12,99 @@ use ecmascript::lexer::escape::{ unescape_string, };
 use ecmascript::lexer::numberic::{ parse_numberic, };
 
 
-#[bench]
-fn bench_tokenization_v0(b: &mut test::Bencher) {
-    use ecmascript::lexer0::Lexer;
-    use ecmascript::lexer0::token::TokenKind;
+// #[bench]
+// fn bench_tokenization_v0(b: &mut test::Bencher) {
+//     use ecmascript::lexer0::Lexer;
+//     use ecmascript::lexer0::token::TokenKind;
     
-    let source = include_str!("../data/react-16.8.3.development.js");
-    let mut code = source.chars().collect::<Vec<char>>();
-    code.push('\0'); // EOF
+//     let source = include_str!("../data/react-16.8.3.development.js");
+//     let mut code = source.chars().collect::<Vec<char>>();
+//     code.push('\0'); // EOF
 
-    b.bytes = source.len() as _;
+//     b.bytes = source.len() as _;
 
-    b.iter(|| {
-        let mut lexer = Lexer::new(&code);
-        loop {
-            let token = lexer.consume();
-            let kind = token.item;
+//     b.iter(|| {
+//         let mut lexer = Lexer::new(&code);
+//         loop {
+//             let token = lexer.consume();
+//             let kind = token.item;
 
-            if kind == TokenKind::UnexpectedToken {
-                break;
-            }
-            if kind == TokenKind::UnexpectedEof {
-                break;
-            }
-            if kind == TokenKind::EndOfProgram {
-                break;
-            }
-        }
-    })
-}
+//             if kind == TokenKind::UnexpectedToken {
+//                 break;
+//             }
+//             if kind == TokenKind::UnexpectedEof {
+//                 break;
+//             }
+//             if kind == TokenKind::EndOfProgram {
+//                 break;
+//             }
+//         }
+//     })
+// }
 
-#[bench]
-fn bench_tokenization_v1(b: &mut test::Bencher) {
-    use ecmascript::lexer1::Lexer;
-    use ecmascript::lexer1::LexError;
+// #[bench]
+// fn bench_tokenization_v1(b: &mut test::Bencher) {
+//     use ecmascript::lexer1::Lexer;
+//     use ecmascript::lexer1::LexError;
 
-    let source = include_str!("../data/react-16.8.3.development.js");
-    // let mut code = source.chars().collect::<Vec<char>>();
-    // code.push('\0'); // EOF
+//     let source = include_str!("../data/react-16.8.3.development.js");
+//     // let mut code = source.chars().collect::<Vec<char>>();
+//     // code.push('\0'); // EOF
     
-    b.bytes = source.len() as _;
+//     b.bytes = source.len() as _;
 
-    b.iter(|| {
-        let mut lexer = Lexer::new(&source);
+//     b.iter(|| {
+//         let mut lexer = Lexer::new(&source);
 
-        loop {
-            match lexer.consume() {
-                Ok(_token) => {
-                    // println!("{:?}", token);
-                },
-                Err(e) => {
-                    if e != LexError::EndOfProgram {
-                        panic!("{:?}", e);
-                    }
-                    break;
-                }
-            }
-        }
-    })
-}
+//         loop {
+//             match lexer.consume() {
+//                 Ok(_token) => {
+//                     // println!("{:?}", token);
+//                 },
+//                 Err(e) => {
+//                     if e != LexError::EndOfProgram {
+//                         panic!("{:?}", e);
+//                     }
+//                     break;
+//                 }
+//             }
+//         }
+//     })
+// }
 
-#[bench]
-fn bench_tokenization_v2(b: &mut test::Bencher) {
-    use ecmascript::lexer2::Lexer;
-    use ecmascript::lexer2::Token;
+// #[bench]
+// fn bench_tokenization_v2(b: &mut test::Bencher) {
+//     use ecmascript::lexer2::Lexer;
+//     use ecmascript::lexer2::Token;
     
-    let source = include_str!("../data/react-16.8.3.development.js");
-    // let source = include_str!("../data/colors.js");
-    let mut code = source.chars().collect::<Vec<char>>();
-    code.push('\0'); // EOF
+//     let source = include_str!("../data/react-16.8.3.development.js");
+//     // let source = include_str!("../data/colors.js");
+//     let mut code = source.chars().collect::<Vec<char>>();
+//     code.push('\0'); // EOF
 
-    b.bytes = source.len() as _;
+//     b.bytes = source.len() as _;
 
-    b.iter(|| {
-        let mut lexer = Lexer::new(&code);
+//     b.iter(|| {
+//         let mut lexer = Lexer::new(&code);
 
-        loop {
-            lexer.consume();
-            let token = &lexer.token;
+//         loop {
+//             lexer.consume();
+//             let token = &lexer.token;
 
-            match token {
-                Token::UnexpectedEof | Token::UnexpectedToken => {
-                    panic!("{:?}", token);
-                },
-                Token::EndOfProgram => {
-                    break;
-                },
-                _ => {
+//             match token {
+//                 Token::UnexpectedEof | Token::UnexpectedToken => {
+//                     panic!("{:?}", token);
+//                 },
+//                 Token::EndOfProgram => {
+//                     break;
+//                 },
+//                 _ => {
 
-                }
-            }
-        }
-    })
-}
+//                 }
+//             }
+//         }
+//     })
+// }
 
 #[bench]
 fn bench_tokenization(b: &mut test::Bencher) {

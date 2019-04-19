@@ -1,6 +1,9 @@
 
-use std::io::{ self, Read, Write, };
+use std::io::{ self, Write, };
 use std::path::{ Path, PathBuf, };
+
+pub const OK: &str = "\x1b[32mok\x1b[0m";
+pub const FAILED: &str = "\x1b[32mfailed\x1b[0m";
 
 
 fn read_dir<P: AsRef<Path>>(path: P, files: &mut Vec<PathBuf>) -> Result<(), io::Error> {
@@ -38,7 +41,7 @@ fn dir_files<P: AsRef<Path>>(path: P) -> Vec<PathBuf> {
 }
 
 fn run<P: AsRef<Path>>(filepath: P) -> Result<(), ()> {
-    let content = match fs::read_to_string(filepath) {
+    let _content = match std::fs::read_to_string(filepath) {
         Ok(content) => content,
         Err(e) => panic!("{:?}", e),
     };
@@ -49,22 +52,22 @@ fn run<P: AsRef<Path>>(filepath: P) -> Result<(), ()> {
     Ok(())
 }
 
-fn test_subject(name: &str, files: &[PathBuf], ret: &mut bool) {
+fn test_subject(name: &str, files: Vec<PathBuf>, ret: &mut bool) {
     // Red: \x1b[31mok\x1b[0m
     // Green: \x1b[32mok\x1b[0m
-    println!("Subject: {}", name);
-
-    const OK: &str = "\x1b[32mok\x1b[0m";
-    const FAILED: &str = "\x1b[32mfailed\x1b[0m";
-
+    let _ = io::stdout().write(format!("Subject: {}\n", name).as_bytes());
+    
     for filepath in files {
-        match run(filepath) {
-            Ok(_) => println!("\t{} ... {}", filepath, OK),
+        match run(filepath.clone()) {
+            Ok(_) => {
+                // let _ = io::stdout().write(format!("\t{} ... {}\n", filepath.display(), OK).as_bytes());
+            },
             Err(e) => {
-                println!("\t{} ... {}", filepath, FAILED);
-                println!("{:?}", e);
-                if ret {
-                    ret = false;
+                let _ = io::stdout().write(format!("\t{} ... {}\n", filepath.display(), FAILED).as_bytes());
+                let _ = io::stderr().write(format!("{:?}\n", e).as_bytes());
+
+                if *ret {
+                    *ret = false;
                 }
             }
         }
@@ -82,6 +85,3 @@ fn test262() {
 
     assert_eq!(ok, true);
 }
-
-
-
