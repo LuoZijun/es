@@ -413,6 +413,44 @@
 <span id="413">413</span>
 <span id="414">414</span>
 <span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">span</span>::{ <span class="ident">Loc</span>, <span class="ident">Span</span>, <span class="ident">LineColumn</span>, };
 <span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">token</span>::{
@@ -558,7 +596,7 @@
             <span class="ident">Expression</span>::<span class="ident">Numeric</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
             <span class="ident">Expression</span>::<span class="ident">RegularExpression</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
             <span class="ident">Expression</span>::<span class="ident">Template</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
-            
+
             <span class="comment">// ArrayLiteral(inner) =&gt; inner.span,</span>
             <span class="comment">// ObjectLiteral(inner) =&gt; inner.span,</span>
 
@@ -589,7 +627,45 @@
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_numeric_literal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="macro">unimplemented</span><span class="macro">!</span>()
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">Expression</span>::<span class="ident">Numeric</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_identifier</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+    
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_prefix_increment</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">Expression</span>::<span class="ident">Prefix</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">operator</span> <span class="op">==</span> <span class="ident">PrefixOperator</span>::<span class="ident">Increment</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_prefix_decrement</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">Expression</span>::<span class="ident">Prefix</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">operator</span> <span class="op">==</span> <span class="ident">PrefixOperator</span>::<span class="ident">Decrement</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_postfix_increment</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">Expression</span>::<span class="ident">Postfix</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">operator</span> <span class="op">==</span> <span class="ident">PostfixOperator</span>::<span class="ident">Increment</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_postfix_decrement</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">Expression</span>::<span class="ident">Postfix</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">operator</span> <span class="op">==</span> <span class="ident">PostfixOperator</span>::<span class="ident">Decrement</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_primary_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
