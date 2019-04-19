@@ -111,11 +111,6 @@ impl<'ast> Parser<'ast> {
                 Ok(Statement::Expression(self.alloc(expr)))
             },
             Token::Keyword(kw) => {
-                if kw.kind.is_future_reserved() {
-                    // NOTE: 该关键字还未赋予清晰的语义。
-                    return Err(self.unexpected_token(token));
-                }
-
                 match kw.kind {
                     KeywordKind::Async => {
                         // NOTE: 由于该关键字有歧义，需要单独处理
@@ -157,6 +152,11 @@ impl<'ast> Parser<'ast> {
                         Ok(Statement::Expression(self.alloc(expr)))
                     },
                     _ => {
+                        if kw.kind.is_future_reserved() {
+                            // NOTE: 该关键字还未赋予清晰的语义。
+                            return Err(self.unexpected_token(token));
+                        }
+
                         return Err(self.unexpected_token(token));
                     }
                 }
@@ -175,6 +175,7 @@ impl<'ast> Parser<'ast> {
                     | PunctuatorKind::Decrement
                     | PunctuatorKind::Not
                     | PunctuatorKind::BitNot => {
+                        // literal regular expression
                         // unary operator
                         let expr = self.parse_expression(token, expr_precedence)?;
                         Ok(Statement::Expression(self.alloc(expr)))

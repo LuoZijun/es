@@ -46,6 +46,70 @@ pub enum Statement<'ast> {
 }
 
 impl<'ast> Statement<'ast> {
+    pub fn loc(&self) -> Loc {
+        match *self {
+            Statement::Empty(inner) => inner.loc,
+            Statement::Debugger(inner) => inner.loc,
+            
+            Statement::Expression(inner) => inner.loc(),
+
+            Statement::Variable(inner) => inner.loc,
+            // Function(FunctionDeclaration),
+            // Class(ClassDeclaration),
+            
+            Statement::Block(inner) => inner.loc,
+            Statement::If(inner) => inner.loc,
+
+            Statement::DoWhile(inner) => inner.loc,
+            Statement::While(inner) => inner.loc,
+            Statement::For(inner) => inner.loc,
+            Statement::ForIn(inner) => inner.loc,
+            Statement::ForOf(inner) => inner.loc,
+            Statement::ForAwaitOf(inner) => inner.loc,
+
+            Statement::Continue(inner) => inner.loc,
+            Statement::Break(inner) => inner.loc,
+            Statement::Return(inner) => inner.loc,
+            Statement::With(inner) => inner.loc,
+            Statement::Switch(inner) => inner.loc,
+            Statement::Labelled(inner) => inner.loc,
+            Statement::Throw(inner) => inner.loc,
+            Statement::Try(inner) => inner.loc,
+        }
+    }
+
+    pub fn span(&self) -> Span {
+        match *self {
+            Statement::Empty(inner) => inner.span,
+            Statement::Debugger(inner) => inner.span,
+            
+            Statement::Expression(inner) => inner.span(),
+
+            Statement::Variable(inner) => inner.span,
+            // Function(FunctionDeclaration),
+            // Class(ClassDeclaration),
+
+            Statement::Block(inner) => inner.span,
+            Statement::If(inner) => inner.span,
+
+            Statement::DoWhile(inner) => inner.span,
+            Statement::While(inner) => inner.span,
+            Statement::For(inner) => inner.span,
+            Statement::ForIn(inner) => inner.span,
+            Statement::ForOf(inner) => inner.span,
+            Statement::ForAwaitOf(inner) => inner.span,
+
+            Statement::Continue(inner) => inner.span,
+            Statement::Break(inner) => inner.span,
+            Statement::Return(inner) => inner.span,
+            Statement::With(inner) => inner.span,
+            Statement::Switch(inner) => inner.span,
+            Statement::Labelled(inner) => inner.span,
+            Statement::Throw(inner) => inner.span,
+            Statement::Try(inner) => inner.span,
+        }
+    }
+
     pub fn is_declaration(&self) -> bool {
         match *self {
             Statement::Variable(_)

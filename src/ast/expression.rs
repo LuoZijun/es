@@ -2,7 +2,7 @@ use lexer::span::{ Loc, Span, LineColumn, };
 use lexer::token::{
     Identifier, LiteralNull, LiteralBoolean, LiteralString, LiteralNumeric,
     LiteralRegularExpression, 
-    Punctuator, Keyword,
+    Punctuator, Keyword, Comment,
 };
 use lexer::operator::{ PrefixOperator, InfixOperator, PostfixOperator, AssignmentOperator, };
 
@@ -31,6 +31,8 @@ impl Default for Direction {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Expression<'ast> {
+    // Comment(&'ast Comment<'ast>),
+
     This(&'ast Keyword),
 
     // NOTE: 特殊表达式，`Spread` 和 `Super` 无法独立成为一个表达式，必须要依附于其它表达式类型。
@@ -82,6 +84,90 @@ pub enum Expression<'ast> {
 }
 
 impl<'ast> Expression<'ast> {
+    pub fn loc(&self) -> Loc {
+        match *self {
+            Expression::This(inner) => inner.loc,
+            Expression::Spread(inner) => inner.loc,
+            Expression::Super(inner) => inner.loc,
+
+            // BindingElement(inner) => inner.loc,
+            // BindingProperty(inner) => inner.loc,
+            
+            Expression::Identifier(inner) => inner.loc,
+            Expression::Null(inner) => inner.loc,
+            Expression::Boolean(inner) => inner.loc,
+            Expression::String(inner) => inner.loc,
+            Expression::Numeric(inner) => inner.loc,
+            Expression::RegularExpression(inner) => inner.loc,
+            Expression::Template(inner) => inner.loc,
+            
+            // ArrayLiteral(inner) => inner.loc,
+            // ObjectLiteral(inner) => inner.loc,
+
+            Expression::Parenthesized(inner) => inner.loc,
+
+            Expression::Member(inner) => inner.loc,
+
+            Expression::TaggedTemplate(inner) => inner.loc,
+
+            Expression::NewTarget(inner) => inner.loc,
+            Expression::Call(inner) => inner.loc,
+            Expression::New(inner) => inner.loc,
+
+            Expression::Prefix(inner) => inner.loc,
+            Expression::Infix(inner) => inner.loc,
+            Expression::Postfix(inner) => inner.loc,
+            Expression::Assignment(inner) => inner.loc,
+
+            Expression::Conditional(inner) => inner.loc,
+            Expression::Yield(inner) => inner.loc,
+            
+            Expression::Comma(inner) => inner.loc,
+        }
+    }
+
+    pub fn span(&self) -> Span {
+        match *self {
+            Expression::This(inner) => inner.span,
+            Expression::Spread(inner) => inner.span,
+            Expression::Super(inner) => inner.span,
+
+            // BindingElement(inner) => inner.span,
+            // BindingProperty(inner) => inner.span,
+            
+            Expression::Identifier(inner) => inner.span,
+            Expression::Null(inner) => inner.span,
+            Expression::Boolean(inner) => inner.span,
+            Expression::String(inner) => inner.span,
+            Expression::Numeric(inner) => inner.span,
+            Expression::RegularExpression(inner) => inner.span,
+            Expression::Template(inner) => inner.span,
+            
+            // ArrayLiteral(inner) => inner.span,
+            // ObjectLiteral(inner) => inner.span,
+
+            Expression::Parenthesized(inner) => inner.span,
+
+            Expression::Member(inner) => inner.span,
+
+            Expression::TaggedTemplate(inner) => inner.span,
+            
+            Expression::NewTarget(inner) => inner.span,
+            Expression::Call(inner) => inner.span,
+            Expression::New(inner) => inner.span,
+
+            Expression::Prefix(inner) => inner.span,
+            Expression::Infix(inner) => inner.span,
+            Expression::Postfix(inner) => inner.span,
+            Expression::Assignment(inner) => inner.span,
+
+            Expression::Conditional(inner) => inner.span,
+            Expression::Yield(inner) => inner.span,
+            
+            Expression::Comma(inner) => inner.span,
+        }
+    }
+
     pub fn is_primitive_literal(&self) -> bool {
         unimplemented!()
     }

@@ -5,6 +5,7 @@ use error::{ ErrorKind, Error, };
 
 use lexer::Lexer;
 use lexer::token::{ Token, LiteralString, LiteralRegularExpression, LiteralTemplate, };
+use lexer::operator::{ PrefixOperator, InfixOperator, PostfixOperator, AssignmentOperator, };
 use lexer::punctuator::PunctuatorKind;
 use lexer::keyword::KeywordKind;
 use lexer::LexerErrorKind;
@@ -19,6 +20,7 @@ use ast::statement::{
 };
 use ast::expression::{
     Expression, LiteralTemplateExpression,
+    PrefixExpression, InfixExpression, PostfixExpression, AssignmentExpression,
 };
 
 // 运算符优先级
@@ -28,7 +30,19 @@ use ast::expression::{
 impl<'ast> Parser<'ast> {
     pub fn parse_expression(&mut self, token: Token<'ast>, precedence: u8) -> Result<Expression<'ast>, Error> {
         let left_expr = match token {
-            Token::TemplateOpenning => {
+            Token::LiteralTemplate(_) => unreachable!(),
+            Token::LiteralRegularExpression(_) => unreachable!(),
+
+            Token::LineTerminator => {
+                let token2 = self.token2()?;
+                self.parse_expression(token2, precedence)?
+            },
+            Token::LiteralString(lit)  => Expression::String(self.arena.alloc(lit)),
+            Token::LiteralNumeric(lit) => Expression::Numeric(self.arena.alloc(lit)),
+            Token::LiteralNull(lit)    => Expression::Null(self.arena.alloc(lit)),
+            Token::LiteralBoolean(lit) => Expression::Boolean(self.arena.alloc(lit)),
+            Token::Identifier(ident)   => Expression::Identifier(self.arena.alloc(ident)),
+            Token::TemplateOpenning    => {
                 let item = self.parse_literal_template()?;
                 Expression::Template(self.arena.alloc(item))
             },
@@ -39,35 +53,273 @@ impl<'ast> Parser<'ast> {
                         Expression::RegularExpression(self.arena.alloc(item))
                     },
                     PunctuatorKind::Add => {
-                        unimplemented!()
+                        // unary operator
+                        // +
+                        let mut loc = punct.loc;
+                        let mut span = punct.span;
+
+                        let precedence = 16u8;
+                        let operator = PrefixOperator::Positive;
+                        let token2 = self.token2()?;
+                        let operand = self.parse_expression(token2, precedence)?;
+                        
+                        loc.end = operand.loc().end;
+                        span.end = operand.span().end;
+
+                        let item = PrefixExpression { loc, span, operator, operand, };
+                        Expression::Prefix(self.arena.alloc(item))
                     },
                     PunctuatorKind::Sub => {
+                        // unary operator
                         // -
-                        unimplemented!()
+                        let mut loc = punct.loc;
+                        let mut span = punct.span;
+
+                        let precedence = 16u8;
+                        let operator = PrefixOperator::Negative;
+                        let token2 = self.token2()?;
+                        let operand = self.parse_expression(token2, precedence)?;
+                        
+                        loc.end = operand.loc().end;
+                        span.end = operand.span().end;
+
+                        let item = PrefixExpression { loc, span, operator, operand, };
+                        Expression::Prefix(self.arena.alloc(item))
                     },
                     PunctuatorKind::Increment => {
-                        unimplemented!()
+                        // unary operator
+                        // ++
+                        let mut loc = punct.loc;
+                        let mut span = punct.span;
+
+                        let precedence = 16u8;
+                        let operator = PrefixOperator::Increment;
+                        let token2 = self.token2()?;
+                        let operand = self.parse_expression(token2, precedence)?;
+
+                        loc.end = operand.loc().end;
+                        span.end = operand.span().end;
+
+                        let item = PrefixExpression { loc, span, operator, operand, };
+                        Expression::Prefix(self.arena.alloc(item))
                     },
                     PunctuatorKind::Decrement => {
-                        unimplemented!()
+                        // unary operator
+                        // --
+                        let mut loc = punct.loc;
+                        let mut span = punct.span;
+
+                        let precedence = 16u8;
+                        let operator = PrefixOperator::Decrement;
+                        let token2 = self.token2()?;
+                        let operand = self.parse_expression(token2, precedence)?;
+                        
+                        loc.end = operand.loc().end;
+                        span.end = operand.span().end;
+
+                        let item = PrefixExpression { loc, span, operator, operand, };
+                        Expression::Prefix(self.arena.alloc(item))
                     },
                     PunctuatorKind::Not => {
-                        unimplemented!()
+                        // unary operator
+                        // !
+                        let mut loc = punct.loc;
+                        let mut span = punct.span;
+
+                        let precedence = 16u8;
+                        let operator = PrefixOperator::Not;
+                        let token2 = self.token2()?;
+                        let operand = self.parse_expression(token2, precedence)?;
+                        
+                        loc.end = operand.loc().end;
+                        span.end = operand.span().end;
+
+                        let item = PrefixExpression { loc, span, operator, operand, };
+                        Expression::Prefix(self.arena.alloc(item))
                     },
                     PunctuatorKind::BitNot => {
+                        // unary operator
+                        // ~
+                        let mut loc = punct.loc;
+                        let mut span = punct.span;
+
+                        let precedence = 16u8;
+                        let operator = PrefixOperator::BitNot;
+                        let token2 = self.token2()?;
+                        let operand = self.parse_expression(token2, precedence)?;
+                        
+                        loc.end = operand.loc().end;
+                        span.end = operand.span().end;
+
+                        let item = PrefixExpression { loc, span, operator, operand, };
+                        Expression::Prefix(self.arena.alloc(item))
+                    },
+                    PunctuatorKind::Dot => {
+                        // MemberAccessor
+                        // .
+                        unimplemented!()
+                    },
+                    PunctuatorKind::LBracket => {
+                        // MemberAccessor
+                        // [
+                        unimplemented!()
+                    },
+                    PunctuatorKind::DotDotDot => {
+                        // spread
+                        // ...
                         unimplemented!()
                     },
                     _ => {
-                        unreachable!()
+                        return Err(self.unexpected_token(token));
                     }
                 }
             },
-            _ => {
-                unimplemented!()
-            }
+            Token::Keyword(kw) => {
+                match kw.kind {
+                    KeywordKind::Await => {
+                        // unary operator
+                        // NOTE: 只在 AsyncFunction 内部才有效
+                        let mut loc = kw.loc;
+                        let mut span = kw.span;
+
+                        let precedence = 16u8;
+                        let operator = PrefixOperator::Await;
+                        let token2 = self.token2()?;
+                        let operand = self.parse_expression(token2, precedence)?;
+                        
+                        loc.end = operand.loc().end;
+                        span.end = operand.span().end;
+
+                        let item = PrefixExpression { loc, span, operator, operand, };
+                        Expression::Prefix(self.arena.alloc(item))
+                    },
+                    KeywordKind::TypeOf => {
+                        // unary operator
+                        let mut loc = kw.loc;
+                        let mut span = kw.span;
+
+                        let precedence = 16u8;
+                        let operator = PrefixOperator::TypeOf;
+                        let token2 = self.token2()?;
+                        let operand = self.parse_expression(token2, precedence)?;
+                        
+                        loc.end = operand.loc().end;
+                        span.end = operand.span().end;
+
+                        let item = PrefixExpression { loc, span, operator, operand, };
+                        Expression::Prefix(self.arena.alloc(item))
+                    },
+                    KeywordKind::Void => {
+                        // unary operator
+                        let mut loc = kw.loc;
+                        let mut span = kw.span;
+
+                        let precedence = 16u8;
+                        let operator = PrefixOperator::Void;
+                        let token2 = self.token2()?;
+                        let operand = self.parse_expression(token2, precedence)?;
+                        
+                        loc.end = operand.loc().end;
+                        span.end = operand.span().end;
+
+                        let item = PrefixExpression { loc, span, operator, operand, };
+                        Expression::Prefix(self.arena.alloc(item))
+                    },
+                    KeywordKind::Delete => {
+                        // unary operator
+                        let mut loc = kw.loc;
+                        let mut span = kw.span;
+
+                        let precedence = 16u8;
+                        let operator = PrefixOperator::Delete;
+                        let token2 = self.token2()?;
+                        let operand = self.parse_expression(token2, precedence)?;
+                        
+                        loc.end = operand.loc().end;
+                        span.end = operand.span().end;
+
+                        let item = PrefixExpression { loc, span, operator, operand, };
+                        Expression::Prefix(self.arena.alloc(item))
+                    },
+                    
+                    KeywordKind::Async => {
+                        // AsyncFunctionDeclaration       EXPR
+                        // AsyncGeneratorDeclaration      EXPR
+                        // AsyncArrowFunctionExpression   EXPR
+                        // AsyncArrowGeneratorExpression  EXPR
+                        unimplemented!()
+                    },
+                    KeywordKind::This => Expression::This(self.arena.alloc(kw)),
+                    KeywordKind::Super => Expression::Super(self.arena.alloc(kw)),
+                    KeywordKind::New => {
+                        unimplemented!()
+                    },
+                    KeywordKind::Yield => {
+                        // let expr = self.parse_expression(token, expr_precedence)?;
+                        // Ok(Statement::Expression(self.alloc(expr)))
+                        unimplemented!()
+                    },
+                    _ => {
+                        if kw.kind.is_future_reserved() {
+                            // NOTE: 该关键字还未赋予清晰的语义。
+                            return Err(self.unexpected_token(token));
+                        }
+
+                        return Err(self.unexpected_token(token));
+                    }
+                }
+            },
         };
 
-        Ok(left_expr)
+        return Ok(left_expr);
+
+        let token2 = match self.token2() {
+            Ok(token2) => token2,
+            Err(_) => return Ok(left_expr),
+        };
+        
+        match token2 {
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::Increment => {
+                        // 后置 递增
+
+                    },
+                    PunctuatorKind::Decrement => {
+                        // 后置 递减
+
+                    },
+
+                    PunctuatorKind::Add => {
+
+                    },
+                    PunctuatorKind::Sub => {
+
+                    },
+                    _ => {
+
+                    },
+                }
+            },
+            Token::Keyword(kw) => {
+                match kw.kind {
+                    KeywordKind::In => {
+
+                    },
+                    KeywordKind::InstanceOf => {
+
+                    },
+                    _ => {
+
+                    },
+                }
+            },
+            _ => {
+
+            }
+        }
+
+        unimplemented!()
     }
 
     pub(super) fn parse_literal_regular_expression(&mut self) -> Result<LiteralRegularExpression<'ast>, Error> {
