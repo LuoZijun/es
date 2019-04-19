@@ -75,12 +75,12 @@
 <span class="comment">// pub mod class;</span>
 
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Module</span> {
-    <span class="kw">pub</span> <span class="ident">imports</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">exports</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="comment">// pub body: Vec&lt;statement::Statement&gt;,</span>
-}
+<span class="comment">// #[derive(Debug, PartialEq, Clone)]</span>
+<span class="comment">// pub struct Module {</span>
+<span class="comment">//     pub imports: HashMap&lt;String, String&gt;,</span>
+<span class="comment">//     pub exports: HashMap&lt;String, String&gt;,</span>
+<span class="comment">//     // pub body: Vec&lt;statement::Statement&gt;,</span>
+<span class="comment">// }</span>
 
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>

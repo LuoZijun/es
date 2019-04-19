@@ -433,9 +433,6 @@
 <span id="433">433</span>
 <span id="434">434</span>
 <span id="435">435</span>
-<span id="436">436</span>
-<span id="437">437</span>
-<span id="438">438</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -449,7 +446,7 @@
 <span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">LexerErrorKind</span>;
 
 <span class="kw">use</span> <span class="ident">parser</span>::<span class="ident">parser</span>::<span class="ident">Parser</span>;
-<span class="kw">use</span> <span class="ident">parser</span>::<span class="ident">parser</span>::<span class="ident">ParserErrorKind</span>;
+<span class="kw">use</span> <span class="ident">parser</span>::<span class="ident">parser</span>::<span class="ident">ParserErrorKind</span>::{ <span class="self">self</span>, <span class="op">*</span> };
 
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Numberic</span>, <span class="ident">Float</span>, };
 <span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">statement</span>::{ 
@@ -460,15 +457,12 @@
     <span class="ident">Expression</span>, <span class="ident">LiteralTemplateExpression</span>,
 };
 
-<span class="kw">use</span> <span class="self">self</span>::<span class="ident">ParserErrorKind</span>::<span class="kw-2">*</span>;
-
-
 <span class="comment">// 运算符优先级</span>
 <span class="comment">// https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table</span>
 
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">precedence</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">left_expr</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">token</span> {
             <span class="ident">Token</span>::<span class="ident">TemplateOpenning</span> <span class="op">=&gt;</span> {
                 <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_literal_template</span>()<span class="question-mark">?</span>;
@@ -553,7 +547,7 @@
 
             <span class="comment">// Read bound</span>
             <span class="kw">let</span> <span class="ident">next_token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
-            <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">next_token</span>)<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">next_token</span>, <span class="number">0</span>)<span class="question-mark">?</span>;
 
             <span class="kw">let</span> <span class="ident">last_offset</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">offset</span>();
             <span class="kw">let</span> <span class="ident">last_line_offset</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">line_offset</span>;

@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Either",""]],"mod":[["expression",""],["numberic",""],["statement",""],["ustring",""]],"struct":[["Module",""]]});
+initSidebarItems({"enum":[["Either",""]],"mod":[["expression",""],["numberic",""],["statement",""],["ustring",""]]});
