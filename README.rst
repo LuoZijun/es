@@ -37,12 +37,12 @@ Work in progress (WIP).
 
 .. code::
 
-    ~/P/es> cargo run --bin esc -- < in.js
+    ~/P/es> cargo run --example esc -- < in.js
 
-    SyntaxError: Unexpected Token: `a`
-     --> src/main.js:0:1
+    SyntaxError: Unexpected Character `/`
+     --> src/main.js:1:1
       |
-    0 | #asd
+    1 | #/usr/bin/env python3
       |  ^
 
 
@@ -76,3 +76,9 @@ FAQ
   一些在现有生态代码里面非常常见的写法（如 Babel 支持它），但它不是 ECMAScript 规范的一部分，这样的语法特性会考虑兼容吗？
 
 不会。
+
+
+License
+---------
+
+MIT license (LICENSE or http://opensource.org/licenses/MIT)

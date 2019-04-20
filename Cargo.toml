@@ -11,8 +11,9 @@ repository    = "https://github.com/LuoZijun/es"
 description   = "A ECMAScript Parser and Interpreter written in Rust"
 documentation = "https://luozijun.github.io/es/ecmascript/"
 keywords = [ 
-    "Language", "ECMAScript", "Parser", "Lexer", 
-    "Parser", "Compiler", "Interpreter",
+    "language", "ecmascript", "javascript", "parser", "lexer", 
+    "compiler", "interpreter",
+    "es", "js", "ast",
 ]
 categories = [
     "Interpreter", "Lexer", "Parser", "Compiler", 
