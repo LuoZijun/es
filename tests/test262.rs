@@ -1,9 +1,12 @@
-
 use std::io::{ self, Write, };
 use std::path::{ Path, PathBuf, };
 
 pub const OK: &str = "\x1b[32mok\x1b[0m";
 pub const FAILED: &str = "\x1b[32mfailed\x1b[0m";
+
+
+// Interpreting Test262 Tests
+// https://github.com/tc39/test262/blob/master/INTERPRETING.md
 
 
 fn read_dir<P: AsRef<Path>>(path: P, files: &mut Vec<PathBuf>) -> Result<(), io::Error> {
