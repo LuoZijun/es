@@ -72,6 +72,11 @@ impl<'ast> Parser<'ast> {
     }
     
     #[inline]
+    pub fn unexpected_eof(&mut self) -> Error {
+        self.lexer.error(LexerErrorKind::UnexpectedEOF)
+    }
+
+    #[inline]
     pub fn token(&mut self) -> Result<Option<Token<'ast>>, Error> {
         if self.token.len() > 0 {
             Ok(self.token.pop())
@@ -85,7 +90,7 @@ impl<'ast> Parser<'ast> {
         // NOTE: 不允许 EOF 的出现
         match self.token() {
             Ok(Some(token)) => Ok(token),
-            Ok(None) => Err(self.lexer.error(LexerErrorKind::UnexpectedEOF)),
+            Ok(None) => Err(self.unexpected_eof()),
             Err(e) => Err(e),
         }
     }

@@ -275,12 +275,14 @@ impl<'ast> Parser<'ast> {
             return Ok(left_expr);
         }
         
-        let token2 = match self.token2() {
-            Ok(token2) => token2,
-            Err(_) => return Ok(left_expr),
-        };
-        
         loop {
+            let precedence = left_expr.precedence();
+
+            let token2 = match self.token2() {
+                Ok(token2) => token2,
+                Err(_) => return Ok(left_expr),
+            };
+
             match token2 {
                 Token::Punctuator(punct) => {
                     match punct.kind {
@@ -288,12 +290,30 @@ impl<'ast> Parser<'ast> {
                             // END.
                             break;
                         },
+                        PunctuatorKind::RParen => {
+                            // )
+                            self.token.push(token2);
+                            break;
+                        },
+                        PunctuatorKind::RBracket => {
+                            // ]
+                            self.token.push(token2);
+                            break;
+                        },
+                        PunctuatorKind::RBrace => {
+                            // }
+                            self.token.push(token2);
+                            break;
+                        },
+
                         PunctuatorKind::Comma => {
                             // ,
                             unimplemented!()
                         },
                         PunctuatorKind::Question => {
                             // ?
+                            let op_precedence = 4;
+
                             unimplemented!()
                         },
                         PunctuatorKind::Increment => {
@@ -312,16 +332,15 @@ impl<'ast> Parser<'ast> {
 
                             unimplemented!()
                         },
-
                         PunctuatorKind::Dot => {
                             // MemberAccessor
                             // .
-                            return self.parse_member_expression(left_expr, token2);
+                            left_expr = self.parse_member_expression(left_expr, token2)?;
                         },
                         PunctuatorKind::LBracket => {
                             // MemberAccessor
                             // [
-                            unimplemented!()
+                            left_expr = self.parse_member_expression(left_expr, token2)?;
                         },
 
                         PunctuatorKind::Add => {
@@ -353,7 +372,7 @@ impl<'ast> Parser<'ast> {
                 }
             }
         }
-            
+        
         Ok(left_expr)
     }
 
@@ -471,31 +490,104 @@ impl<'ast> Parser<'ast> {
         unimplemented!()
     }
 
-    pub fn parse_member_expression(&mut self, left_expr: Expression<'ast>, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
-        let precedence = 19u8;
-        match token {
-            Token::Punctuator(punct) => {
-                match punct.kind {
-                    PunctuatorKind::Dot => {
-                        // MemberAccessor
-                        // .
-                        let token2 = self.token2()?;
-                        let right_expr = self.parse_expression(token2, precedence)?;
-                        if !right_expr.is_identifier() {
+    pub fn parse_member_expression(&mut self, mut left_expr: Expression<'ast>, mut token: Token<'ast>) -> Result<Expression<'ast>, Error> {
+        let op_precedence = 19;
 
+        loop {
+            match token {
+                Token::LineTerminator => {
+                    continue;
+                },
+                Token::Punctuator(punct) => {
+                    match punct.kind {
+                        PunctuatorKind::Dot => {
+                            // .
+                            let token2 = self.token2()?;
+                            
+                            match token2 {
+                                Token::LineTerminator => continue,
+                                Token::Identifier(ident) => {
+                                    let right_expr = Expression::Identifier(self.arena.alloc(ident));
+
+                                    let mut loc = left_expr.loc();
+                                    let mut span = left_expr.span();
+                                    
+                                    loc.end = right_expr.loc().end;
+                                    span.end = right_expr.span().end;
+
+                                    let left = left_expr;
+                                    let right = right_expr;
+                                    let computed = false;
+                                    let item = MemberExpression { loc, span, left, right, computed, };
+
+                                    left_expr = Expression::Member(self.alloc(item));
+                                },
+                                _ => return Err(self.unexpected_token(token2)),
+                            }
+                        },
+                        PunctuatorKind::LBracket => {
+                            // [
+                            let token2 = self.token2()?;
+
+                            let right_expr = self.parse_expression(token2, op_precedence)?;
+
+                            loop {
+                                let end_token = self.token2()?;
+                                match end_token {
+                                    Token::LineTerminator => continue,
+                                    Token::Punctuator(punct) => match punct.kind {
+                                        PunctuatorKind::RBracket => {
+                                            break;
+                                        },
+                                        _ => {
+                                            println!("{:?}", self.token);
+                                            println!("{:?}", end_token);
+                                            println!("{:?}", right_expr);
+                                            return Err(self.unexpected_token(end_token));
+                                        }
+                                    },
+                                    _ => {
+                                        return Err(self.unexpected_token(end_token));
+                                    }
+                                }
+                            }
+                            
+                            let mut loc = left_expr.loc();
+                            let mut span = left_expr.span();
+                            
+                            loc.end = right_expr.loc().end;
+                            span.end = right_expr.span().end;
+
+                            let left = left_expr;
+                            let right = right_expr;
+                            let computed = false;
+                            let item = MemberExpression { loc, span, left, right, computed, };
+
+                            left_expr = Expression::Member(self.alloc(item));
+                        },
+                        _ => {
+                            self.token.push(token);
+                            break;
                         }
-                        unimplemented!()
-                    },
-                    PunctuatorKind::LBracket => {
-                        // MemberAccessor
-                        // [
-                        unimplemented!()
-                    },
-                    _ => unreachable!(),
+                    }
+                },
+                _ => {
+                    self.token.push(token);
+                    break;
+                },
+            }
+
+            match self.token()? {
+                Some(token3) => {
+                    token = token3;
+                },
+                None => {
+                    break;
                 }
-            },
-            _ => unreachable!(),
+            }
         }
+
+        Ok(left_expr)
     }
 
     pub fn parse_super_expression(&mut self) -> Result<Expression<'ast>, Error> {

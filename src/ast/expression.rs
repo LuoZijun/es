@@ -221,6 +221,13 @@ impl<'ast> Expression<'ast> {
         }
     }
 
+    pub fn is_comma_expression(&self) -> bool {
+        match *self {
+            Expression::Comma(_) => true,
+            _ => false,
+        }
+    }
+
     pub fn is_primary_expression(&self) -> bool {
         unimplemented!()
     }

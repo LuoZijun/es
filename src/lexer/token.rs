@@ -26,27 +26,27 @@ pub enum StringDelimiter {
 /// #!/xx/xxx
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct HashBang<'ast> {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
     pub value: &'ast [char],
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct WhiteSpaces {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LineTerminator {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Comment<'ast> {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
     pub is_multi_line: bool,
     pub value: &'ast [char],
 }
@@ -55,8 +55,8 @@ pub struct Comment<'ast> {
 /// Keyword or IdentifierName
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Identifier<'ast> {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
     pub raw: &'ast [char],
     // if has_escaped_char { Some(cooked) } else { None }
     pub cooked: Option<&'ast [char]>,
@@ -85,14 +85,14 @@ impl<'ast> Identifier<'ast> {
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralNull {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralBoolean {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
     pub value: bool,
 }
 
