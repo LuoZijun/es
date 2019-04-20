@@ -1,8 +1,8 @@
-use error::Error;
-use rc_ref::RcRef;
-use vm::value::Value;
-use vm::value::symbol::{ SymbolRegistry, SymbolRegistryRef, };
-use vm::scope::{ Scope, ScopeRef, };
+use crate::error::Error;
+use crate::rc_ref::RcRef;
+use crate::vm::value::Value;
+use crate::vm::value::symbol::{ SymbolRegistry, SymbolRegistryRef, };
+use crate::vm::scope::{ Scope, ScopeRef, };
 
 use std::rc::{ Rc, };
 use std::cell::{ Cell, Ref, RefMut, RefCell, };

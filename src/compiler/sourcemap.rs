@@ -1,7 +1,7 @@
 use crate::vlq;
 use crate::serde::ser::{Serialize, SerializeStruct, Serializer};
 
-use lexer::span::{ Loc, Span, LineColumn, };
+use crate::lexer::span::{ Loc, Span, LineColumn, };
 
 
 use std::io::{ Write, Cursor, };

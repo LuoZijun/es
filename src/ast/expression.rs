@@ -1,12 +1,12 @@
-use lexer::span::{ Loc, Span, LineColumn, };
-use lexer::token::{
+use crate::lexer::span::{ Loc, Span, LineColumn, };
+use crate::lexer::token::{
     Identifier, LiteralNull, LiteralBoolean, LiteralString, LiteralNumeric,
     LiteralRegularExpression, 
     Punctuator, Keyword, Comment,
 };
-use lexer::operator::{ PrefixOperator, InfixOperator, PostfixOperator, AssignmentOperator, };
+use crate::lexer::operator::{ PrefixOperator, InfixOperator, PostfixOperator, AssignmentOperator, };
 
-use ast::numberic::{ Float, Numberic, };
+use crate::ast::numberic::{ Float, Numberic, };
 // use ast::class::ClassExpression;
 // use ast::function::{ FunctionExpression, ArrowFunctionExpression, UniqueFormalParameters, };
 // use ast::jsx::{ JSXFragment, JSXElement, };
@@ -214,6 +214,13 @@ impl<'ast> Expression<'ast> {
         }
     }
 
+    pub fn is_member_expression(&self) -> bool {
+        match *self {
+            Expression::Member(_) => true,
+            _ => false,
+        }
+    }
+
     pub fn is_primary_expression(&self) -> bool {
         unimplemented!()
     }
@@ -222,9 +229,7 @@ impl<'ast> Expression<'ast> {
         unimplemented!()
     }
 
-    pub fn is_member_expression(&self) -> bool {
-        unimplemented!()
-    }
+
 
     pub fn is_call_expression(&self) -> bool {
         unimplemented!()
@@ -247,7 +252,46 @@ impl<'ast> Expression<'ast> {
 
     pub fn precedence(&self) -> u8 {
         // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
-        unimplemented!()
+        match *self {
+            Expression::This(inner) => 0,
+            Expression::Spread(inner) => 1,
+            Expression::Super(inner) => 0,
+
+            // BindingElement(inner) => inner.span,
+            // BindingProperty(inner) => inner.span,
+            
+            Expression::Identifier(inner) => 0,
+            Expression::Null(inner) => 0,
+            Expression::Boolean(inner) => 0,
+            Expression::String(inner) => 0,
+            Expression::Numeric(inner) => 0,
+            Expression::RegularExpression(inner) => 0,
+            Expression::Template(inner) => 0,
+
+            // ArrayLiteral(inner) => inner.span,
+            // ObjectLiteral(inner) => inner.span,
+
+            Expression::Parenthesized(inner) => 20,
+
+            Expression::Member(inner) => 19,
+
+            Expression::TaggedTemplate(inner) => 19,
+            
+            Expression::NewTarget(inner) => 0,
+            Expression::Call(inner) => 19,
+            Expression::New(inner) => if inner.arguments.is_some() { 19 } else { 18 },
+
+            Expression::Prefix(inner) => 16,
+            Expression::Infix(inner) => inner.operator.precedence(),
+            Expression::Postfix(inner) => 17,
+            Expression::Assignment(inner) => 3,
+
+            // ... ? ... : ...
+            Expression::Conditional(inner) => 4,
+            Expression::Yield(inner) => 2,
+            
+            Expression::Comma(inner) => 0,
+        }
     }
 }
 

@@ -14,25 +14,25 @@ pub mod utf8;
 use crate::toolshed::{ Arena, };
 use crate::unicode_xid::UnicodeXID;
 
-use error::{ Error, ErrorKind, };
-use ast::numberic::{ Float, Numberic, };
+use crate::error::{ Error, ErrorKind, };
+use crate::ast::numberic::{ Float, Numberic, };
 
-use lexer::eschar::{
+use crate::lexer::eschar::{
     ESChar,
     CR, LF, LS, PS,
     TAB, VT, FF, SP, NBSP, ZWNBSP,
 };
-use lexer::span::{ LineColumn, Span, Loc, };
-use lexer::numberic::parse_numberic;
-use lexer::escape::{ unescape_string, unescape_template, unescape_identifier, };
-use lexer::punctuator::PunctuatorKind;
-use lexer::token::{
+use crate::lexer::span::{ LineColumn, Span, Loc, };
+use crate::lexer::numberic::parse_numberic;
+use crate::lexer::escape::{ unescape_string, unescape_template, unescape_identifier, };
+use crate::lexer::punctuator::PunctuatorKind;
+use crate::lexer::token::{
     Comment, HashBang, LiteralTemplate, LiteralRegularExpression,
     Token, Punctuator, Identifier, 
     LiteralNumeric, LiteralString, LiteralBoolean, LiteralNull, 
 };
 
-use parser::Parser;
+use crate::parser::Parser;
 
 use self::LexerErrorKind::*;
 

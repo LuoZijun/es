@@ -1,4 +1,4 @@
-use lexer::eschar::{
+use crate::lexer::eschar::{
     ESChar,
     CR, LF, LS, PS,
     TAB, VT, FF, SP, NBSP, ZWNBSP,

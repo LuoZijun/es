@@ -1,26 +1,27 @@
 use crate::toolshed::{ Arena, };
 
-use version::ECMAScriptVersion;
-use error::{ ErrorKind, Error, };
+use crate::version::ECMAScriptVersion;
+use crate::error::{ ErrorKind, Error, };
 
-use lexer::Lexer;
-use lexer::token::{ Token, LiteralString, LiteralRegularExpression, LiteralTemplate, };
-use lexer::operator::{ PrefixOperator, InfixOperator, PostfixOperator, AssignmentOperator, };
-use lexer::punctuator::PunctuatorKind;
-use lexer::keyword::KeywordKind;
-use lexer::LexerErrorKind;
+use crate::lexer::Lexer;
+use crate::lexer::token::{ Token, LiteralString, LiteralRegularExpression, LiteralTemplate, };
+use crate::lexer::operator::{ PrefixOperator, InfixOperator, PostfixOperator, AssignmentOperator, };
+use crate::lexer::punctuator::PunctuatorKind;
+use crate::lexer::keyword::KeywordKind;
+use crate::lexer::LexerErrorKind;
 
-use parser::parser::Parser;
-use parser::parser::ParserErrorKind::{ self, * };
+use crate::parser::parser::Parser;
+use crate::parser::parser::ParserErrorKind::{ self, * };
 
-use ast::numberic::{ Numberic, Float, };
-use ast::statement::{ 
+use crate::ast::numberic::{ Numberic, Float, };
+use crate::ast::statement::{ 
     Statement, StatementList,
     VariableStatement, LexicalDeclarationKind, LexicalBinding,
 };
-use ast::expression::{
+use crate::ast::expression::{
     Expression, LiteralTemplateExpression,
     PrefixExpression, InfixExpression, PostfixExpression, AssignmentExpression,
+    MemberExpression,
 };
 
 // 运算符优先级
@@ -29,7 +30,7 @@ use ast::expression::{
 
 impl<'ast> Parser<'ast> {
     pub fn parse_expression(&mut self, token: Token<'ast>, precedence: u8) -> Result<Expression<'ast>, Error> {
-        let left_expr = match token {
+        let mut left_expr = match token {
             Token::LiteralTemplate(_) => unreachable!(),
             Token::LiteralRegularExpression(_) => unreachable!(),
 
@@ -97,6 +98,10 @@ impl<'ast> Parser<'ast> {
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
 
+                        if !operand.is_identifier() {
+                            return Err(self.unexpected_token(token2));
+                        }
+
                         loc.end = operand.loc().end;
                         span.end = operand.span().end;
 
@@ -114,6 +119,10 @@ impl<'ast> Parser<'ast> {
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
                         
+                        if !operand.is_identifier() {
+                            return Err(self.unexpected_token(token2));
+                        }
+
                         loc.end = operand.loc().end;
                         span.end = operand.span().end;
 
@@ -153,16 +162,6 @@ impl<'ast> Parser<'ast> {
 
                         let item = PrefixExpression { loc, span, operator, operand, };
                         Expression::Prefix(self.arena.alloc(item))
-                    },
-                    PunctuatorKind::Dot => {
-                        // MemberAccessor
-                        // .
-                        unimplemented!()
-                    },
-                    PunctuatorKind::LBracket => {
-                        // MemberAccessor
-                        // [
-                        unimplemented!()
                     },
                     PunctuatorKind::DotDotDot => {
                         // spread
@@ -241,7 +240,10 @@ impl<'ast> Parser<'ast> {
                         let item = PrefixExpression { loc, span, operator, operand, };
                         Expression::Prefix(self.arena.alloc(item))
                     },
-                    
+
+                    KeywordKind::This => Expression::This(self.arena.alloc(kw)),
+                    KeywordKind::Super => Expression::Super(self.arena.alloc(kw)),
+                    KeywordKind::Function => unimplemented!(),
                     KeywordKind::Async => {
                         // AsyncFunctionDeclaration       EXPR
                         // AsyncGeneratorDeclaration      EXPR
@@ -249,8 +251,6 @@ impl<'ast> Parser<'ast> {
                         // AsyncArrowGeneratorExpression  EXPR
                         unimplemented!()
                     },
-                    KeywordKind::This => Expression::This(self.arena.alloc(kw)),
-                    KeywordKind::Super => Expression::Super(self.arena.alloc(kw)),
                     KeywordKind::New => {
                         unimplemented!()
                     },
@@ -270,56 +270,91 @@ impl<'ast> Parser<'ast> {
                 }
             },
         };
-
-        return Ok(left_expr);
-
+        
+        if left_expr.precedence() > precedence {
+            return Ok(left_expr);
+        }
+        
         let token2 = match self.token2() {
             Ok(token2) => token2,
             Err(_) => return Ok(left_expr),
         };
         
-        match token2 {
-            Token::Punctuator(punct) => {
-                match punct.kind {
-                    PunctuatorKind::Increment => {
-                        // 后置 递增
+        loop {
+            match token2 {
+                Token::Punctuator(punct) => {
+                    match punct.kind {
+                        PunctuatorKind::Semicolon => {
+                            // END.
+                            break;
+                        },
+                        PunctuatorKind::Comma => {
+                            // ,
+                            unimplemented!()
+                        },
+                        PunctuatorKind::Question => {
+                            // ?
+                            unimplemented!()
+                        },
+                        PunctuatorKind::Increment => {
+                            // 后置 递增
+                            if !left_expr.is_member_expression() || !left_expr.is_identifier() {
+                                return Err(self.unexpected_token(token2));
+                            }
 
-                    },
-                    PunctuatorKind::Decrement => {
-                        // 后置 递减
+                            unimplemented!()
+                        },
+                        PunctuatorKind::Decrement => {
+                            // 后置 递减
+                            if !left_expr.is_member_expression() || !left_expr.is_identifier() {
+                                return Err(self.unexpected_token(token2));
+                            }
 
-                    },
+                            unimplemented!()
+                        },
 
-                    PunctuatorKind::Add => {
+                        PunctuatorKind::Dot => {
+                            // MemberAccessor
+                            // .
+                            return self.parse_member_expression(left_expr, token2);
+                        },
+                        PunctuatorKind::LBracket => {
+                            // MemberAccessor
+                            // [
+                            unimplemented!()
+                        },
 
-                    },
-                    PunctuatorKind::Sub => {
-
-                    },
-                    _ => {
-
-                    },
+                        PunctuatorKind::Add => {
+                            unimplemented!()
+                        },
+                        PunctuatorKind::Sub => {
+                            unimplemented!()
+                        },
+                        _ => {
+                            unimplemented!()
+                        },
+                    }
+                },
+                Token::Keyword(kw) => {
+                    match kw.kind {
+                        KeywordKind::In => {
+                            unimplemented!()
+                        },
+                        KeywordKind::InstanceOf => {
+                            unimplemented!()
+                        },
+                        _ => {
+                            unimplemented!()
+                        },
+                    }
+                },
+                _ => {
+                    unimplemented!()
                 }
-            },
-            Token::Keyword(kw) => {
-                match kw.kind {
-                    KeywordKind::In => {
-
-                    },
-                    KeywordKind::InstanceOf => {
-
-                    },
-                    _ => {
-
-                    },
-                }
-            },
-            _ => {
-
             }
         }
-
-        unimplemented!()
+            
+        Ok(left_expr)
     }
 
     pub(super) fn parse_literal_regular_expression(&mut self) -> Result<LiteralRegularExpression<'ast>, Error> {
@@ -372,13 +407,7 @@ impl<'ast> Parser<'ast> {
 
             let last_token = self.token2()?;
             let ok = match last_token {
-                Token::Punctuator(punct) => {
-                    if punct.kind == PunctuatorKind::RBrace {
-                        true
-                    } else {
-                        false
-                    }
-                },
+                Token::Punctuator(punct) => punct.kind == PunctuatorKind::RBrace,
                 _ => false,
             };
             
@@ -422,122 +451,69 @@ impl<'ast> Parser<'ast> {
         Ok(LiteralTemplateExpression { loc, span, strings: strings_ref, bounds: self.arena.alloc_vec(bounds) })
     }
 
-    pub fn parse_primitive_literal(&mut self) -> Result<Expression<'ast>, Error> {
-        // null/true/false
-        // string
-        // number
+    pub fn parse_async_expression(&mut self, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
+        // AsyncFunctionDeclaration       EXPR
+        // AsyncGeneratorDeclaration      EXPR
+        // AsyncArrowFunctionExpression   EXPR
+        // AsyncArrowGeneratorExpression  EXPR
         unimplemented!()
-        // match spanned_token.item {
-        //     Token::Identifier(ident) => {
-        //         let start = spanned_token.start;
-        //         let end = spanned_token.end;
-        //         let item = Expression::Identifier( Box::new(ident) );
-
-        //         Ok(Span { start, end, item })
-        //     },
-        //     Token::LiteralNull => {
-        //         let start = spanned_token.start;
-        //         let end = spanned_token.end;
-        //         let item = Expression::NullLiteral;
-
-        //         Ok(Span { start, end, item })
-        //     },
-        //     Token::LiteralBoolean(ref val) => {
-        //         let start = spanned_token.start;
-        //         let end = spanned_token.end;
-        //         let item = Expression::BooleanLiteral(*val);
-                
-        //         Ok(Span { start, end, item })
-        //     },
-        //     Token::LiteralString(val) => {
-        //         let start = spanned_token.start;
-        //         let end = spanned_token.end;
-
-        //         let start_offset = start.offset + start.column + 1;
-        //         let end_offset = end.offset + end.column - 1;
-
-        //         let raw = self.lexer.source[start_offset..end_offset].to_vec();
-
-        //         let s = StringLiteral { raw: raw, cooked: val };
-        //         let item = Expression::StringLiteral(Box::new(s));
-                
-        //         Ok(Span { start, end, item })
-        //     },
-        //     Token::LiteralDecimalNumeric(val) => {
-        //         let start = spanned_token.start;
-        //         let end = spanned_token.end;
-        //         let item = Expression::NumericLiteral(val.into());
-                
-        //         Ok(Span { start, end, item })
-        //     },
-        //     Token::LiteralFloatNumeric(val) => {
-        //         let start = spanned_token.start;
-        //         let end = spanned_token.end;
-        //         let item = Expression::NumericLiteral(val.into());
-                
-        //         Ok(Span { start, end, item })
-        //     },
-        //     Token::Punctuator(Punctuator::BackTick) => {
-        //         self.parse_template_literal(spanned_token)
-        //     },
-        //     Token::Punctuator(Punctuator::Div) => {
-        //         self.parse_regular_expression_literal(spanned_token)
-        //     },
-        //     _ => unreachable!(),
-        // }
     }
-    
-    // pub fn parse_prefix_expression(&mut self, spanned_token: SpannedToken) -> Result<SpannedExpression, Error> {
-    //     let op = match spanned_token.item {
-    //         Token::Keyword(Keyword::Await) => {
-    //             PrefixOperator::Await
-    //         },
-    //         Token::Keyword(Keyword::Delete) => {
-    //             PrefixOperator::Delete
-    //         },
-    //         Token::Keyword(Keyword::Void) => {
-    //             PrefixOperator::Void
-    //         },
-    //         Token::Keyword(Keyword::Typeof) => {
-    //             PrefixOperator::TypeOf
-    //         },
-    //         Token::Punctuator(Punctuator::Increment) => {
-    //             PrefixOperator::Increment
-    //         },
-    //         Token::Punctuator(Punctuator::Decrement) => {
-    //             PrefixOperator::Decrement
-    //         },
-    //         Token::Punctuator(Punctuator::Not) => {
-    //             PrefixOperator::Not
-    //         },
-    //         Token::Punctuator(Punctuator::Add) => {
-    //             PrefixOperator::Pos
-    //         },
-    //         Token::Punctuator(Punctuator::Sub) => {
-    //             PrefixOperator::Neg
-    //         },
-    //         Token::Punctuator(Punctuator::BitNot) => {
-    //             // ~
-    //             PrefixOperator::BitNot
-    //         },
-    //         _ => unreachable!(),
-    //     };
 
-    //     let token2 = self.next_token2_with_skip(&[
-    //         Token::SingleLineComment,
-    //         Token::MultiLineComment,
-    //         Token::WhiteSpaces,
-    //         Token::LineTerminator,
-    //     ])?;
-    //     let spanned_expression = self.parse_expression(token2)?;
+    pub fn parse_prefix_expression(&mut self) -> Result<Expression<'ast>, Error> {
+        unimplemented!()
+    }
 
-    //     let expr = PrefixExpression { operator: op, operand: Box::new(spanned_expression) };
+    pub fn parse_infix_expression(&mut self) -> Result<Expression<'ast>, Error> {
+        unimplemented!()
+    }
 
-    //     let start = spanned_token.start;
-    //     let end = spanned_token.end;
-    //     let item = Expression::Prefix(Box::new(expr));
+    pub fn parse_postfix_expression(&mut self) -> Result<Expression<'ast>, Error> {
+        unimplemented!()
+    }
 
-    //     Ok(Span { start, end, item })
+    pub fn parse_member_expression(&mut self, left_expr: Expression<'ast>, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
+        let precedence = 19u8;
+        match token {
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::Dot => {
+                        // MemberAccessor
+                        // .
+                        let token2 = self.token2()?;
+                        let right_expr = self.parse_expression(token2, precedence)?;
+                        if !right_expr.is_identifier() {
+
+                        }
+                        unimplemented!()
+                    },
+                    PunctuatorKind::LBracket => {
+                        // MemberAccessor
+                        // [
+                        unimplemented!()
+                    },
+                    _ => unreachable!(),
+                }
+            },
+            _ => unreachable!(),
+        }
+    }
+
+    pub fn parse_super_expression(&mut self) -> Result<Expression<'ast>, Error> {
+        // super member
+        // super call
+        unimplemented!()
+    }
+
+    pub fn parse_new_expression(&mut self) -> Result<Expression<'ast>, Error> {
+        unimplemented!()
+    }
+
+    // pub fn parse_object_binding_pattern(&mut self) -> Result<ObjectBindingPattern, Error> {
+    //     unimplemented!()
+    // }
+
+    // pub fn parse_array_binding_pattern(&mut self) -> Result<ObjectBindingPattern, Error> {
+    //     unimplemented!()
     // }
 
     // pub fn parse_infix_expression(&mut self,
@@ -641,47 +617,4 @@ impl<'ast> Parser<'ast> {
     //     Ok(Span { start, end, item })
     // }
 
-    // pub fn parse_postfix_expression(&mut self,
-    //                                 left_spanned_expression: SpannedExpression,
-    //                                 spanned_token: SpannedToken) -> Result<SpannedExpression, Error> {
-    //     let op = match spanned_token.item {
-    //         Token::Punctuator(Punctuator::Increment) => {
-    //             PostfixOperator::Increment
-    //         },
-    //         Token::Punctuator(Punctuator::Decrement) => {
-    //             PostfixOperator::Decrement
-    //         },
-    //         _ => unreachable!(),
-    //     };
-
-    //     let expr = PostfixExpression { operator: op, operand: Box::new(left_spanned_expression) };
-        
-    //     let start = spanned_token.start;
-    //     let end = spanned_token.end;
-    //     let item = Expression::Postfix(Box::new(expr));
-
-    //     Ok(Span { start, end, item })
-    // }
-
-    // pub fn parse_member_expression(&mut self) -> Result<SpannedExpression, Error> {
-    //     unimplemented!()
-    // }
-
-    // pub fn parse_super_expression(&mut self) -> Result<SpannedExpression, Error> {
-    //     // super member
-    //     // super call
-    //     unimplemented!()
-    // }
-
-    // pub fn parse_new_expression(&mut self) -> Result<SpannedExpression, Error> {
-    //     unimplemented!()
-    // }
-
-    // pub fn parse_object_binding_pattern(&mut self) -> Result<ObjectBindingPattern, Error> {
-    //     unimplemented!()
-    // }
-
-    // pub fn parse_array_binding_pattern(&mut self) -> Result<ObjectBindingPattern, Error> {
-    //     unimplemented!()
-    // }
 }

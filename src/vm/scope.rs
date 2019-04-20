@@ -1,7 +1,7 @@
 
-use rc_ref::RcRef;
-use vm::isolate::IsolateRef;
-use vm::value::Value;
+use crate::rc_ref::RcRef;
+use crate::vm::isolate::IsolateRef;
+use crate::vm::value::Value;
 
 
 use std::rc::{ Rc, };

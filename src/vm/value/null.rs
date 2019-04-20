@@ -1,5 +1,5 @@
 
-use vm::value::String;
+use crate::vm::value::String;
 
 
 use std::fmt;

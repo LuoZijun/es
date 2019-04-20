@@ -1,23 +1,23 @@
 use crate::toolshed::{ Arena, };
 
-use version::ECMAScriptVersion;
-use error::{ ErrorKind, Error, };
+use crate::version::ECMAScriptVersion;
+use crate::error::{ ErrorKind, Error, };
 
-use lexer::Lexer;
-use lexer::token::{ Token, LiteralString, LiteralRegularExpression, LiteralTemplate, };
-use lexer::punctuator::PunctuatorKind;
-use lexer::keyword::KeywordKind;
-use lexer::LexerErrorKind;
+use crate::lexer::Lexer;
+use crate::lexer::token::{ Token, LiteralString, LiteralRegularExpression, LiteralTemplate, };
+use crate::lexer::punctuator::PunctuatorKind;
+use crate::lexer::keyword::KeywordKind;
+use crate::lexer::LexerErrorKind;
 
-use parser::parser::Parser;
-use parser::parser::ParserErrorKind::{ self, * };
+use crate::parser::parser::Parser;
+use crate::parser::parser::ParserErrorKind::{ self, * };
 
-use ast::numberic::{ Numberic, Float, };
-use ast::statement::{ 
+use crate::ast::numberic::{ Numberic, Float, };
+use crate::ast::statement::{ 
     Statement, StatementList,
     VariableStatement, LexicalDeclarationKind, LexicalBinding,
 };
-use ast::expression::{
+use crate::ast::expression::{
     Expression, LiteralTemplateExpression,
 };
 

@@ -1,18 +1,45 @@
 [package]
-name = "ecmascript"
-version = "0.1.0"
-authors = ["luozijun <luozijun.assistant@gmail.com>"]
+name          = "ecmascript"
+version       = "0.1.0"
+authors       = ["luozijun <luozijun.assistant@gmail.com>"]
+edition       = "2018"
+readme        = "README.rst"
+license       = "MIT"
+# license-file  = "LICENSE"
+homepage      = "https://github.com/LuoZijun/es"
+repository    = "https://github.com/LuoZijun/es"
+description   = "A ECMAScript Parser and Interpreter written in Rust"
+documentation = "https://luozijun.github.io/es/ecmascript/"
+keywords = [ 
+    "Language", "ECMAScript", "Parser", "Lexer", 
+    "Parser", "Compiler", "Interpreter",
+]
+categories = [
+    "Interpreter", "Lexer", "Parser", "Compiler", 
+    "Language", "parser-implementations", "parsing", "wasm",
+]
 include = [
-    "data/*",
-    "src/*",
-    "bin/*",
+    "src/",
+    "tests/",
+    "examples/",
     "Cargo.toml",
     "README.rst",
+    "LICENSE",
 ]
+exclude = [
+    "benches",
+    "data",
+    "scripts",
+    "test262",
+]
+
+[lib]
+# https://doc.rust-lang.org/reference/linkage.html
+crate-type = ["lib"]
 
 [workspace]
 members = [
-
+    
 ]
 
 [dependencies]
@@ -22,44 +49,19 @@ toolshed = "0.8"
 vlq = "0.5"
 serde = "1.0"
 serde_json = "1.0"
-
 # memchr = "2.2"
 # time = "0.1"
-# gc = "0.3"
-# gc_derive = "0.3"
-# bitflags = "0.1"
-
-rustyline = { version = "3.0", optional = true }
-
-[dependencies.env_logger]
-version = "0.6"
-optional = true
-default-features = false
-features = [ "termcolor", "atty", "humantime"]
 
 [dev-dependencies]
-
-
-[[bin]]
-name = "esc"
-path = "bin/esc.rs"
-required-features = [ "env_logger", "rustyline", "compiler" ]
-
-[[bin]]
-# interpreter
-name = "esi"
-path = "bin/esi.rs"
-required-features = [ "env_logger", "rustyline", "vm" ]
+rustyline  = "3.0"
+env_logger = { version = "0.6", default-features = false, features = [ "termcolor", "atty", "humantime"]  }
 
 [features]
-default = [ 
-    "parser", "compiler", "vm",
-    "env_logger", "rustyline"
-]
-parser = [ ]
+default  = [ "parser", "compiler", "vm" ]
+parser   = [ ]
 compiler = [ "parser" ]
-vm = [ "compiler" ]
-
+vm       = [ "compiler" ]
+nightly  = [ ]
 
 # https://doc.rust-lang.org/cargo/reference/manifest.html#the-profile-sections
 [profile.dev]
@@ -68,10 +70,30 @@ debug = true
 codegen-units = 16
 lto = false
 panic = "unwind"
+incremental = false
+overflow-checks = true
+
+[profile.test]
+opt-level = 0
+debug = true
+codegen-units = 16
+lto = false
+incremental = false
+overflow-checks = true
 
 [profile.release]
 opt-level = 3
 debug = false
 codegen-units = 1
 lto = true
-panic = "abort"
+panic = "unwind"
+incremental = false
+overflow-checks = false
+
+[profile.bench]
+opt-level = 3
+debug = false
+codegen-units = 1
+lto = true
+incremental = false
+overflow-checks = false

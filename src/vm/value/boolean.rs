@@ -1,11 +1,11 @@
 
-use vm::value::Value;
-use vm::value::Undefined;
-use vm::value::Null;
-use vm::value::Number;
-use vm::value::String;
-use vm::value::Symbol;
-use vm::value::Object;
+use crate::vm::value::Value;
+use crate::vm::value::Undefined;
+use crate::vm::value::Null;
+use crate::vm::value::Number;
+use crate::vm::value::String;
+use crate::vm::value::Symbol;
+use crate::vm::value::Object;
 
 
 use std::fmt;

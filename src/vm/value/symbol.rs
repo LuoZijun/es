@@ -1,7 +1,7 @@
-use rc_ref::RcRef;
-use vm::value::Value;
-use vm::value::Undefined;
-use vm::value::String;
+use crate::rc_ref::RcRef;
+use crate::vm::value::Value;
+use crate::vm::value::Undefined;
+use crate::vm::value::String;
 
 use std::fmt;
 use std::rc::{ Rc, };

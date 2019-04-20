@@ -1,8 +1,8 @@
-use ast::numberic::{ Float, Numberic, };
+use crate::ast::numberic::{ Float, Numberic, };
 
-use super::span::{ Span, Loc, };
-use super::keyword::KeywordKind;
-use super::punctuator::PunctuatorKind;
+use crate::lexer::span::{ Span, Loc, };
+use crate::lexer::keyword::KeywordKind;
+use crate::lexer::punctuator::PunctuatorKind;
 
 use std::fmt;
 use std::cmp;

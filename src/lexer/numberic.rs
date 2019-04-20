@@ -1,4 +1,4 @@
-use ast::numberic::{ Float, Numberic, };
+use crate::ast::numberic::{ Float, Numberic, };
 
 const BINARY: u32 = 2;
 const OCTAL: u32  = 8;

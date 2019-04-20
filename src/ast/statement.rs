@@ -1,11 +1,11 @@
 
-use lexer::span::{ Loc, Span, LineColumn, };
-use lexer::token::{
+use crate::lexer::span::{ Loc, Span, LineColumn, };
+use crate::lexer::token::{
     Identifier, LiteralNull, LiteralBoolean, LiteralString, LiteralNumeric,
     LiteralRegularExpression, 
     Punctuator, Keyword,
 };
-use ast::expression::{ Expression, };
+use crate::ast::expression::{ Expression, };
 // use ast::class::ClassDeclaration;
 // use ast::function::FunctionDeclaration;
 

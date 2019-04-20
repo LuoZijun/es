@@ -1,20 +1,20 @@
 use crate::toolshed::{ Arena, };
 
-use version::ECMAScriptVersion;
-use error::{ ErrorKind, Error, };
+use crate::version::ECMAScriptVersion;
+use crate::error::{ ErrorKind, Error, };
 
-use lexer::Lexer;
-use lexer::token::Token;
-use lexer::punctuator::PunctuatorKind;
-use lexer::keyword::KeywordKind;
-use lexer::LexerErrorKind;
+use crate::lexer::Lexer;
+use crate::lexer::token::Token;
+use crate::lexer::punctuator::PunctuatorKind;
+use crate::lexer::keyword::KeywordKind;
+use crate::lexer::LexerErrorKind;
 
-use ast::numberic::{ Numberic, Float, };
-use ast::statement::{ 
+use crate::ast::numberic::{ Numberic, Float, };
+use crate::ast::statement::{ 
     Statement, StatementList,
     VariableStatement, LexicalDeclarationKind, LexicalBinding,
 };
-use ast::expression::{
+use crate::ast::expression::{
     Expression, LiteralTemplateExpression,
 };
 
@@ -36,13 +36,20 @@ pub struct Parser<'ast> {
 
     pub body: Vec<Statement<'ast>>,
     pub tokens: Vec<Token<'ast>>,
+
+    pub errors: Vec<Error>,
 }
 
 impl<'ast> Parser<'ast> {
     pub fn new(arena: &'ast Arena, source: &'ast [char], filename: &'ast str) -> Self {
         let lexer = Lexer::new(arena, source, filename);
-
-        Self { arena, lexer, body: vec![], token: Vec::with_capacity(1), tokens: vec![] }
+        
+        let body = vec![];
+        let token = Vec::with_capacity(1);
+        let tokens = vec![];
+        let errors = vec![];
+        
+        Self { arena, lexer, body, token, tokens, errors, }
     }
     
     #[inline]
@@ -50,20 +57,20 @@ impl<'ast> Parser<'ast> {
         // TODO
         unimplemented!()
     }
-
+    
     #[inline]
     pub fn error_line(&mut self) -> String {
         // TODO
         unimplemented!()
     }
-
+    
     #[inline]
     pub fn unexpected_token(&mut self, token: Token<'ast>) -> Error {
         // TODO
         debug!("{:?}", token);
         self.lexer.error(LexerErrorKind::Custom("Unexpected Token"))
     }
-
+    
     #[inline]
     pub fn token(&mut self) -> Result<Option<Token<'ast>>, Error> {
         if self.token.len() > 0 {
@@ -72,7 +79,7 @@ impl<'ast> Parser<'ast> {
             self.lexer.consume()
         }
     }
-
+    
     #[inline]
     pub fn token2(&mut self) -> Result<Token<'ast>, Error> {
         // NOTE: 不允许 EOF 的出现
@@ -82,12 +89,12 @@ impl<'ast> Parser<'ast> {
             Err(e) => Err(e),
         }
     }
-
+    
     #[inline]
     pub fn alloc<T: Copy>(&mut self, item: T) -> &'ast T {
         self.arena.alloc(item)
     }
-
+    
     #[inline]
     fn process(&mut self, token: Token<'ast>) -> Result<Statement<'ast>, Error> {
         let expr_precedence = 0u8;
@@ -96,7 +103,7 @@ impl<'ast> Parser<'ast> {
             Token::LineTerminator => unreachable!(),
             Token::LiteralTemplate(_) => unreachable!(),
             Token::LiteralRegularExpression(_) => unreachable!(),
-
+            
             Token::LiteralString(_)
             | Token::LiteralNumeric(_)
             | Token::LiteralNull(_)

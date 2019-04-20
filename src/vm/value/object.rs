@@ -1,9 +1,9 @@
 
-use vm::value::Value;
-use vm::value::Undefined;
-use vm::value::Boolean;
-use vm::value::String;
-use vm::value::Symbol;
+use crate::vm::value::Value;
+use crate::vm::value::Undefined;
+use crate::vm::value::Boolean;
+use crate::vm::value::String;
+use crate::vm::value::Symbol;
 // use builtin::Function;
 
 
