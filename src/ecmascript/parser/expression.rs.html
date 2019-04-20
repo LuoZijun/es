@@ -618,97 +618,31 @@
 <span id="618">618</span>
 <span id="619">619</span>
 <span id="620">620</span>
-<span id="621">621</span>
-<span id="622">622</span>
-<span id="623">623</span>
-<span id="624">624</span>
-<span id="625">625</span>
-<span id="626">626</span>
-<span id="627">627</span>
-<span id="628">628</span>
-<span id="629">629</span>
-<span id="630">630</span>
-<span id="631">631</span>
-<span id="632">632</span>
-<span id="633">633</span>
-<span id="634">634</span>
-<span id="635">635</span>
-<span id="636">636</span>
-<span id="637">637</span>
-<span id="638">638</span>
-<span id="639">639</span>
-<span id="640">640</span>
-<span id="641">641</span>
-<span id="642">642</span>
-<span id="643">643</span>
-<span id="644">644</span>
-<span id="645">645</span>
-<span id="646">646</span>
-<span id="647">647</span>
-<span id="648">648</span>
-<span id="649">649</span>
-<span id="650">650</span>
-<span id="651">651</span>
-<span id="652">652</span>
-<span id="653">653</span>
-<span id="654">654</span>
-<span id="655">655</span>
-<span id="656">656</span>
-<span id="657">657</span>
-<span id="658">658</span>
-<span id="659">659</span>
-<span id="660">660</span>
-<span id="661">661</span>
-<span id="662">662</span>
-<span id="663">663</span>
-<span id="664">664</span>
-<span id="665">665</span>
-<span id="666">666</span>
-<span id="667">667</span>
-<span id="668">668</span>
-<span id="669">669</span>
-<span id="670">670</span>
-<span id="671">671</span>
-<span id="672">672</span>
-<span id="673">673</span>
-<span id="674">674</span>
-<span id="675">675</span>
-<span id="676">676</span>
-<span id="677">677</span>
-<span id="678">678</span>
-<span id="679">679</span>
-<span id="680">680</span>
-<span id="681">681</span>
-<span id="682">682</span>
-<span id="683">683</span>
-<span id="684">684</span>
-<span id="685">685</span>
-<span id="686">686</span>
-<span id="687">687</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
-<span class="kw">use</span> <span class="ident">version</span>::<span class="ident">ECMAScriptVersion</span>;
-<span class="kw">use</span> <span class="ident">error</span>::{ <span class="ident">ErrorKind</span>, <span class="ident">Error</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">version</span>::<span class="ident">ECMAScriptVersion</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{ <span class="ident">ErrorKind</span>, <span class="ident">Error</span>, };
 
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">Lexer</span>;
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">token</span>::{ <span class="ident">Token</span>, <span class="ident">LiteralString</span>, <span class="ident">LiteralRegularExpression</span>, <span class="ident">LiteralTemplate</span>, };
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">operator</span>::{ <span class="ident">PrefixOperator</span>, <span class="ident">InfixOperator</span>, <span class="ident">PostfixOperator</span>, <span class="ident">AssignmentOperator</span>, };
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">punctuator</span>::<span class="ident">PunctuatorKind</span>;
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">keyword</span>::<span class="ident">KeywordKind</span>;
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">LexerErrorKind</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">Lexer</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">token</span>::{ <span class="ident">Token</span>, <span class="ident">LiteralString</span>, <span class="ident">LiteralRegularExpression</span>, <span class="ident">LiteralTemplate</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">operator</span>::{ <span class="ident">PrefixOperator</span>, <span class="ident">InfixOperator</span>, <span class="ident">PostfixOperator</span>, <span class="ident">AssignmentOperator</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">punctuator</span>::<span class="ident">PunctuatorKind</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">keyword</span>::<span class="ident">KeywordKind</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">LexerErrorKind</span>;
 
-<span class="kw">use</span> <span class="ident">parser</span>::<span class="ident">parser</span>::<span class="ident">Parser</span>;
-<span class="kw">use</span> <span class="ident">parser</span>::<span class="ident">parser</span>::<span class="ident">ParserErrorKind</span>::{ <span class="self">self</span>, <span class="op">*</span> };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">parser</span>::<span class="ident">parser</span>::<span class="ident">Parser</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">parser</span>::<span class="ident">parser</span>::<span class="ident">ParserErrorKind</span>::{ <span class="self">self</span>, <span class="op">*</span> };
 
-<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Numberic</span>, <span class="ident">Float</span>, };
-<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">statement</span>::{ 
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Numberic</span>, <span class="ident">Float</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">statement</span>::{ 
     <span class="ident">Statement</span>, <span class="ident">StatementList</span>,
     <span class="ident">VariableStatement</span>, <span class="ident">LexicalDeclarationKind</span>, <span class="ident">LexicalBinding</span>,
 };
-<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">expression</span>::{
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">expression</span>::{
     <span class="ident">Expression</span>, <span class="ident">LiteralTemplateExpression</span>,
     <span class="ident">PrefixExpression</span>, <span class="ident">InfixExpression</span>, <span class="ident">PostfixExpression</span>, <span class="ident">AssignmentExpression</span>,
+    <span class="ident">MemberExpression</span>,
 };
 
 <span class="comment">// 运算符优先级</span>
@@ -717,7 +651,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">precedence</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">left_expr</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">token</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">left_expr</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">token</span> {
             <span class="ident">Token</span>::<span class="ident">LiteralTemplate</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
             <span class="ident">Token</span>::<span class="ident">LiteralRegularExpression</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
 
@@ -785,6 +719,10 @@
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
 
+                        <span class="kw">if</span> <span class="op">!</span><span class="ident">operand</span>.<span class="ident">is_identifier</span>() {
+                            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
+                        }
+
                         <span class="ident">loc</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">operand</span>.<span class="ident">loc</span>().<span class="ident">end</span>;
                         <span class="ident">span</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">operand</span>.<span class="ident">span</span>().<span class="ident">end</span>;
 
@@ -802,6 +740,10 @@
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
                         
+                        <span class="kw">if</span> <span class="op">!</span><span class="ident">operand</span>.<span class="ident">is_identifier</span>() {
+                            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
+                        }
+
                         <span class="ident">loc</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">operand</span>.<span class="ident">loc</span>().<span class="ident">end</span>;
                         <span class="ident">span</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">operand</span>.<span class="ident">span</span>().<span class="ident">end</span>;
 
@@ -841,16 +783,6 @@
 
                         <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">PrefixExpression</span> { <span class="ident">loc</span>, <span class="ident">span</span>, <span class="ident">operator</span>, <span class="ident">operand</span>, };
                         <span class="ident">Expression</span>::<span class="ident">Prefix</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">item</span>))
-                    },
-                    <span class="ident">PunctuatorKind</span>::<span class="ident">Dot</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// MemberAccessor</span>
-                        <span class="comment">// .</span>
-                        <span class="macro">unimplemented</span><span class="macro">!</span>()
-                    },
-                    <span class="ident">PunctuatorKind</span>::<span class="ident">LBracket</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// MemberAccessor</span>
-                        <span class="comment">// [</span>
-                        <span class="macro">unimplemented</span><span class="macro">!</span>()
                     },
                     <span class="ident">PunctuatorKind</span>::<span class="ident">DotDotDot</span> <span class="op">=&gt;</span> {
                         <span class="comment">// spread</span>
@@ -929,7 +861,10 @@
                         <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">PrefixExpression</span> { <span class="ident">loc</span>, <span class="ident">span</span>, <span class="ident">operator</span>, <span class="ident">operand</span>, };
                         <span class="ident">Expression</span>::<span class="ident">Prefix</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">item</span>))
                     },
-                    
+
+                    <span class="ident">KeywordKind</span>::<span class="ident">This</span> <span class="op">=&gt;</span> <span class="ident">Expression</span>::<span class="ident">This</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">kw</span>)),
+                    <span class="ident">KeywordKind</span>::<span class="ident">Super</span> <span class="op">=&gt;</span> <span class="ident">Expression</span>::<span class="ident">Super</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">kw</span>)),
+                    <span class="ident">KeywordKind</span>::<span class="ident">Function</span> <span class="op">=&gt;</span> <span class="macro">unimplemented</span><span class="macro">!</span>(),
                     <span class="ident">KeywordKind</span>::<span class="ident">Async</span> <span class="op">=&gt;</span> {
                         <span class="comment">// AsyncFunctionDeclaration       EXPR</span>
                         <span class="comment">// AsyncGeneratorDeclaration      EXPR</span>
@@ -937,8 +872,6 @@
                         <span class="comment">// AsyncArrowGeneratorExpression  EXPR</span>
                         <span class="macro">unimplemented</span><span class="macro">!</span>()
                     },
-                    <span class="ident">KeywordKind</span>::<span class="ident">This</span> <span class="op">=&gt;</span> <span class="ident">Expression</span>::<span class="ident">This</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">kw</span>)),
-                    <span class="ident">KeywordKind</span>::<span class="ident">Super</span> <span class="op">=&gt;</span> <span class="ident">Expression</span>::<span class="ident">Super</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">kw</span>)),
                     <span class="ident">KeywordKind</span>::<span class="ident">New</span> <span class="op">=&gt;</span> {
                         <span class="macro">unimplemented</span><span class="macro">!</span>()
                     },
@@ -958,56 +891,91 @@
                 }
             },
         };
-
-        <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">left_expr</span>);
-
+        
+        <span class="kw">if</span> <span class="ident">left_expr</span>.<span class="ident">precedence</span>() <span class="op">&gt;</span> <span class="ident">precedence</span> {
+            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">left_expr</span>);
+        }
+        
         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">token2</span>() {
             <span class="prelude-val">Ok</span>(<span class="ident">token2</span>) <span class="op">=&gt;</span> <span class="ident">token2</span>,
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">left_expr</span>),
         };
         
-        <span class="kw">match</span> <span class="ident">token2</span> {
-            <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
-                <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
-                    <span class="ident">PunctuatorKind</span>::<span class="ident">Increment</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// 后置 递增</span>
+        <span class="kw">loop</span> {
+            <span class="kw">match</span> <span class="ident">token2</span> {
+                <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">Semicolon</span> <span class="op">=&gt;</span> {
+                            <span class="comment">// END.</span>
+                            <span class="kw">break</span>;
+                        },
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">Comma</span> <span class="op">=&gt;</span> {
+                            <span class="comment">// ,</span>
+                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        },
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">Question</span> <span class="op">=&gt;</span> {
+                            <span class="comment">// ?</span>
+                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        },
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">Increment</span> <span class="op">=&gt;</span> {
+                            <span class="comment">// 后置 递增</span>
+                            <span class="kw">if</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_member_expression</span>() <span class="op">||</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_identifier</span>() {
+                                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
+                            }
 
-                    },
-                    <span class="ident">PunctuatorKind</span>::<span class="ident">Decrement</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// 后置 递减</span>
+                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        },
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">Decrement</span> <span class="op">=&gt;</span> {
+                            <span class="comment">// 后置 递减</span>
+                            <span class="kw">if</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_member_expression</span>() <span class="op">||</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_identifier</span>() {
+                                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
+                            }
 
-                    },
+                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        },
 
-                    <span class="ident">PunctuatorKind</span>::<span class="ident">Add</span> <span class="op">=&gt;</span> {
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">Dot</span> <span class="op">=&gt;</span> {
+                            <span class="comment">// MemberAccessor</span>
+                            <span class="comment">// .</span>
+                            <span class="kw">return</span> <span class="self">self</span>.<span class="ident">parse_member_expression</span>(<span class="ident">left_expr</span>, <span class="ident">token2</span>);
+                        },
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">LBracket</span> <span class="op">=&gt;</span> {
+                            <span class="comment">// MemberAccessor</span>
+                            <span class="comment">// [</span>
+                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        },
 
-                    },
-                    <span class="ident">PunctuatorKind</span>::<span class="ident">Sub</span> <span class="op">=&gt;</span> {
-
-                    },
-                    <span class="kw">_</span> <span class="op">=&gt;</span> {
-
-                    },
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">Add</span> <span class="op">=&gt;</span> {
+                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        },
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">Sub</span> <span class="op">=&gt;</span> {
+                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        },
+                        <span class="kw">_</span> <span class="op">=&gt;</span> {
+                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        },
+                    }
+                },
+                <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">kw</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">match</span> <span class="ident">kw</span>.<span class="ident">kind</span> {
+                        <span class="ident">KeywordKind</span>::<span class="ident">In</span> <span class="op">=&gt;</span> {
+                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        },
+                        <span class="ident">KeywordKind</span>::<span class="ident">InstanceOf</span> <span class="op">=&gt;</span> {
+                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        },
+                        <span class="kw">_</span> <span class="op">=&gt;</span> {
+                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        },
+                    }
+                },
+                <span class="kw">_</span> <span class="op">=&gt;</span> {
+                    <span class="macro">unimplemented</span><span class="macro">!</span>()
                 }
-            },
-            <span class="ident">Token</span>::<span class="ident">Keyword</span>(<span class="ident">kw</span>) <span class="op">=&gt;</span> {
-                <span class="kw">match</span> <span class="ident">kw</span>.<span class="ident">kind</span> {
-                    <span class="ident">KeywordKind</span>::<span class="ident">In</span> <span class="op">=&gt;</span> {
-
-                    },
-                    <span class="ident">KeywordKind</span>::<span class="ident">InstanceOf</span> <span class="op">=&gt;</span> {
-
-                    },
-                    <span class="kw">_</span> <span class="op">=&gt;</span> {
-
-                    },
-                }
-            },
-            <span class="kw">_</span> <span class="op">=&gt;</span> {
-
             }
         }
-
-        <span class="macro">unimplemented</span><span class="macro">!</span>()
+            
+        <span class="prelude-val">Ok</span>(<span class="ident">left_expr</span>)
     }
 
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">parse_literal_regular_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">LiteralRegularExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
@@ -1060,13 +1028,7 @@
 
             <span class="kw">let</span> <span class="ident">last_token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
             <span class="kw">let</span> <span class="ident">ok</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">last_token</span> {
-                <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
-                    <span class="kw">if</span> <span class="ident">punct</span>.<span class="ident">kind</span> <span class="op">==</span> <span class="ident">PunctuatorKind</span>::<span class="ident">RBrace</span> {
-                        <span class="bool-val">true</span>
-                    } <span class="kw">else</span> {
-                        <span class="bool-val">false</span>
-                    }
-                },
+                <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> <span class="ident">punct</span>.<span class="ident">kind</span> <span class="op">==</span> <span class="ident">PunctuatorKind</span>::<span class="ident">RBrace</span>,
                 <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
             };
             
@@ -1110,122 +1072,69 @@
         <span class="prelude-val">Ok</span>(<span class="ident">LiteralTemplateExpression</span> { <span class="ident">loc</span>, <span class="ident">span</span>, <span class="ident">strings</span>: <span class="ident">strings_ref</span>, <span class="ident">bounds</span>: <span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc_vec</span>(<span class="ident">bounds</span>) })
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_primitive_literal</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="comment">// null/true/false</span>
-        <span class="comment">// string</span>
-        <span class="comment">// number</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_async_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="comment">// AsyncFunctionDeclaration       EXPR</span>
+        <span class="comment">// AsyncGeneratorDeclaration      EXPR</span>
+        <span class="comment">// AsyncArrowFunctionExpression   EXPR</span>
+        <span class="comment">// AsyncArrowGeneratorExpression  EXPR</span>
         <span class="macro">unimplemented</span><span class="macro">!</span>()
-        <span class="comment">// match spanned_token.item {</span>
-        <span class="comment">//     Token::Identifier(ident) =&gt; {</span>
-        <span class="comment">//         let start = spanned_token.start;</span>
-        <span class="comment">//         let end = spanned_token.end;</span>
-        <span class="comment">//         let item = Expression::Identifier( Box::new(ident) );</span>
-
-        <span class="comment">//         Ok(Span { start, end, item })</span>
-        <span class="comment">//     },</span>
-        <span class="comment">//     Token::LiteralNull =&gt; {</span>
-        <span class="comment">//         let start = spanned_token.start;</span>
-        <span class="comment">//         let end = spanned_token.end;</span>
-        <span class="comment">//         let item = Expression::NullLiteral;</span>
-
-        <span class="comment">//         Ok(Span { start, end, item })</span>
-        <span class="comment">//     },</span>
-        <span class="comment">//     Token::LiteralBoolean(ref val) =&gt; {</span>
-        <span class="comment">//         let start = spanned_token.start;</span>
-        <span class="comment">//         let end = spanned_token.end;</span>
-        <span class="comment">//         let item = Expression::BooleanLiteral(*val);</span>
-                
-        <span class="comment">//         Ok(Span { start, end, item })</span>
-        <span class="comment">//     },</span>
-        <span class="comment">//     Token::LiteralString(val) =&gt; {</span>
-        <span class="comment">//         let start = spanned_token.start;</span>
-        <span class="comment">//         let end = spanned_token.end;</span>
-
-        <span class="comment">//         let start_offset = start.offset + start.column + 1;</span>
-        <span class="comment">//         let end_offset = end.offset + end.column - 1;</span>
-
-        <span class="comment">//         let raw = self.lexer.source[start_offset..end_offset].to_vec();</span>
-
-        <span class="comment">//         let s = StringLiteral { raw: raw, cooked: val };</span>
-        <span class="comment">//         let item = Expression::StringLiteral(Box::new(s));</span>
-                
-        <span class="comment">//         Ok(Span { start, end, item })</span>
-        <span class="comment">//     },</span>
-        <span class="comment">//     Token::LiteralDecimalNumeric(val) =&gt; {</span>
-        <span class="comment">//         let start = spanned_token.start;</span>
-        <span class="comment">//         let end = spanned_token.end;</span>
-        <span class="comment">//         let item = Expression::NumericLiteral(val.into());</span>
-                
-        <span class="comment">//         Ok(Span { start, end, item })</span>
-        <span class="comment">//     },</span>
-        <span class="comment">//     Token::LiteralFloatNumeric(val) =&gt; {</span>
-        <span class="comment">//         let start = spanned_token.start;</span>
-        <span class="comment">//         let end = spanned_token.end;</span>
-        <span class="comment">//         let item = Expression::NumericLiteral(val.into());</span>
-                
-        <span class="comment">//         Ok(Span { start, end, item })</span>
-        <span class="comment">//     },</span>
-        <span class="comment">//     Token::Punctuator(Punctuator::BackTick) =&gt; {</span>
-        <span class="comment">//         self.parse_template_literal(spanned_token)</span>
-        <span class="comment">//     },</span>
-        <span class="comment">//     Token::Punctuator(Punctuator::Div) =&gt; {</span>
-        <span class="comment">//         self.parse_regular_expression_literal(spanned_token)</span>
-        <span class="comment">//     },</span>
-        <span class="comment">//     _ =&gt; unreachable!(),</span>
-        <span class="comment">// }</span>
     }
-    
-    <span class="comment">// pub fn parse_prefix_expression(&amp;mut self, spanned_token: SpannedToken) -&gt; Result&lt;SpannedExpression, Error&gt; {</span>
-    <span class="comment">//     let op = match spanned_token.item {</span>
-    <span class="comment">//         Token::Keyword(Keyword::Await) =&gt; {</span>
-    <span class="comment">//             PrefixOperator::Await</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         Token::Keyword(Keyword::Delete) =&gt; {</span>
-    <span class="comment">//             PrefixOperator::Delete</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         Token::Keyword(Keyword::Void) =&gt; {</span>
-    <span class="comment">//             PrefixOperator::Void</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         Token::Keyword(Keyword::Typeof) =&gt; {</span>
-    <span class="comment">//             PrefixOperator::TypeOf</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         Token::Punctuator(Punctuator::Increment) =&gt; {</span>
-    <span class="comment">//             PrefixOperator::Increment</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         Token::Punctuator(Punctuator::Decrement) =&gt; {</span>
-    <span class="comment">//             PrefixOperator::Decrement</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         Token::Punctuator(Punctuator::Not) =&gt; {</span>
-    <span class="comment">//             PrefixOperator::Not</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         Token::Punctuator(Punctuator::Add) =&gt; {</span>
-    <span class="comment">//             PrefixOperator::Pos</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         Token::Punctuator(Punctuator::Sub) =&gt; {</span>
-    <span class="comment">//             PrefixOperator::Neg</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         Token::Punctuator(Punctuator::BitNot) =&gt; {</span>
-    <span class="comment">//             // ~</span>
-    <span class="comment">//             PrefixOperator::BitNot</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         _ =&gt; unreachable!(),</span>
-    <span class="comment">//     };</span>
 
-    <span class="comment">//     let token2 = self.next_token2_with_skip(&amp;[</span>
-    <span class="comment">//         Token::SingleLineComment,</span>
-    <span class="comment">//         Token::MultiLineComment,</span>
-    <span class="comment">//         Token::WhiteSpaces,</span>
-    <span class="comment">//         Token::LineTerminator,</span>
-    <span class="comment">//     ])?;</span>
-    <span class="comment">//     let spanned_expression = self.parse_expression(token2)?;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_prefix_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="macro">unimplemented</span><span class="macro">!</span>()
+    }
 
-    <span class="comment">//     let expr = PrefixExpression { operator: op, operand: Box::new(spanned_expression) };</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_infix_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="macro">unimplemented</span><span class="macro">!</span>()
+    }
 
-    <span class="comment">//     let start = spanned_token.start;</span>
-    <span class="comment">//     let end = spanned_token.end;</span>
-    <span class="comment">//     let item = Expression::Prefix(Box::new(expr));</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_postfix_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="macro">unimplemented</span><span class="macro">!</span>()
+    }
 
-    <span class="comment">//     Ok(Span { start, end, item })</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_member_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">left_expr</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">19u8</span>;
+        <span class="kw">match</span> <span class="ident">token</span> {
+            <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
+                <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
+                    <span class="ident">PunctuatorKind</span>::<span class="ident">Dot</span> <span class="op">=&gt;</span> {
+                        <span class="comment">// MemberAccessor</span>
+                        <span class="comment">// .</span>
+                        <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                        <span class="kw">let</span> <span class="ident">right_expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
+                        <span class="kw">if</span> <span class="op">!</span><span class="ident">right_expr</span>.<span class="ident">is_identifier</span>() {
+
+                        }
+                        <span class="macro">unimplemented</span><span class="macro">!</span>()
+                    },
+                    <span class="ident">PunctuatorKind</span>::<span class="ident">LBracket</span> <span class="op">=&gt;</span> {
+                        <span class="comment">// MemberAccessor</span>
+                        <span class="comment">// [</span>
+                        <span class="macro">unimplemented</span><span class="macro">!</span>()
+                    },
+                    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                }
+            },
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        }
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_super_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="comment">// super member</span>
+        <span class="comment">// super call</span>
+        <span class="macro">unimplemented</span><span class="macro">!</span>()
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_new_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="macro">unimplemented</span><span class="macro">!</span>()
+    }
+
+    <span class="comment">// pub fn parse_object_binding_pattern(&amp;mut self) -&gt; Result&lt;ObjectBindingPattern, Error&gt; {</span>
+    <span class="comment">//     unimplemented!()</span>
+    <span class="comment">// }</span>
+
+    <span class="comment">// pub fn parse_array_binding_pattern(&amp;mut self) -&gt; Result&lt;ObjectBindingPattern, Error&gt; {</span>
+    <span class="comment">//     unimplemented!()</span>
     <span class="comment">// }</span>
 
     <span class="comment">// pub fn parse_infix_expression(&amp;mut self,</span>
@@ -1329,48 +1238,5 @@
     <span class="comment">//     Ok(Span { start, end, item })</span>
     <span class="comment">// }</span>
 
-    <span class="comment">// pub fn parse_postfix_expression(&amp;mut self,</span>
-    <span class="comment">//                                 left_spanned_expression: SpannedExpression,</span>
-    <span class="comment">//                                 spanned_token: SpannedToken) -&gt; Result&lt;SpannedExpression, Error&gt; {</span>
-    <span class="comment">//     let op = match spanned_token.item {</span>
-    <span class="comment">//         Token::Punctuator(Punctuator::Increment) =&gt; {</span>
-    <span class="comment">//             PostfixOperator::Increment</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         Token::Punctuator(Punctuator::Decrement) =&gt; {</span>
-    <span class="comment">//             PostfixOperator::Decrement</span>
-    <span class="comment">//         },</span>
-    <span class="comment">//         _ =&gt; unreachable!(),</span>
-    <span class="comment">//     };</span>
-
-    <span class="comment">//     let expr = PostfixExpression { operator: op, operand: Box::new(left_spanned_expression) };</span>
-        
-    <span class="comment">//     let start = spanned_token.start;</span>
-    <span class="comment">//     let end = spanned_token.end;</span>
-    <span class="comment">//     let item = Expression::Postfix(Box::new(expr));</span>
-
-    <span class="comment">//     Ok(Span { start, end, item })</span>
-    <span class="comment">// }</span>
-
-    <span class="comment">// pub fn parse_member_expression(&amp;mut self) -&gt; Result&lt;SpannedExpression, Error&gt; {</span>
-    <span class="comment">//     unimplemented!()</span>
-    <span class="comment">// }</span>
-
-    <span class="comment">// pub fn parse_super_expression(&amp;mut self) -&gt; Result&lt;SpannedExpression, Error&gt; {</span>
-    <span class="comment">//     // super member</span>
-    <span class="comment">//     // super call</span>
-    <span class="comment">//     unimplemented!()</span>
-    <span class="comment">// }</span>
-
-    <span class="comment">// pub fn parse_new_expression(&amp;mut self) -&gt; Result&lt;SpannedExpression, Error&gt; {</span>
-    <span class="comment">//     unimplemented!()</span>
-    <span class="comment">// }</span>
-
-    <span class="comment">// pub fn parse_object_binding_pattern(&amp;mut self) -&gt; Result&lt;ObjectBindingPattern, Error&gt; {</span>
-    <span class="comment">//     unimplemented!()</span>
-    <span class="comment">// }</span>
-
-    <span class="comment">// pub fn parse_array_binding_pattern(&amp;mut self) -&gt; Result&lt;ObjectBindingPattern, Error&gt; {</span>
-    <span class="comment">//     unimplemented!()</span>
-    <span class="comment">// }</span>
 }</pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "ecmascript";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

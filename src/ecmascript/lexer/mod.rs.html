@@ -1375,25 +1375,25 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">unicode_xid</span>::<span class="ident">UnicodeXID</span>;
 
-<span class="kw">use</span> <span class="ident">error</span>::{ <span class="ident">Error</span>, <span class="ident">ErrorKind</span>, };
-<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Float</span>, <span class="ident">Numberic</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{ <span class="ident">Error</span>, <span class="ident">ErrorKind</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Float</span>, <span class="ident">Numberic</span>, };
 
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">eschar</span>::{
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">eschar</span>::{
     <span class="ident">ESChar</span>,
     <span class="ident">CR</span>, <span class="ident">LF</span>, <span class="ident">LS</span>, <span class="ident">PS</span>,
     <span class="ident">TAB</span>, <span class="ident">VT</span>, <span class="ident">FF</span>, <span class="ident">SP</span>, <span class="ident">NBSP</span>, <span class="ident">ZWNBSP</span>,
 };
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">span</span>::{ <span class="ident">LineColumn</span>, <span class="ident">Span</span>, <span class="ident">Loc</span>, };
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">numberic</span>::<span class="ident">parse_numberic</span>;
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">escape</span>::{ <span class="ident">unescape_string</span>, <span class="ident">unescape_template</span>, <span class="ident">unescape_identifier</span>, };
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">punctuator</span>::<span class="ident">PunctuatorKind</span>;
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">token</span>::{
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">span</span>::{ <span class="ident">LineColumn</span>, <span class="ident">Span</span>, <span class="ident">Loc</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">numberic</span>::<span class="ident">parse_numberic</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">escape</span>::{ <span class="ident">unescape_string</span>, <span class="ident">unescape_template</span>, <span class="ident">unescape_identifier</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">punctuator</span>::<span class="ident">PunctuatorKind</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">token</span>::{
     <span class="ident">Comment</span>, <span class="ident">HashBang</span>, <span class="ident">LiteralTemplate</span>, <span class="ident">LiteralRegularExpression</span>,
     <span class="ident">Token</span>, <span class="ident">Punctuator</span>, <span class="ident">Identifier</span>, 
     <span class="ident">LiteralNumeric</span>, <span class="ident">LiteralString</span>, <span class="ident">LiteralBoolean</span>, <span class="ident">LiteralNull</span>, 
 };
 
-<span class="kw">use</span> <span class="ident">parser</span>::<span class="ident">Parser</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">parser</span>::<span class="ident">Parser</span>;
 
 <span class="kw">use</span> <span class="self">self</span>::<span class="ident">LexerErrorKind</span>::<span class="kw-2">*</span>;
 

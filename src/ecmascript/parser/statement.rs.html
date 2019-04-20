@@ -39,24 +39,24 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
-<span class="kw">use</span> <span class="ident">version</span>::<span class="ident">ECMAScriptVersion</span>;
-<span class="kw">use</span> <span class="ident">error</span>::{ <span class="ident">ErrorKind</span>, <span class="ident">Error</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">version</span>::<span class="ident">ECMAScriptVersion</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{ <span class="ident">ErrorKind</span>, <span class="ident">Error</span>, };
 
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">Lexer</span>;
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">token</span>::{ <span class="ident">Token</span>, <span class="ident">LiteralString</span>, <span class="ident">LiteralRegularExpression</span>, <span class="ident">LiteralTemplate</span>, };
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">punctuator</span>::<span class="ident">PunctuatorKind</span>;
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">keyword</span>::<span class="ident">KeywordKind</span>;
-<span class="kw">use</span> <span class="ident">lexer</span>::<span class="ident">LexerErrorKind</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">Lexer</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">token</span>::{ <span class="ident">Token</span>, <span class="ident">LiteralString</span>, <span class="ident">LiteralRegularExpression</span>, <span class="ident">LiteralTemplate</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">punctuator</span>::<span class="ident">PunctuatorKind</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">keyword</span>::<span class="ident">KeywordKind</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">LexerErrorKind</span>;
 
-<span class="kw">use</span> <span class="ident">parser</span>::<span class="ident">parser</span>::<span class="ident">Parser</span>;
-<span class="kw">use</span> <span class="ident">parser</span>::<span class="ident">parser</span>::<span class="ident">ParserErrorKind</span>::{ <span class="self">self</span>, <span class="op">*</span> };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">parser</span>::<span class="ident">parser</span>::<span class="ident">Parser</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">parser</span>::<span class="ident">parser</span>::<span class="ident">ParserErrorKind</span>::{ <span class="self">self</span>, <span class="op">*</span> };
 
-<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Numberic</span>, <span class="ident">Float</span>, };
-<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">statement</span>::{ 
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Numberic</span>, <span class="ident">Float</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">statement</span>::{ 
     <span class="ident">Statement</span>, <span class="ident">StatementList</span>,
     <span class="ident">VariableStatement</span>, <span class="ident">LexicalDeclarationKind</span>, <span class="ident">LexicalBinding</span>,
 };
-<span class="kw">use</span> <span class="ident">ast</span>::<span class="ident">expression</span>::{
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">expression</span>::{
     <span class="ident">Expression</span>, <span class="ident">LiteralTemplateExpression</span>,
 };
 
