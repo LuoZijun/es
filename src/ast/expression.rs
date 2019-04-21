@@ -11,6 +11,8 @@ use crate::ast::numberic::{ Float, Numberic, };
 // use ast::function::{ FunctionExpression, ArrowFunctionExpression, UniqueFormalParameters, };
 // use ast::jsx::{ JSXFragment, JSXElement, };
 
+use std::fmt;
+
 
 pub type ExpressionList<'ast> = Vec<Expression<'ast>>;
 
@@ -29,7 +31,7 @@ impl Default for Direction {
 }
 
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum Expression<'ast> {
     // Comment(&'ast Comment<'ast>),
 
@@ -81,6 +83,50 @@ pub enum Expression<'ast> {
     // JSX
     // JSXFragment(JSXFragment),
     // JSXElement(JSXElement),
+}
+
+impl<'ast> fmt::Debug for Expression<'ast> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Expression::This(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Spread(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Super(inner) => fmt::Debug::fmt(inner, f),
+
+            // BindingElement(inner) => fmt::Debug::fmt(inner, f),
+            // BindingProperty(inner) => fmt::Debug::fmt(inner, f),
+            
+            Expression::Identifier(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Null(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Boolean(inner) => fmt::Debug::fmt(inner, f),
+            Expression::String(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Numeric(inner) => fmt::Debug::fmt(inner, f),
+            Expression::RegularExpression(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Template(inner) => fmt::Debug::fmt(inner, f),
+            
+            // ArrayLiteral(inner) => fmt::Debug::fmt(inner, f),
+            // ObjectLiteral(inner) => fmt::Debug::fmt(inner, f),
+
+            Expression::Parenthesized(inner) => fmt::Debug::fmt(inner, f),
+
+            Expression::Member(inner) => fmt::Debug::fmt(inner, f),
+
+            Expression::TaggedTemplate(inner) => fmt::Debug::fmt(inner, f),
+
+            Expression::NewTarget(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Call(inner) => fmt::Debug::fmt(inner, f),
+            Expression::New(inner) => fmt::Debug::fmt(inner, f),
+
+            Expression::Prefix(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Infix(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Postfix(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Assignment(inner) => fmt::Debug::fmt(inner, f),
+
+            Expression::Conditional(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Yield(inner) => fmt::Debug::fmt(inner, f),
+            
+            Expression::Comma(inner) => fmt::Debug::fmt(inner, f),
+        }
+    }
 }
 
 impl<'ast> Expression<'ast> {
@@ -257,23 +303,23 @@ impl<'ast> Expression<'ast> {
         unimplemented!()
     }
 
-    pub fn precedence(&self) -> u8 {
+    pub fn precedence(&self) -> i8 {
         // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
         match *self {
-            Expression::This(inner) => 0,
+            Expression::This(inner) => -1,
             Expression::Spread(inner) => 1,
-            Expression::Super(inner) => 0,
+            Expression::Super(inner) => -1,
 
             // BindingElement(inner) => inner.span,
             // BindingProperty(inner) => inner.span,
             
-            Expression::Identifier(inner) => 0,
-            Expression::Null(inner) => 0,
-            Expression::Boolean(inner) => 0,
-            Expression::String(inner) => 0,
-            Expression::Numeric(inner) => 0,
-            Expression::RegularExpression(inner) => 0,
-            Expression::Template(inner) => 0,
+            Expression::Identifier(inner) => -1,
+            Expression::Null(inner) => -1,
+            Expression::Boolean(inner) => -1,
+            Expression::String(inner) => -1,
+            Expression::Numeric(inner) => -1,
+            Expression::RegularExpression(inner) => -1,
+            Expression::Template(inner) => -1,
 
             // ArrayLiteral(inner) => inner.span,
             // ObjectLiteral(inner) => inner.span,
@@ -284,7 +330,7 @@ impl<'ast> Expression<'ast> {
 
             Expression::TaggedTemplate(inner) => 19,
             
-            Expression::NewTarget(inner) => 0,
+            Expression::NewTarget(inner) => -1,
             Expression::Call(inner) => 19,
             Expression::New(inner) => if inner.arguments.is_some() { 19 } else { 18 },
 
@@ -407,13 +453,19 @@ pub struct PrefixExpression<'ast> {
     pub operand: Expression<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(PartialEq, Clone, Copy)]
 pub struct InfixExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
     pub left: Expression<'ast>,
     pub operator: InfixOperator,
     pub right: Expression<'ast>,
+}
+
+impl<'ast> fmt::Debug for InfixExpression<'ast> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "InfixExpression{{ left: {:?}, operator: {:?}, right: {:?} }}", self.left, self.operator, self.right)
+    }
 }
 
 // --
@@ -446,9 +498,9 @@ pub struct YieldExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
     // no LineTerminator here
-    pub star: bool,                    // *
-    pub value: Expression<'ast>,       // AssignmentExpression
-                                       // * AssignmentExpression
+    pub star: bool,                   // *
+    pub item: Expression<'ast>,       // AssignmentExpression
+                                      // * AssignmentExpression
 }
 
 // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-AssignmentExpression

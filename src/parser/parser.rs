@@ -102,7 +102,7 @@ impl<'ast> Parser<'ast> {
     
     #[inline]
     fn process(&mut self, token: Token<'ast>) -> Result<Statement<'ast>, Error> {
-        let expr_precedence = 0u8;
+        let expr_precedence = -1i8;
 
         match token {
             Token::LineTerminator => unreachable!(),

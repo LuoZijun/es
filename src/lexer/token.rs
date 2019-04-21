@@ -53,7 +53,7 @@ pub struct Comment<'ast> {
 
 
 /// Keyword or IdentifierName
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Identifier<'ast> {
     pub loc: Loc,
     pub span: Span,
@@ -81,72 +81,117 @@ impl<'ast> Identifier<'ast> {
     }
 }
 
+impl<'ast> fmt::Debug for Identifier<'ast> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Identifier({})", self.raw.iter().collect::<String>())
+    }
+}
 
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+
+
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralNull {
     pub loc: Loc,
     pub span: Span,
 }
+impl fmt::Debug for LiteralNull {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "LiteralNull")
+    }
+}
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralBoolean {
     pub loc: Loc,
     pub span: Span,
     pub value: bool,
 }
+impl fmt::Debug for LiteralBoolean {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "LiteralBoolean({})", self.value)
+    }
+}
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralString<'ast> {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
     // pub delimiter: StringDelimiter,
     pub raw: &'ast [char],
     // if has_escaped_char { Some(cooked) } else { None }
     pub cooked: Option<&'ast [char]>,
 }
+impl<'ast> fmt::Debug for LiteralString<'ast> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "LiteralString({:?})", self.raw.iter().collect::<String>())
+    }
+}
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralNumeric<'ast> {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
     pub raw: &'ast [char],
     pub value: Numberic,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+impl<'ast> fmt::Debug for LiteralNumeric<'ast> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "LiteralNumeric({:?})", self.value)
+    }
+}
+
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralRegularExpression<'ast> {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
     pub body: &'ast [char],
     pub flags: Option<&'ast [char]>,
 }
+impl<'ast> fmt::Debug for LiteralRegularExpression<'ast> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "LiteralRegularExpression({:?}, {:?})",
+            self.body.iter().collect::<String>(),
+            self.flags.map(|flags| flags.iter().collect::<String>()))
+    }
+}
+
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct LiteralTemplate<'ast> {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
     pub raw: &'ast [char],
     pub strings: &'ast [ LiteralString<'ast> ],
     pub bounds: &'ast [ &'ast [ Token<'ast> ] ],
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Punctuator {
-    pub span: Span,
     pub loc: Loc,
+    pub span: Span,
     pub kind: PunctuatorKind,
 }
-
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-pub struct Keyword {
-    pub span: Span,
-    pub loc: Loc,
-    pub kind: KeywordKind,
+impl fmt::Debug for Punctuator {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Punctuator_{:?}", self.kind)
+    }
 }
 
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
+pub struct Keyword {
+    pub loc: Loc,
+    pub span: Span,
+    pub kind: KeywordKind,
+}
+impl fmt::Debug for Keyword {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Keyword_{:?}", self.kind)
+    }
+}
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Token<'ast> {
     // HashBang(HashBang<'ast>),
     // WhiteSpaces,
@@ -167,9 +212,26 @@ pub enum Token<'ast> {
 
     TemplateOpenning,
 }
+impl<'ast> fmt::Debug for Token<'ast> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Token::LineTerminator => write!(f, "LineTerminator"),
+            Token::TemplateOpenning => write!(f, "TemplateOpenning"),
+            Token::Identifier(inner) => fmt::Debug::fmt(&inner, f),
+            Token::Keyword(inner) => fmt::Debug::fmt(&inner, f),
+            Token::LiteralNull(inner) => fmt::Debug::fmt(&inner, f),
+            Token::LiteralBoolean(inner) => fmt::Debug::fmt(&inner, f),
+            Token::Punctuator(inner) => fmt::Debug::fmt(&inner, f),
+            Token::LiteralString(inner) => fmt::Debug::fmt(&inner, f),
+            Token::LiteralNumeric(inner) => fmt::Debug::fmt(&inner, f),
+            Token::LiteralRegularExpression(inner) => fmt::Debug::fmt(&inner, f),
+            Token::LiteralTemplate(inner) => fmt::Debug::fmt(&inner, f),
+        }
+        
+    }
+}
 
-
-// // args: Punctuated<Expr, Comma>
+// args: Punctuated<Expr, Comma>
 // pub struct Punctuated<T, P> {
 //     inner: Vec<(T, P)>,
 //     last: Option<Box<T>>,

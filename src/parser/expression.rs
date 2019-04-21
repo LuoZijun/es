@@ -22,6 +22,7 @@ use crate::ast::expression::{
     Expression, LiteralTemplateExpression,
     PrefixExpression, InfixExpression, PostfixExpression, AssignmentExpression,
     MemberExpression, NewTargetExpression, NewExpression,
+    ConditionalExpression, YieldExpression, CommaExpression,
 };
 
 // 运算符优先级
@@ -58,6 +59,27 @@ pub fn punctuator_to_infix_op(punct: PunctuatorKind) -> InfixOperator {
 }
 
 #[inline]
+pub fn punctuator_to_assignment_op(punct: PunctuatorKind) -> AssignmentOperator {
+    match punct {
+        PunctuatorKind::Assign => AssignmentOperator::Assign,
+        PunctuatorKind::AddAssign => AssignmentOperator::AddAssign,
+        PunctuatorKind::SubAssign => AssignmentOperator::SubAssign,
+        PunctuatorKind::MulAssign => AssignmentOperator::MulAssign,
+        PunctuatorKind::DivAssign => AssignmentOperator::DivAssign,
+        PunctuatorKind::RemAssign => AssignmentOperator::RemAssign,
+        PunctuatorKind::PowAssign => AssignmentOperator::PowAssign,
+
+        PunctuatorKind::BitAndAssign => AssignmentOperator::BitAndAssign,
+        PunctuatorKind::BitOrAssign => AssignmentOperator::BitOrAssign,
+        PunctuatorKind::BitXorAssign => AssignmentOperator::BitXorAssign,
+        PunctuatorKind::BitShlAssign => AssignmentOperator::BitShlAssign,
+        PunctuatorKind::BitShrAssign => AssignmentOperator::BitShrAssign,
+        PunctuatorKind::BitUShrAssign => AssignmentOperator::BitUShrAssign,
+        _ => unreachable!(),
+    }
+}
+
+#[inline]
 pub fn keyword_to_infix_op(keyword: KeywordKind) -> InfixOperator {
     match keyword {
         KeywordKind::In => InfixOperator::In,
@@ -67,7 +89,7 @@ pub fn keyword_to_infix_op(keyword: KeywordKind) -> InfixOperator {
 }
 
 impl<'ast> Parser<'ast> {
-    pub fn parse_expression(&mut self, token: Token<'ast>, precedence: u8) -> Result<Expression<'ast>, Error> {
+    pub fn parse_expression(&mut self, token: Token<'ast>, precedence: i8) -> Result<Expression<'ast>, Error> {
         let mut left_expr = match token {
             Token::LiteralTemplate(_) => unreachable!(),
             Token::LiteralRegularExpression(_) => unreachable!(),
@@ -102,7 +124,7 @@ impl<'ast> Parser<'ast> {
                         let mut loc = punct.loc;
                         let mut span = punct.span;
 
-                        let precedence = 16u8;
+                        let precedence = 16i8;
                         let operator = PrefixOperator::Positive;
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
@@ -119,7 +141,7 @@ impl<'ast> Parser<'ast> {
                         let mut loc = punct.loc;
                         let mut span = punct.span;
 
-                        let precedence = 16u8;
+                        let precedence = 16i8;
                         let operator = PrefixOperator::Negative;
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
@@ -136,7 +158,7 @@ impl<'ast> Parser<'ast> {
                         let mut loc = punct.loc;
                         let mut span = punct.span;
 
-                        let precedence = 16u8;
+                        let precedence = 16i8;
                         let operator = PrefixOperator::Increment;
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
@@ -157,7 +179,7 @@ impl<'ast> Parser<'ast> {
                         let mut loc = punct.loc;
                         let mut span = punct.span;
 
-                        let precedence = 16u8;
+                        let precedence = 16i8;
                         let operator = PrefixOperator::Decrement;
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
@@ -178,7 +200,7 @@ impl<'ast> Parser<'ast> {
                         let mut loc = punct.loc;
                         let mut span = punct.span;
 
-                        let precedence = 16u8;
+                        let precedence = 16i8;
                         let operator = PrefixOperator::Not;
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
@@ -195,7 +217,7 @@ impl<'ast> Parser<'ast> {
                         let mut loc = punct.loc;
                         let mut span = punct.span;
 
-                        let precedence = 16u8;
+                        let precedence = 16i8;
                         let operator = PrefixOperator::BitNot;
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
@@ -224,7 +246,7 @@ impl<'ast> Parser<'ast> {
                         let mut loc = kw.loc;
                         let mut span = kw.span;
 
-                        let precedence = 16u8;
+                        let precedence = 16i8;
                         let operator = PrefixOperator::Await;
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
@@ -240,7 +262,7 @@ impl<'ast> Parser<'ast> {
                         let mut loc = kw.loc;
                         let mut span = kw.span;
 
-                        let precedence = 16u8;
+                        let precedence = 16i8;
                         let operator = PrefixOperator::TypeOf;
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
@@ -256,7 +278,7 @@ impl<'ast> Parser<'ast> {
                         let mut loc = kw.loc;
                         let mut span = kw.span;
 
-                        let precedence = 16u8;
+                        let precedence = 16i8;
                         let operator = PrefixOperator::Void;
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
@@ -272,7 +294,7 @@ impl<'ast> Parser<'ast> {
                         let mut loc = kw.loc;
                         let mut span = kw.span;
 
-                        let precedence = 16u8;
+                        let precedence = 16i8;
                         let operator = PrefixOperator::Delete;
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
@@ -298,9 +320,32 @@ impl<'ast> Parser<'ast> {
                         self.parse_new_expression(token)?
                     },
                     KeywordKind::Yield => {
-                        // let expr = self.parse_expression(token, expr_precedence)?;
-                        // Ok(Statement::Expression(self.alloc(expr)))
-                        unimplemented!()
+                        let op_precedence = 2;
+
+                        let mut loc = kw.loc;
+                        let mut span = kw.span;
+
+                        let mut token2 = self.token2()?;
+                        let star = match token2 {
+                            // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-YieldExpression
+                            // no LineTerminator here
+                            Token::Punctuator(punct) => {
+                                if punct.kind == PunctuatorKind::Mul {
+                                    token2 = self.token2()?;
+                                    true
+                                } else {
+                                    false
+                                }
+                            },
+                            _ => false
+                        };
+
+                        let expr = self.parse_expression(token2, op_precedence)?;
+                        loc.end = expr.loc().end;
+                        span.end = expr.span().end;
+
+                        let item = YieldExpression{ loc, span, star, item: expr };
+                        Expression::Yield(self.alloc(item))
                     },
                     _ => {
                         if kw.kind.is_future_reserved() {
@@ -348,16 +393,57 @@ impl<'ast> Parser<'ast> {
                             self.token.push(token2);
                             break;
                         },
+                        PunctuatorKind::Colon => {
+                            // :
+                            self.token.push(token2);
+                            break;
+                        },
 
                         PunctuatorKind::Comma => {
                             // ,
+                            // CommaExpression
                             unimplemented!()
                         },
                         PunctuatorKind::Question => {
                             // ?
-                            let op_precedence = 4;
+                            // EXPR ? EXPR : EXPR
+                            let op_precedence = 4i8;
+                            
+                            let mut loc = punct.loc;
+                            let mut span = punct.span;
 
-                            unimplemented!()
+                            let token3 = self.token2()?;
+                            let and_then = self.parse_expression(token3, op_precedence)?;
+                            let mut token4 = self.token2()?;
+                            
+                            loop {
+                                match token4 {
+                                    Token::LineTerminator => {
+                                        token4 = self.token2()?;
+                                        continue;
+                                    },
+                                    Token::Punctuator(punct) => {
+                                        if punct.kind == PunctuatorKind::Colon {
+                                            // :
+                                            token4 = self.token2()?;
+                                            break;
+                                        } else {
+                                            return Err(self.unexpected_token(token4));
+                                        }
+                                    },
+                                    _ => {
+                                        return Err(self.unexpected_token(token4));
+                                    }
+                                }
+                            }
+
+                            let or_else = self.parse_expression(token4, op_precedence)?;
+                            
+                            loc.end = or_else.loc().end;
+                            span.end = or_else.span().end;
+
+                            let item = ConditionalExpression { loc, span, condition: left_expr, and_then, or_else };
+                            left_expr = Expression::Conditional(self.alloc(item));
                         },
                         PunctuatorKind::Increment => {
                             // 后置 递增
@@ -368,7 +454,7 @@ impl<'ast> Parser<'ast> {
                             let mut loc = left_expr.loc();
                             let mut span = left_expr.span();
 
-                            let precedence = 17u8;
+                            let precedence = 17i8;
                             let operator = PostfixOperator::Increment;
                             let operand = left_expr;
                             
@@ -387,7 +473,7 @@ impl<'ast> Parser<'ast> {
                             let mut loc = left_expr.loc();
                             let mut span = left_expr.span();
 
-                            let precedence = 17u8;
+                            let precedence = 17i8;
                             let operator = PostfixOperator::Decrement;
                             let operand = left_expr;
                             
@@ -611,6 +697,25 @@ impl<'ast> Parser<'ast> {
 
                             left_expr = self.parse_infix_expression(left_expr, token2)?;
                         },
+
+                        // AssignmentExpression
+                        PunctuatorKind::Assign | PunctuatorKind::AddAssign | PunctuatorKind::SubAssign | PunctuatorKind::MulAssign 
+                        | PunctuatorKind::DivAssign | PunctuatorKind::RemAssign | PunctuatorKind::PowAssign 
+                        | PunctuatorKind::BitAndAssign | PunctuatorKind::BitOrAssign | PunctuatorKind::BitXorAssign 
+                        | PunctuatorKind::BitShlAssign | PunctuatorKind::BitShrAssign | PunctuatorKind::BitUShrAssign => {
+                            let op_precedence = 3i8;
+
+                            let operator = punctuator_to_assignment_op(punct.kind);
+                            let token3 = self.token2()?;
+                            let right_expr = self.parse_expression(token3, op_precedence)?;
+                            
+                            let mut loc = left_expr.loc();
+                            let mut span = left_expr.span();
+                            loc.end = right_expr.loc().end;
+                            span.end = right_expr.span().end;
+                            let item = AssignmentExpression { loc, span, left: left_expr, operator, right: right_expr };
+                            left_expr = Expression::Assignment(self.alloc(item));
+                        },
                         _ => {
                             return Err(self.unexpected_token(token2));
                         },
@@ -691,7 +796,7 @@ impl<'ast> Parser<'ast> {
 
             // Read bound
             let next_token = self.token2()?;
-            let expr = self.parse_expression(next_token, 0)?;
+            let expr = self.parse_expression(next_token, -1i8)?;
 
             let last_offset = self.lexer.offset();
             let last_line_offset = self.lexer.line_offset;
@@ -799,7 +904,7 @@ impl<'ast> Parser<'ast> {
                             // [
                             let token2 = self.token2()?;
 
-                            let right_expr = self.parse_expression(token2, 0)?;
+                            let right_expr = self.parse_expression(token2, 0i8)?;
 
                             loop {
                                 let end_token = self.token2()?;
@@ -827,7 +932,7 @@ impl<'ast> Parser<'ast> {
 
                             let left = left_expr;
                             let right = right_expr;
-                            let computed = false;
+                            let computed = true;
                             let item = MemberExpression { loc, span, left, right, computed, };
 
                             left_expr = Expression::Member(self.alloc(item));
@@ -917,7 +1022,7 @@ impl<'ast> Parser<'ast> {
             }
         }
 
-        let op_precedence = 18u8;
+        let op_precedence = 18i8;
 
         let token2 = self.token2()?;
         let callee = self.parse_expression(token2, op_precedence)?;
@@ -932,8 +1037,6 @@ impl<'ast> Parser<'ast> {
     }
 
     pub fn parse_infix_expression(&mut self, mut left_expr: Expression<'ast>, mut token: Token<'ast>) -> Result<Expression<'ast>, Error> {
-        let mut last_precedence = 0u8;
-
         loop {
             let operator = match token {
                 Token::Punctuator(punct) => {

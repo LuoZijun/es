@@ -59,7 +59,7 @@ pub enum InfixOperator {
 }
 
 impl InfixOperator {
-    pub fn precedence(&self) -> u8 {
+    pub fn precedence(&self) -> i8 {
         use self::InfixOperator::*;
 
         match *self {
