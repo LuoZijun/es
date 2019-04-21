@@ -1319,7 +1319,7 @@
                         },
                         <span class="ident">PunctuatorKind</span>::<span class="ident">Increment</span> <span class="op">=&gt;</span> {
                             <span class="comment">// 后置 递增</span>
-                            <span class="kw">if</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_member_expression</span>() <span class="op">||</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_identifier</span>() {
+                            <span class="kw">if</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_member_expression</span>() <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_identifier</span>() {
                                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
                             }
 
@@ -1338,7 +1338,7 @@
                         },
                         <span class="ident">PunctuatorKind</span>::<span class="ident">Decrement</span> <span class="op">=&gt;</span> {
                             <span class="comment">// 后置 递减</span>
-                            <span class="kw">if</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_member_expression</span>() <span class="op">||</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_identifier</span>() {
+                            <span class="kw">if</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_member_expression</span>() <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">left_expr</span>.<span class="ident">is_identifier</span>() {
                                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
                             }
 
