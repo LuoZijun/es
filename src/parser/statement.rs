@@ -15,7 +15,7 @@ use crate::parser::parser::ParserErrorKind::{ self, * };
 use crate::ast::numberic::{ Numberic, Float, };
 use crate::ast::statement::{ 
     Statement, StatementList,
-    VariableStatement, LexicalDeclarationKind, LexicalBinding,
+    EmptyStatement, VariableStatement, LexicalDeclarationKind, LexicalBinding,
 };
 use crate::ast::expression::{
     Expression, LiteralTemplateExpression,
@@ -24,7 +24,28 @@ use crate::ast::expression::{
 
 impl<'ast> Parser<'ast> {
     pub fn parse_statement(&mut self, token: Token<'ast>) -> Result<Statement<'ast>, Error> {
-        unimplemented!()
+        match token {
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::Semicolon => {
+                        // Empty ?
+                        // self.parse_statement(token)
+                        let loc =  punct.loc;
+                        let span = punct.span;
+
+                        let item = EmptyStatement { loc, span };
+                        
+                        return Ok(Statement::Empty(self.alloc(item)))
+                    },
+                    _ => {
+                        unimplemented!()
+                    }
+                }
+            },
+            _ => {
+                unimplemented!()
+            }
+        }
     }
 
     fn parse_lexical_binding(&mut self) -> Result<Vec<LexicalBinding>, Error> {

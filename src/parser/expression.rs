@@ -376,6 +376,7 @@ impl<'ast> Parser<'ast> {
                     match punct.kind {
                         PunctuatorKind::Semicolon => {
                             // END.
+                            self.token.push(token2);
                             break;
                         },
                         PunctuatorKind::RParen => {
