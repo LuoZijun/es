@@ -1127,6 +1127,11 @@
 <span id="1127">1127</span>
 <span id="1128">1128</span>
 <span id="1129">1129</span>
+<span id="1130">1130</span>
+<span id="1131">1131</span>
+<span id="1132">1132</span>
+<span id="1133">1133</span>
+<span id="1134">1134</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -1502,6 +1507,9 @@
             };
 
             <span class="kw">match</span> <span class="ident">token2</span> {
+                <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> {
+                    <span class="kw">continue</span>;
+                },
                 <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
                     <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
                         <span class="ident">PunctuatorKind</span>::<span class="ident">Semicolon</span> <span class="op">=&gt;</span> {
@@ -2002,7 +2010,7 @@
         <span class="kw">loop</span> {
             <span class="kw">match</span> <span class="ident">token</span> {
                 <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> {
-                    <span class="kw">continue</span>;
+                    <span class="comment">// continue;</span>
                 },
                 <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
                     <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
@@ -2011,7 +2019,9 @@
                             <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                             
                             <span class="kw">match</span> <span class="ident">token2</span> {
-                                <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> <span class="kw">continue</span>,
+                                <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> {
+                                    <span class="comment">// continue</span>
+                                },
                                 <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> {
                                     <span class="kw">let</span> <span class="ident">right_expr</span> <span class="op">=</span> <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">ident</span>));
 
