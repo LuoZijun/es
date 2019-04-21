@@ -502,6 +502,58 @@
 <span id="502">502</span>
 <span id="503">503</span>
 <span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">span</span>::{ <span class="ident">Loc</span>, <span class="ident">Span</span>, <span class="ident">LineColumn</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">token</span>::{
@@ -515,6 +567,8 @@
 <span class="comment">// use ast::class::ClassExpression;</span>
 <span class="comment">// use ast::function::{ FunctionExpression, ArrowFunctionExpression, UniqueFormalParameters, };</span>
 <span class="comment">// use ast::jsx::{ JSXFragment, JSXElement, };</span>
+
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ExpressionList</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>;
@@ -534,7 +588,7 @@
 }
 
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="comment">// Comment(&amp;&#39;ast Comment&lt;&#39;ast&gt;),</span>
 
@@ -586,6 +640,50 @@
     <span class="comment">// JSX</span>
     <span class="comment">// JSXFragment(JSXFragment),</span>
     <span class="comment">// JSXElement(JSXElement),</span>
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">Expression</span>::<span class="ident">This</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Spread</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Super</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+
+            <span class="comment">// BindingElement(inner) =&gt; fmt::Debug::fmt(inner, f),</span>
+            <span class="comment">// BindingProperty(inner) =&gt; fmt::Debug::fmt(inner, f),</span>
+            
+            <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Null</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Boolean</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">String</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Numeric</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">RegularExpression</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Template</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            
+            <span class="comment">// ArrayLiteral(inner) =&gt; fmt::Debug::fmt(inner, f),</span>
+            <span class="comment">// ObjectLiteral(inner) =&gt; fmt::Debug::fmt(inner, f),</span>
+
+            <span class="ident">Expression</span>::<span class="ident">Parenthesized</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+
+            <span class="ident">Expression</span>::<span class="ident">Member</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+
+            <span class="ident">Expression</span>::<span class="ident">TaggedTemplate</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+
+            <span class="ident">Expression</span>::<span class="ident">NewTarget</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Call</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">New</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+
+            <span class="ident">Expression</span>::<span class="ident">Prefix</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Infix</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Postfix</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Assignment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+
+            <span class="ident">Expression</span>::<span class="ident">Conditional</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Yield</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            
+            <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+        }
+    }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
@@ -762,23 +860,23 @@
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">precedence</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">precedence</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">i8</span> {
         <span class="comment">// https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table</span>
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Expression</span>::<span class="ident">This</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
+            <span class="ident">Expression</span>::<span class="ident">This</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
             <span class="ident">Expression</span>::<span class="ident">Spread</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">1</span>,
-            <span class="ident">Expression</span>::<span class="ident">Super</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
+            <span class="ident">Expression</span>::<span class="ident">Super</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
 
             <span class="comment">// BindingElement(inner) =&gt; inner.span,</span>
             <span class="comment">// BindingProperty(inner) =&gt; inner.span,</span>
             
-            <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
-            <span class="ident">Expression</span>::<span class="ident">Null</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
-            <span class="ident">Expression</span>::<span class="ident">Boolean</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
-            <span class="ident">Expression</span>::<span class="ident">String</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
-            <span class="ident">Expression</span>::<span class="ident">Numeric</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
-            <span class="ident">Expression</span>::<span class="ident">RegularExpression</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
-            <span class="ident">Expression</span>::<span class="ident">Template</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
+            <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">Null</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">Boolean</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">String</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">Numeric</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">RegularExpression</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">Template</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
 
             <span class="comment">// ArrayLiteral(inner) =&gt; inner.span,</span>
             <span class="comment">// ObjectLiteral(inner) =&gt; inner.span,</span>
@@ -789,7 +887,7 @@
 
             <span class="ident">Expression</span>::<span class="ident">TaggedTemplate</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">19</span>,
             
-            <span class="ident">Expression</span>::<span class="ident">NewTarget</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
+            <span class="ident">Expression</span>::<span class="ident">NewTarget</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
             <span class="ident">Expression</span>::<span class="ident">Call</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">19</span>,
             <span class="ident">Expression</span>::<span class="ident">New</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="kw">if</span> <span class="ident">inner</span>.<span class="ident">arguments</span>.<span class="ident">is_some</span>() { <span class="number">19</span> } <span class="kw">else</span> { <span class="number">18</span> },
 
@@ -912,13 +1010,19 @@
     <span class="kw">pub</span> <span class="ident">operand</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InfixExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
     <span class="kw">pub</span> <span class="ident">left</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">operator</span>: <span class="ident">InfixOperator</span>,
     <span class="kw">pub</span> <span class="ident">right</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">InfixExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;InfixExpression{{ left: {:?}, operator: {:?}, right: {:?} }}&quot;</span>, <span class="self">self</span>.<span class="ident">left</span>, <span class="self">self</span>.<span class="ident">operator</span>, <span class="self">self</span>.<span class="ident">right</span>)
+    }
 }
 
 <span class="comment">// --</span>
@@ -951,9 +1055,9 @@
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
     <span class="comment">// no LineTerminator here</span>
-    <span class="kw">pub</span> <span class="ident">star</span>: <span class="ident">bool</span>,                    <span class="comment">// *</span>
-    <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,       <span class="comment">// AssignmentExpression</span>
-                                       <span class="comment">// * AssignmentExpression</span>
+    <span class="kw">pub</span> <span class="ident">star</span>: <span class="ident">bool</span>,                   <span class="comment">// *</span>
+    <span class="kw">pub</span> <span class="ident">item</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,       <span class="comment">// AssignmentExpression</span>
+                                      <span class="comment">// * AssignmentExpression</span>
 }
 
 <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#prod-AssignmentExpression</span>

@@ -1023,6 +1023,109 @@
 <span id="1023">1023</span>
 <span id="1024">1024</span>
 <span id="1025">1025</span>
+<span id="1026">1026</span>
+<span id="1027">1027</span>
+<span id="1028">1028</span>
+<span id="1029">1029</span>
+<span id="1030">1030</span>
+<span id="1031">1031</span>
+<span id="1032">1032</span>
+<span id="1033">1033</span>
+<span id="1034">1034</span>
+<span id="1035">1035</span>
+<span id="1036">1036</span>
+<span id="1037">1037</span>
+<span id="1038">1038</span>
+<span id="1039">1039</span>
+<span id="1040">1040</span>
+<span id="1041">1041</span>
+<span id="1042">1042</span>
+<span id="1043">1043</span>
+<span id="1044">1044</span>
+<span id="1045">1045</span>
+<span id="1046">1046</span>
+<span id="1047">1047</span>
+<span id="1048">1048</span>
+<span id="1049">1049</span>
+<span id="1050">1050</span>
+<span id="1051">1051</span>
+<span id="1052">1052</span>
+<span id="1053">1053</span>
+<span id="1054">1054</span>
+<span id="1055">1055</span>
+<span id="1056">1056</span>
+<span id="1057">1057</span>
+<span id="1058">1058</span>
+<span id="1059">1059</span>
+<span id="1060">1060</span>
+<span id="1061">1061</span>
+<span id="1062">1062</span>
+<span id="1063">1063</span>
+<span id="1064">1064</span>
+<span id="1065">1065</span>
+<span id="1066">1066</span>
+<span id="1067">1067</span>
+<span id="1068">1068</span>
+<span id="1069">1069</span>
+<span id="1070">1070</span>
+<span id="1071">1071</span>
+<span id="1072">1072</span>
+<span id="1073">1073</span>
+<span id="1074">1074</span>
+<span id="1075">1075</span>
+<span id="1076">1076</span>
+<span id="1077">1077</span>
+<span id="1078">1078</span>
+<span id="1079">1079</span>
+<span id="1080">1080</span>
+<span id="1081">1081</span>
+<span id="1082">1082</span>
+<span id="1083">1083</span>
+<span id="1084">1084</span>
+<span id="1085">1085</span>
+<span id="1086">1086</span>
+<span id="1087">1087</span>
+<span id="1088">1088</span>
+<span id="1089">1089</span>
+<span id="1090">1090</span>
+<span id="1091">1091</span>
+<span id="1092">1092</span>
+<span id="1093">1093</span>
+<span id="1094">1094</span>
+<span id="1095">1095</span>
+<span id="1096">1096</span>
+<span id="1097">1097</span>
+<span id="1098">1098</span>
+<span id="1099">1099</span>
+<span id="1100">1100</span>
+<span id="1101">1101</span>
+<span id="1102">1102</span>
+<span id="1103">1103</span>
+<span id="1104">1104</span>
+<span id="1105">1105</span>
+<span id="1106">1106</span>
+<span id="1107">1107</span>
+<span id="1108">1108</span>
+<span id="1109">1109</span>
+<span id="1110">1110</span>
+<span id="1111">1111</span>
+<span id="1112">1112</span>
+<span id="1113">1113</span>
+<span id="1114">1114</span>
+<span id="1115">1115</span>
+<span id="1116">1116</span>
+<span id="1117">1117</span>
+<span id="1118">1118</span>
+<span id="1119">1119</span>
+<span id="1120">1120</span>
+<span id="1121">1121</span>
+<span id="1122">1122</span>
+<span id="1123">1123</span>
+<span id="1124">1124</span>
+<span id="1125">1125</span>
+<span id="1126">1126</span>
+<span id="1127">1127</span>
+<span id="1128">1128</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -1048,6 +1151,7 @@
     <span class="ident">Expression</span>, <span class="ident">LiteralTemplateExpression</span>,
     <span class="ident">PrefixExpression</span>, <span class="ident">InfixExpression</span>, <span class="ident">PostfixExpression</span>, <span class="ident">AssignmentExpression</span>,
     <span class="ident">MemberExpression</span>, <span class="ident">NewTargetExpression</span>, <span class="ident">NewExpression</span>,
+    <span class="ident">ConditionalExpression</span>, <span class="ident">YieldExpression</span>, <span class="ident">CommaExpression</span>,
 };
 
 <span class="comment">// 运算符优先级</span>
@@ -1084,6 +1188,27 @@
 }
 
 <span class="attribute">#[<span class="ident">inline</span>]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">punctuator_to_assignment_op</span>(<span class="ident">punct</span>: <span class="ident">PunctuatorKind</span>) <span class="op">-&gt;</span> <span class="ident">AssignmentOperator</span> {
+    <span class="kw">match</span> <span class="ident">punct</span> {
+        <span class="ident">PunctuatorKind</span>::<span class="ident">Assign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">Assign</span>,
+        <span class="ident">PunctuatorKind</span>::<span class="ident">AddAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">AddAssign</span>,
+        <span class="ident">PunctuatorKind</span>::<span class="ident">SubAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">SubAssign</span>,
+        <span class="ident">PunctuatorKind</span>::<span class="ident">MulAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">MulAssign</span>,
+        <span class="ident">PunctuatorKind</span>::<span class="ident">DivAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">DivAssign</span>,
+        <span class="ident">PunctuatorKind</span>::<span class="ident">RemAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">RemAssign</span>,
+        <span class="ident">PunctuatorKind</span>::<span class="ident">PowAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">PowAssign</span>,
+
+        <span class="ident">PunctuatorKind</span>::<span class="ident">BitAndAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">BitAndAssign</span>,
+        <span class="ident">PunctuatorKind</span>::<span class="ident">BitOrAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">BitOrAssign</span>,
+        <span class="ident">PunctuatorKind</span>::<span class="ident">BitXorAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">BitXorAssign</span>,
+        <span class="ident">PunctuatorKind</span>::<span class="ident">BitShlAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">BitShlAssign</span>,
+        <span class="ident">PunctuatorKind</span>::<span class="ident">BitShrAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">BitShrAssign</span>,
+        <span class="ident">PunctuatorKind</span>::<span class="ident">BitUShrAssign</span> <span class="op">=&gt;</span> <span class="ident">AssignmentOperator</span>::<span class="ident">BitUShrAssign</span>,
+        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+    }
+}
+
+<span class="attribute">#[<span class="ident">inline</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">keyword_to_infix_op</span>(<span class="ident">keyword</span>: <span class="ident">KeywordKind</span>) <span class="op">-&gt;</span> <span class="ident">InfixOperator</span> {
     <span class="kw">match</span> <span class="ident">keyword</span> {
         <span class="ident">KeywordKind</span>::<span class="ident">In</span> <span class="op">=&gt;</span> <span class="ident">InfixOperator</span>::<span class="ident">In</span>,
@@ -1093,7 +1218,7 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">precedence</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">precedence</span>: <span class="ident">i8</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">left_expr</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">token</span> {
             <span class="ident">Token</span>::<span class="ident">LiteralTemplate</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
             <span class="ident">Token</span>::<span class="ident">LiteralRegularExpression</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
@@ -1128,7 +1253,7 @@
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">loc</span>;
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16u8</span>;
+                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16i8</span>;
                         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PrefixOperator</span>::<span class="ident">Positive</span>;
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
@@ -1145,7 +1270,7 @@
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">loc</span>;
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16u8</span>;
+                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16i8</span>;
                         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PrefixOperator</span>::<span class="ident">Negative</span>;
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
@@ -1162,7 +1287,7 @@
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">loc</span>;
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16u8</span>;
+                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16i8</span>;
                         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PrefixOperator</span>::<span class="ident">Increment</span>;
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
@@ -1183,7 +1308,7 @@
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">loc</span>;
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16u8</span>;
+                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16i8</span>;
                         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PrefixOperator</span>::<span class="ident">Decrement</span>;
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
@@ -1204,7 +1329,7 @@
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">loc</span>;
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16u8</span>;
+                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16i8</span>;
                         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PrefixOperator</span>::<span class="ident">Not</span>;
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
@@ -1221,7 +1346,7 @@
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">loc</span>;
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16u8</span>;
+                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16i8</span>;
                         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PrefixOperator</span>::<span class="ident">BitNot</span>;
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
@@ -1250,7 +1375,7 @@
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">loc</span>;
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16u8</span>;
+                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16i8</span>;
                         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PrefixOperator</span>::<span class="ident">Await</span>;
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
@@ -1266,7 +1391,7 @@
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">loc</span>;
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16u8</span>;
+                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16i8</span>;
                         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PrefixOperator</span>::<span class="ident">TypeOf</span>;
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
@@ -1282,7 +1407,7 @@
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">loc</span>;
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16u8</span>;
+                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16i8</span>;
                         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PrefixOperator</span>::<span class="ident">Void</span>;
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
@@ -1298,7 +1423,7 @@
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">loc</span>;
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16u8</span>;
+                        <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">16i8</span>;
                         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PrefixOperator</span>::<span class="ident">Delete</span>;
                         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">precedence</span>)<span class="question-mark">?</span>;
@@ -1324,9 +1449,32 @@
                         <span class="self">self</span>.<span class="ident">parse_new_expression</span>(<span class="ident">token</span>)<span class="question-mark">?</span>
                     },
                     <span class="ident">KeywordKind</span>::<span class="ident">Yield</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// let expr = self.parse_expression(token, expr_precedence)?;</span>
-                        <span class="comment">// Ok(Statement::Expression(self.alloc(expr)))</span>
-                        <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        <span class="kw">let</span> <span class="ident">op_precedence</span> <span class="op">=</span> <span class="number">2</span>;
+
+                        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">loc</span>;
+                        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">span</span>;
+
+                        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                        <span class="kw">let</span> <span class="ident">star</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">token2</span> {
+                            <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#prod-YieldExpression</span>
+                            <span class="comment">// no LineTerminator here</span>
+                            <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
+                                <span class="kw">if</span> <span class="ident">punct</span>.<span class="ident">kind</span> <span class="op">==</span> <span class="ident">PunctuatorKind</span>::<span class="ident">Mul</span> {
+                                    <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                                    <span class="bool-val">true</span>
+                                } <span class="kw">else</span> {
+                                    <span class="bool-val">false</span>
+                                }
+                            },
+                            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>
+                        };
+
+                        <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">op_precedence</span>)<span class="question-mark">?</span>;
+                        <span class="ident">loc</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">expr</span>.<span class="ident">loc</span>().<span class="ident">end</span>;
+                        <span class="ident">span</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">expr</span>.<span class="ident">span</span>().<span class="ident">end</span>;
+
+                        <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">YieldExpression</span>{ <span class="ident">loc</span>, <span class="ident">span</span>, <span class="ident">star</span>, <span class="ident">item</span>: <span class="ident">expr</span> };
+                        <span class="ident">Expression</span>::<span class="ident">Yield</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">item</span>))
                     },
                     <span class="kw">_</span> <span class="op">=&gt;</span> {
                         <span class="kw">if</span> <span class="ident">kw</span>.<span class="ident">kind</span>.<span class="ident">is_future_reserved</span>() {
@@ -1374,16 +1522,57 @@
                             <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">push</span>(<span class="ident">token2</span>);
                             <span class="kw">break</span>;
                         },
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">Colon</span> <span class="op">=&gt;</span> {
+                            <span class="comment">// :</span>
+                            <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">push</span>(<span class="ident">token2</span>);
+                            <span class="kw">break</span>;
+                        },
 
                         <span class="ident">PunctuatorKind</span>::<span class="ident">Comma</span> <span class="op">=&gt;</span> {
                             <span class="comment">// ,</span>
+                            <span class="comment">// CommaExpression</span>
                             <span class="macro">unimplemented</span><span class="macro">!</span>()
                         },
                         <span class="ident">PunctuatorKind</span>::<span class="ident">Question</span> <span class="op">=&gt;</span> {
                             <span class="comment">// ?</span>
-                            <span class="kw">let</span> <span class="ident">op_precedence</span> <span class="op">=</span> <span class="number">4</span>;
+                            <span class="comment">// EXPR ? EXPR : EXPR</span>
+                            <span class="kw">let</span> <span class="ident">op_precedence</span> <span class="op">=</span> <span class="number">4i8</span>;
+                            
+                            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">loc</span>;
+                            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">span</span>;
 
-                            <span class="macro">unimplemented</span><span class="macro">!</span>()
+                            <span class="kw">let</span> <span class="ident">token3</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                            <span class="kw">let</span> <span class="ident">and_then</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token3</span>, <span class="ident">op_precedence</span>)<span class="question-mark">?</span>;
+                            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">token4</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                            
+                            <span class="kw">loop</span> {
+                                <span class="kw">match</span> <span class="ident">token4</span> {
+                                    <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> {
+                                        <span class="ident">token4</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                                        <span class="kw">continue</span>;
+                                    },
+                                    <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
+                                        <span class="kw">if</span> <span class="ident">punct</span>.<span class="ident">kind</span> <span class="op">==</span> <span class="ident">PunctuatorKind</span>::<span class="ident">Colon</span> {
+                                            <span class="comment">// :</span>
+                                            <span class="ident">token4</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                                            <span class="kw">break</span>;
+                                        } <span class="kw">else</span> {
+                                            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token4</span>));
+                                        }
+                                    },
+                                    <span class="kw">_</span> <span class="op">=&gt;</span> {
+                                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token4</span>));
+                                    }
+                                }
+                            }
+
+                            <span class="kw">let</span> <span class="ident">or_else</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token4</span>, <span class="ident">op_precedence</span>)<span class="question-mark">?</span>;
+                            
+                            <span class="ident">loc</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">or_else</span>.<span class="ident">loc</span>().<span class="ident">end</span>;
+                            <span class="ident">span</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">or_else</span>.<span class="ident">span</span>().<span class="ident">end</span>;
+
+                            <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">ConditionalExpression</span> { <span class="ident">loc</span>, <span class="ident">span</span>, <span class="ident">condition</span>: <span class="ident">left_expr</span>, <span class="ident">and_then</span>, <span class="ident">or_else</span> };
+                            <span class="ident">left_expr</span> <span class="op">=</span> <span class="ident">Expression</span>::<span class="ident">Conditional</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">item</span>));
                         },
                         <span class="ident">PunctuatorKind</span>::<span class="ident">Increment</span> <span class="op">=&gt;</span> {
                             <span class="comment">// 后置 递增</span>
@@ -1394,7 +1583,7 @@
                             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">left_expr</span>.<span class="ident">loc</span>();
                             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">left_expr</span>.<span class="ident">span</span>();
 
-                            <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">17u8</span>;
+                            <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">17i8</span>;
                             <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PostfixOperator</span>::<span class="ident">Increment</span>;
                             <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="ident">left_expr</span>;
                             
@@ -1413,7 +1602,7 @@
                             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">left_expr</span>.<span class="ident">loc</span>();
                             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">left_expr</span>.<span class="ident">span</span>();
 
-                            <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">17u8</span>;
+                            <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="number">17i8</span>;
                             <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">PostfixOperator</span>::<span class="ident">Decrement</span>;
                             <span class="kw">let</span> <span class="ident">operand</span> <span class="op">=</span> <span class="ident">left_expr</span>;
                             
@@ -1637,6 +1826,25 @@
 
                             <span class="ident">left_expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_infix_expression</span>(<span class="ident">left_expr</span>, <span class="ident">token2</span>)<span class="question-mark">?</span>;
                         },
+
+                        <span class="comment">// AssignmentExpression</span>
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">Assign</span> <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">AddAssign</span> <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">SubAssign</span> <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">MulAssign</span> 
+                        <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">DivAssign</span> <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">RemAssign</span> <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">PowAssign</span> 
+                        <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">BitAndAssign</span> <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">BitOrAssign</span> <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">BitXorAssign</span> 
+                        <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">BitShlAssign</span> <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">BitShrAssign</span> <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">BitUShrAssign</span> <span class="op">=&gt;</span> {
+                            <span class="kw">let</span> <span class="ident">op_precedence</span> <span class="op">=</span> <span class="number">3i8</span>;
+
+                            <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">punctuator_to_assignment_op</span>(<span class="ident">punct</span>.<span class="ident">kind</span>);
+                            <span class="kw">let</span> <span class="ident">token3</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                            <span class="kw">let</span> <span class="ident">right_expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token3</span>, <span class="ident">op_precedence</span>)<span class="question-mark">?</span>;
+                            
+                            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">left_expr</span>.<span class="ident">loc</span>();
+                            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">left_expr</span>.<span class="ident">span</span>();
+                            <span class="ident">loc</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">right_expr</span>.<span class="ident">loc</span>().<span class="ident">end</span>;
+                            <span class="ident">span</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">right_expr</span>.<span class="ident">span</span>().<span class="ident">end</span>;
+                            <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">AssignmentExpression</span> { <span class="ident">loc</span>, <span class="ident">span</span>, <span class="ident">left</span>: <span class="ident">left_expr</span>, <span class="ident">operator</span>, <span class="ident">right</span>: <span class="ident">right_expr</span> };
+                            <span class="ident">left_expr</span> <span class="op">=</span> <span class="ident">Expression</span>::<span class="ident">Assignment</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">item</span>));
+                        },
                         <span class="kw">_</span> <span class="op">=&gt;</span> {
                             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
                         },
@@ -1717,7 +1925,7 @@
 
             <span class="comment">// Read bound</span>
             <span class="kw">let</span> <span class="ident">next_token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
-            <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">next_token</span>, <span class="number">0</span>)<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">next_token</span>, <span class="op">-</span><span class="number">1i8</span>)<span class="question-mark">?</span>;
 
             <span class="kw">let</span> <span class="ident">last_offset</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">offset</span>();
             <span class="kw">let</span> <span class="ident">last_line_offset</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">line_offset</span>;
@@ -1825,7 +2033,7 @@
                             <span class="comment">// [</span>
                             <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
 
-                            <span class="kw">let</span> <span class="ident">right_expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="number">0</span>)<span class="question-mark">?</span>;
+                            <span class="kw">let</span> <span class="ident">right_expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="number">0i8</span>)<span class="question-mark">?</span>;
 
                             <span class="kw">loop</span> {
                                 <span class="kw">let</span> <span class="ident">end_token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
@@ -1853,7 +2061,7 @@
 
                             <span class="kw">let</span> <span class="ident">left</span> <span class="op">=</span> <span class="ident">left_expr</span>;
                             <span class="kw">let</span> <span class="ident">right</span> <span class="op">=</span> <span class="ident">right_expr</span>;
-                            <span class="kw">let</span> <span class="ident">computed</span> <span class="op">=</span> <span class="bool-val">false</span>;
+                            <span class="kw">let</span> <span class="ident">computed</span> <span class="op">=</span> <span class="bool-val">true</span>;
                             <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">MemberExpression</span> { <span class="ident">loc</span>, <span class="ident">span</span>, <span class="ident">left</span>, <span class="ident">right</span>, <span class="ident">computed</span>, };
 
                             <span class="ident">left_expr</span> <span class="op">=</span> <span class="ident">Expression</span>::<span class="ident">Member</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">item</span>));
@@ -1943,7 +2151,7 @@
             }
         }
 
-        <span class="kw">let</span> <span class="ident">op_precedence</span> <span class="op">=</span> <span class="number">18u8</span>;
+        <span class="kw">let</span> <span class="ident">op_precedence</span> <span class="op">=</span> <span class="number">18i8</span>;
 
         <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">callee</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">op_precedence</span>)<span class="question-mark">?</span>;
@@ -1958,8 +2166,6 @@
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_infix_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">left_expr</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">last_precedence</span> <span class="op">=</span> <span class="number">0u8</span>;
-
         <span class="kw">loop</span> {
             <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">token</span> {
                 <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
