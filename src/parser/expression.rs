@@ -372,6 +372,9 @@ impl<'ast> Parser<'ast> {
             };
 
             match token2 {
+                Token::LineTerminator => {
+                    continue;
+                },
                 Token::Punctuator(punct) => {
                     match punct.kind {
                         PunctuatorKind::Semicolon => {
@@ -872,7 +875,7 @@ impl<'ast> Parser<'ast> {
         loop {
             match token {
                 Token::LineTerminator => {
-                    continue;
+                    // continue;
                 },
                 Token::Punctuator(punct) => {
                     match punct.kind {
@@ -881,7 +884,9 @@ impl<'ast> Parser<'ast> {
                             let token2 = self.token2()?;
                             
                             match token2 {
-                                Token::LineTerminator => continue,
+                                Token::LineTerminator => {
+                                    // continue
+                                },
                                 Token::Identifier(ident) => {
                                     let right_expr = Expression::Identifier(self.arena.alloc(ident));
 
