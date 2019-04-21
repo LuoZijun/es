@@ -1126,6 +1126,7 @@
 <span id="1126">1126</span>
 <span id="1127">1127</span>
 <span id="1128">1128</span>
+<span id="1129">1129</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -1505,6 +1506,7 @@
                     <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
                         <span class="ident">PunctuatorKind</span>::<span class="ident">Semicolon</span> <span class="op">=&gt;</span> {
                             <span class="comment">// END.</span>
+                            <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">push</span>(<span class="ident">token2</span>);
                             <span class="kw">break</span>;
                         },
                         <span class="ident">PunctuatorKind</span>::<span class="ident">RParen</span> <span class="op">=&gt;</span> {
