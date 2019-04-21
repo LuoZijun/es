@@ -15,6 +15,43 @@ Work in progress (WIP).
 *   🔜 编译器 (Compiler)
 *   🔜 解释器 (Interpreter)
 
+**Parser**:
+
+* ✅ Identifier
+* ✅ LiteralNull
+* ✅ LiteralBoolean
+* ✅ LiteralString
+* ✅ LiteralNumeric
+* ✅ LiteralRegularExpression
+* ✅ LiteralTemplateExpression
+* ❌ LiteralArray
+* ❌ LiteralObject
+
+* ✅ ThisExpression
+* ✅ MemberExpression (include `SuperMemberExpression`)
+* ✅ NewTargetExpression
+* ✅ NewExpression ( NOTE: partial )
+* ✅ PrefixExpression
+* ✅ InfixExpression
+* ✅ PostfixExpression
+* ✅ AssignmentExpression
+* ✅ ConditionalExpression
+* ✅ YieldExpression
+* ❌ CallExpression （include `SuperCallExpression`）
+* ❌ TaggedTemplate
+* ❌ SpreadExpression
+* ❌ CommaExpression
+* ❌ ParenthesizedExpression ( Grouping )
+
+* ❌ ObjectBindingPattern (Destructuring)
+* ❌ ArrayBindingPattern (Destructuring)
+* ❌ FunctionExpression
+* ❌ GeneratorExpression
+* ❌ AsyncFunctionExpression
+* ❌ AsyncGeneratorExpression
+* ❌ ArrowFunctionExpression
+* ❌ AsyncArrowFunctionExpression
+
 
 原则
 ----------
