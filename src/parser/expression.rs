@@ -21,7 +21,7 @@ use crate::ast::statement::{
 use crate::ast::expression::{
     Expression, LiteralTemplateExpression,
     PrefixExpression, InfixExpression, PostfixExpression, AssignmentExpression,
-    MemberExpression,
+    MemberExpression, NewTargetExpression, NewExpression,
 };
 
 // 运算符优先级
@@ -295,7 +295,7 @@ impl<'ast> Parser<'ast> {
                         unimplemented!()
                     },
                     KeywordKind::New => {
-                        unimplemented!()
+                        self.parse_new_expression(token)?
                     },
                     KeywordKind::Yield => {
                         // let expr = self.parse_expression(token, expr_precedence)?;
@@ -863,8 +863,72 @@ impl<'ast> Parser<'ast> {
         unimplemented!()
     }
 
-    pub fn parse_new_expression(&mut self) -> Result<Expression<'ast>, Error> {
-        unimplemented!()
+    pub fn parse_new_expression(&mut self, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
+        let (mut loc, mut span) = match token {
+            Token::Keyword(kw) => {
+                assert_eq!(kw.kind, KeywordKind::New);
+                (kw.loc, kw.span)
+            },
+            _ => unreachable!(),
+        };
+
+        loop {
+            let token2 = self.token2()?;
+            match token2 {
+                Token::LineTerminator => {
+                    continue;
+                },
+                Token::Punctuator(punct) => {
+                    match punct.kind {
+                        PunctuatorKind::Dot => {
+                            // new . target
+                            let token3 = self.token2()?;
+                            const TARGET: &[char] = &['t', 'a', 'r', 'g', 'e', 't'];
+                            match token3 {
+                                Token::Identifier(ident) => {
+                                    if ident.raw == TARGET {
+                                        loc.end = ident.loc.end;
+                                        span.end = ident.span.end;
+
+                                        let item = NewTargetExpression { loc, span, };
+                                        
+                                        return Ok(Expression::NewTarget(self.alloc(item)));
+
+                                    } else {
+                                        return Err(self.unexpected_token(token3));
+                                    }
+                                },
+                                _ => {
+                                    return Err(self.unexpected_token(token3));
+                                }
+                            }
+                        },
+
+                        _ => {
+                            self.token.push(token2);
+                            break;
+                        }
+                    }
+                },
+                _ => {
+                    self.token.push(token2);
+                    break;
+                }
+            }
+        }
+
+        let op_precedence = 18u8;
+
+        let token2 = self.token2()?;
+        let callee = self.parse_expression(token2, op_precedence)?;
+        let arguments = None;
+
+        loc.end = callee.loc().end;
+        span.end = callee.span().end;
+
+        let item = NewExpression { loc, span, callee, arguments, };
+        
+        Ok(Expression::New(self.alloc(item)))
     }
 
     pub fn parse_infix_expression(&mut self, mut left_expr: Expression<'ast>, mut token: Token<'ast>) -> Result<Expression<'ast>, Error> {
@@ -951,11 +1015,11 @@ impl<'ast> Parser<'ast> {
         Ok(left_expr)
     }
 
-    // pub fn parse_object_binding_pattern(&mut self) -> Result<ObjectBindingPattern, Error> {
-    //     unimplemented!()
-    // }
+    pub fn parse_object_binding_pattern(&mut self) -> Result<Expression<'ast>, Error> {
+        unimplemented!()
+    }
 
-    // pub fn parse_array_binding_pattern(&mut self) -> Result<ObjectBindingPattern, Error> {
-    //     unimplemented!()
-    // }
+    pub fn parse_array_binding_pattern(&mut self) -> Result<Expression<'ast>, Error> {
+        unimplemented!()
+    }
 }
