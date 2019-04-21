@@ -42,7 +42,12 @@ impl<'ast> Parser<'ast> {
             Token::LiteralNumeric(lit) => Expression::Numeric(self.arena.alloc(lit)),
             Token::LiteralNull(lit)    => Expression::Null(self.arena.alloc(lit)),
             Token::LiteralBoolean(lit) => Expression::Boolean(self.arena.alloc(lit)),
-            Token::Identifier(ident)   => Expression::Identifier(self.arena.alloc(ident)),
+            Token::Identifier(ident)   => {
+                match ident.to_keyword_or_literal() {
+                    Some(token) => return self.parse_expression(token, precedence),
+                    None => Expression::Identifier(self.arena.alloc(ident)),
+                }
+            },
             Token::TemplateOpenning    => {
                 let item = self.parse_literal_template()?;
                 Expression::Template(self.arena.alloc(item))
@@ -322,7 +327,18 @@ impl<'ast> Parser<'ast> {
                                 return Err(self.unexpected_token(token2));
                             }
 
-                            unimplemented!()
+                            let mut loc = left_expr.loc();
+                            let mut span = left_expr.span();
+
+                            let precedence = 17u8;
+                            let operator = PostfixOperator::Increment;
+                            let operand = left_expr;
+                            
+                            loc.end = punct.loc.end;
+                            span.end = punct.span.end;
+
+                            let item = PostfixExpression { loc, span, operator, operand, };
+                            left_expr = Expression::Postfix(self.arena.alloc(item));
                         },
                         PunctuatorKind::Decrement => {
                             // 后置 递减
@@ -330,7 +346,18 @@ impl<'ast> Parser<'ast> {
                                 return Err(self.unexpected_token(token2));
                             }
 
-                            unimplemented!()
+                            let mut loc = left_expr.loc();
+                            let mut span = left_expr.span();
+
+                            let precedence = 17u8;
+                            let operator = PostfixOperator::Decrement;
+                            let operand = left_expr;
+                            
+                            loc.end = punct.loc.end;
+                            span.end = punct.span.end;
+
+                            let item = PostfixExpression { loc, span, operator, operand, };
+                            left_expr = Expression::Postfix(self.arena.alloc(item));
                         },
                         PunctuatorKind::Dot => {
                             // MemberAccessor
@@ -343,32 +370,49 @@ impl<'ast> Parser<'ast> {
                             left_expr = self.parse_member_expression(left_expr, token2)?;
                         },
 
-                        PunctuatorKind::Add => {
-                            unimplemented!()
-                        },
-                        PunctuatorKind::Sub => {
-                            unimplemented!()
-                        },
+                        PunctuatorKind::Add => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::Sub => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::Mul => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::Div => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::Rem => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::Pow => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::BitShl => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::BitShr => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::BitUShr => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::And => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::Or => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::BitAnd => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::BitXor => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::BitOr => left_expr = self.parse_infix_expression(left_expr, token2)?,
+
+                        PunctuatorKind::Gt => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::Lt => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::GtEq => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::LtEq => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::Eq => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::Neq => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::StrictEq => left_expr = self.parse_infix_expression(left_expr, token2)?,
+                        PunctuatorKind::StrictNeq => left_expr = self.parse_infix_expression(left_expr, token2)?,
                         _ => {
-                            unimplemented!()
+                            return Err(self.unexpected_token(token2));
                         },
                     }
                 },
                 Token::Keyword(kw) => {
                     match kw.kind {
                         KeywordKind::In => {
-                            unimplemented!()
+                            left_expr = self.parse_infix_expression(left_expr, token2)?;
                         },
                         KeywordKind::InstanceOf => {
-                            unimplemented!()
+                            left_expr = self.parse_infix_expression(left_expr, token2)?;
                         },
                         _ => {
-                            unimplemented!()
+                            return Err(self.unexpected_token(token2));
                         },
                     }
                 },
                 _ => {
-                    unimplemented!()
+                    return Err(self.unexpected_token(token2));
                 }
             }
         }
@@ -482,10 +526,6 @@ impl<'ast> Parser<'ast> {
         unimplemented!()
     }
 
-    pub fn parse_infix_expression(&mut self) -> Result<Expression<'ast>, Error> {
-        unimplemented!()
-    }
-
     pub fn parse_postfix_expression(&mut self) -> Result<Expression<'ast>, Error> {
         unimplemented!()
     }
@@ -540,9 +580,6 @@ impl<'ast> Parser<'ast> {
                                             break;
                                         },
                                         _ => {
-                                            println!("{:?}", self.token);
-                                            println!("{:?}", end_token);
-                                            println!("{:?}", right_expr);
                                             return Err(self.unexpected_token(end_token));
                                         }
                                     },
@@ -600,6 +637,69 @@ impl<'ast> Parser<'ast> {
         unimplemented!()
     }
 
+    pub fn parse_infix_expression(&mut self, left_expr: Expression<'ast>, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
+        let op = match token {
+            Token::LineTerminator => {
+                let token = self.token2()?;
+                return self.parse_infix_expression(left_expr, token);
+            },
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::Add => InfixOperator::Add,     // +
+                    PunctuatorKind::Sub => InfixOperator::Sub,     // -
+                    PunctuatorKind::Mul => InfixOperator::Mul,      // *
+                    PunctuatorKind::Div => InfixOperator::Div,      // /
+                    PunctuatorKind::Rem => InfixOperator::Rem,      // %
+                    PunctuatorKind::Pow => InfixOperator::Pow,      // **
+                    PunctuatorKind::BitShl => InfixOperator::BitShl,   // <<
+                    PunctuatorKind::BitShr => InfixOperator::BitShr,   // >>
+                    PunctuatorKind::BitUShr => InfixOperator::BitUShr,  // >>>
+                    PunctuatorKind::And => InfixOperator::And,      // &&
+                    PunctuatorKind::Or => InfixOperator::Or,       // ||
+                    PunctuatorKind::BitAnd => InfixOperator::BitAnd,   // &
+                    PunctuatorKind::BitXor => InfixOperator::BitXor,   // ^
+                    PunctuatorKind::BitOr => InfixOperator::BitOr,    // |
+
+                    // COMPARE_OPERATORS
+                    PunctuatorKind::Gt => InfixOperator::Gt,        // >
+                    PunctuatorKind::Lt => InfixOperator::Lt,        // <
+                    PunctuatorKind::GtEq => InfixOperator::GtEq,      // >=
+                    PunctuatorKind::LtEq => InfixOperator::LtEq,      // <=
+                    PunctuatorKind::Eq => InfixOperator::Eq,        // ==
+                    PunctuatorKind::Neq => InfixOperator::Neq,       // !=
+                    PunctuatorKind::StrictEq => InfixOperator::StrictEq,  // ===
+                    PunctuatorKind::StrictNeq => InfixOperator::StrictNeq, // !==
+                    _ => {
+                        return Err(self.unexpected_token(token));
+                    }
+                }
+            },
+            Token::Keyword(kw) => {
+                match kw.kind {
+                    KeywordKind::In => InfixOperator::In,
+                    KeywordKind::InstanceOf => InfixOperator::InstanceOf,
+                    _ => return Err(self.unexpected_token(token)),
+                }
+            },
+            _ => return Err(self.unexpected_token(token)),
+        };
+
+        let mut loc = left_expr.loc();
+        let mut span = left_expr.span();
+
+        let precedence = op.precedence();
+        let operator = op;
+        let token2 = self.token2()?;
+        let operand = self.parse_expression(token2, precedence)?;
+        
+        loc.end = operand.loc().end;
+        span.end = operand.span().end;
+
+        let item = InfixExpression { loc, span, operator, left: left_expr, right: operand };
+
+        Ok(Expression::Infix(self.arena.alloc(item)))
+    }
+
     // pub fn parse_object_binding_pattern(&mut self) -> Result<ObjectBindingPattern, Error> {
     //     unimplemented!()
     // }
@@ -607,106 +707,4 @@ impl<'ast> Parser<'ast> {
     // pub fn parse_array_binding_pattern(&mut self) -> Result<ObjectBindingPattern, Error> {
     //     unimplemented!()
     // }
-
-    // pub fn parse_infix_expression(&mut self,
-    //                               left_spanned_expression: SpannedExpression,
-    //                               spanned_token: SpannedToken) -> Result<SpannedExpression, Error> {
-    //     let op = match spanned_token.item {
-    //         Token::Punctuator(Punctuator::Pow) => {
-    //             InfixOperator::Pow
-    //         },
-    //         Token::Punctuator(Punctuator::Mul) => {
-    //             InfixOperator::Mul
-    //         },
-    //         Token::Punctuator(Punctuator::Div) => {
-    //             InfixOperator::Div
-    //         },
-    //         Token::Punctuator(Punctuator::Rem) => {
-    //             InfixOperator::Rem
-    //         },
-    //         Token::Punctuator(Punctuator::Add) => {
-    //             InfixOperator::Add
-    //         },
-    //         Token::Punctuator(Punctuator::Sub) => {
-    //             InfixOperator::Sub
-    //         },
-    //         Token::Punctuator(Punctuator::BitShl) => {
-    //             InfixOperator::BitShl
-    //         },
-    //         Token::Punctuator(Punctuator::BitShr) => {
-    //             InfixOperator::BitShr
-    //         },
-    //         Token::Punctuator(Punctuator::BitUShr) => {
-    //             InfixOperator::BitUShr
-    //         },
-    //         Token::Punctuator(Punctuator::Gt) => {
-    //             InfixOperator::Gt
-    //         },
-    //         Token::Punctuator(Punctuator::Lt) => {
-    //             InfixOperator::Lt
-    //         },
-    //         Token::Punctuator(Punctuator::GtEq) => {
-    //             InfixOperator::GtEq
-    //         },
-    //         Token::Punctuator(Punctuator::LtEq) => {
-    //             InfixOperator::LtEq
-    //         },
-    //         Token::Punctuator(Punctuator::Eq) => {
-    //             InfixOperator::Eq
-    //         },
-    //         Token::Punctuator(Punctuator::Neq) => {
-    //             InfixOperator::Neq
-    //         },
-    //         Token::Punctuator(Punctuator::StrictEq) => {
-    //             InfixOperator::StrictEq
-    //         },
-    //         Token::Punctuator(Punctuator::StrictNeq) => {
-    //             InfixOperator::StrictNeq
-    //         },
-    //         Token::Punctuator(Punctuator::BitAnd) => {
-    //             InfixOperator::BitAnd
-    //         },
-    //         Token::Punctuator(Punctuator::BitXor) => {
-    //             InfixOperator::BitXor
-    //         },
-    //         Token::Punctuator(Punctuator::BitOr) => {
-    //             InfixOperator::BitOr
-    //         },
-    //         Token::Punctuator(Punctuator::And) => {
-    //             InfixOperator::And
-    //         },
-    //         Token::Punctuator(Punctuator::Or) => {
-    //             InfixOperator::Or
-    //         },
-    //         Token::Keyword(Keyword::Instanceof) => {
-    //             InfixOperator::InstanceOf
-    //         },
-    //         Token::Keyword(Keyword::In) => {
-    //             InfixOperator::In
-    //         },
-    //         _ => unreachable!(),
-    //     };
-        
-    //     let precedence = op.precedence();
-
-    //     let token2 = self.next_token2_with_skip(&[
-    //         Token::SingleLineComment,
-    //         Token::MultiLineComment,
-    //         Token::WhiteSpaces,
-    //         Token::LineTerminator,
-    //     ])?;
-    //     let right_spanned_expression = self.parse_expression(token2)?;
-
-    //     let left = Box::new(left_spanned_expression.item);
-    //     let right = Box::new(right_spanned_expression.item);
-
-    //     let expr = InfixExpression { operator: op, left, right  };
-        
-    //     let start = spanned_token.start;
-    //     let end = spanned_token.end;
-    //     let item = Expression::Infix(Box::new(expr));
-
-    //     Ok(Span { start, end, item })
-    // }
-
 }
