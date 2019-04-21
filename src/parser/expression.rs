@@ -141,7 +141,7 @@ impl<'ast> Parser<'ast> {
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
 
-                        if !operand.is_identifier() {
+                        if !operand.is_member_expression() && !operand.is_identifier() {
                             return Err(self.unexpected_token(token2));
                         }
 
@@ -162,7 +162,7 @@ impl<'ast> Parser<'ast> {
                         let token2 = self.token2()?;
                         let operand = self.parse_expression(token2, precedence)?;
                         
-                        if !operand.is_identifier() {
+                        if !operand.is_member_expression() && !operand.is_identifier() {
                             return Err(self.unexpected_token(token2));
                         }
 
