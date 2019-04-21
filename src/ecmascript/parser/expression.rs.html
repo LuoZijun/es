@@ -955,10 +955,6 @@
 <span id="955">955</span>
 <span id="956">956</span>
 <span id="957">957</span>
-<span id="958">958</span>
-<span id="959">959</span>
-<span id="960">960</span>
-<span id="961">961</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -1757,7 +1753,7 @@
                             <span class="comment">// [</span>
                             <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
 
-                            <span class="kw">let</span> <span class="ident">right_expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="ident">op_precedence</span>)<span class="question-mark">?</span>;
+                            <span class="kw">let</span> <span class="ident">right_expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="number">0</span>)<span class="question-mark">?</span>;
 
                             <span class="kw">loop</span> {
                                 <span class="kw">let</span> <span class="ident">end_token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
@@ -1880,8 +1876,6 @@
             <span class="kw">let</span> <span class="ident">precedence</span> <span class="op">=</span> <span class="ident">operator</span>.<span class="ident">precedence</span>();
             <span class="kw">if</span> <span class="ident">left_expr</span>.<span class="ident">precedence</span>() <span class="op">&gt;</span> <span class="ident">precedence</span> {
                 <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">push</span>(<span class="ident">token</span>);
-                <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{:?} {:?}&quot;</span>, <span class="ident">operator</span>, <span class="ident">left_expr</span>);
-                <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;break;&quot;</span>);
                 <span class="kw">break</span>;
             }
 
@@ -1906,8 +1900,6 @@
                     <span class="kw">break</span>;
                 }
             }
-
-            <span class="comment">// last_precedence = precedence;</span>
         }
         
         <span class="prelude-val">Ok</span>(<span class="ident">left_expr</span>)
