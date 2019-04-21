@@ -955,6 +955,10 @@
 <span id="955">955</span>
 <span id="956">956</span>
 <span id="957">957</span>
+<span id="958">958</span>
+<span id="959">959</span>
+<span id="960">960</span>
+<span id="961">961</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -1358,6 +1362,10 @@
                         <span class="ident">PunctuatorKind</span>::<span class="ident">Dot</span> <span class="op">=&gt;</span> {
                             <span class="comment">// MemberAccessor</span>
                             <span class="comment">// .</span>
+                            <span class="kw">if</span> <span class="ident">left_expr</span>.<span class="ident">is_numeric_literal</span>() {
+                                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
+                            }
+
                             <span class="ident">left_expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_member_expression</span>(<span class="ident">left_expr</span>, <span class="ident">token2</span>)<span class="question-mark">?</span>;
                         },
                         <span class="ident">PunctuatorKind</span>::<span class="ident">LBracket</span> <span class="op">=&gt;</span> {
