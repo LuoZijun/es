@@ -795,7 +795,7 @@ impl<'ast> Parser<'ast> {
                             // [
                             let token2 = self.token2()?;
 
-                            let right_expr = self.parse_expression(token2, op_precedence)?;
+                            let right_expr = self.parse_expression(token2, 0)?;
 
                             loop {
                                 let end_token = self.token2()?;
@@ -918,8 +918,6 @@ impl<'ast> Parser<'ast> {
             let precedence = operator.precedence();
             if left_expr.precedence() > precedence {
                 self.token.push(token);
-                println!("{:?} {:?}", operator, left_expr);
-                println!("break;");
                 break;
             }
 
@@ -944,8 +942,6 @@ impl<'ast> Parser<'ast> {
                     break;
                 }
             }
-
-            // last_precedence = precedence;
         }
         
         Ok(left_expr)
