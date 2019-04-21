@@ -361,7 +361,7 @@ impl<'ast> Parser<'ast> {
                         },
                         PunctuatorKind::Increment => {
                             // 后置 递增
-                            if !left_expr.is_member_expression() || !left_expr.is_identifier() {
+                            if !left_expr.is_member_expression() && !left_expr.is_identifier() {
                                 return Err(self.unexpected_token(token2));
                             }
 
@@ -380,7 +380,7 @@ impl<'ast> Parser<'ast> {
                         },
                         PunctuatorKind::Decrement => {
                             // 后置 递减
-                            if !left_expr.is_member_expression() || !left_expr.is_identifier() {
+                            if !left_expr.is_member_expression() && !left_expr.is_identifier() {
                                 return Err(self.unexpected_token(token2));
                             }
 
