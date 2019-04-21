@@ -400,6 +400,10 @@ impl<'ast> Parser<'ast> {
                         PunctuatorKind::Dot => {
                             // MemberAccessor
                             // .
+                            if left_expr.is_numeric_literal() {
+                                return Err(self.unexpected_token(token2));
+                            }
+
                             left_expr = self.parse_member_expression(left_expr, token2)?;
                         },
                         PunctuatorKind::LBracket => {
