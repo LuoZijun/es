@@ -1209,6 +1209,12 @@
 <span id="1209">1209</span>
 <span id="1210">1210</span>
 <span id="1211">1211</span>
+<span id="1212">1212</span>
+<span id="1213">1213</span>
+<span id="1214">1214</span>
+<span id="1215">1215</span>
+<span id="1216">1216</span>
+<span id="1217">1217</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -1542,7 +1548,14 @@
 
                     <span class="ident">KeywordKind</span>::<span class="ident">This</span> <span class="op">=&gt;</span> <span class="ident">Expression</span>::<span class="ident">This</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">kw</span>)),
                     <span class="ident">KeywordKind</span>::<span class="ident">Super</span> <span class="op">=&gt;</span> <span class="ident">Expression</span>::<span class="ident">Super</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">kw</span>)),
-                    <span class="ident">KeywordKind</span>::<span class="ident">Function</span> <span class="op">=&gt;</span> <span class="macro">unimplemented</span><span class="macro">!</span>(),
+                    <span class="ident">KeywordKind</span>::<span class="ident">Function</span> <span class="op">=&gt;</span> {
+                        <span class="comment">// Function or Generator EXPR</span>
+                        <span class="macro">unimplemented</span><span class="macro">!</span>()
+                    },
+                    <span class="ident">KeywordKind</span>::<span class="ident">Class</span> <span class="op">=&gt;</span> {
+                        <span class="comment">// Class EXPR</span>
+                        <span class="macro">unimplemented</span><span class="macro">!</span>()
+                    },
                     <span class="ident">KeywordKind</span>::<span class="ident">Async</span> <span class="op">=&gt;</span> {
                         <span class="comment">// AsyncFunctionDeclaration       EXPR</span>
                         <span class="comment">// AsyncGeneratorDeclaration      EXPR</span>
@@ -1634,7 +1647,6 @@
                             <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">push</span>(<span class="ident">token2</span>);
                             <span class="kw">break</span>;
                         },
-
                         <span class="ident">PunctuatorKind</span>::<span class="ident">Comma</span> <span class="op">=&gt;</span> {
                             <span class="comment">// ,</span>
                             <span class="comment">// CommaExpression</span>
@@ -1642,7 +1654,7 @@
                             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">left_expr</span>.<span class="ident">span</span>();
                             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
                             <span class="kw">let</span> <span class="ident">op_precedence</span> <span class="op">=</span> <span class="number">0i8</span>;
-                            
+
                             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">token3</span> <span class="op">=</span> <span class="ident">token2</span>;
                             <span class="kw">loop</span> {
                                 <span class="kw">match</span> <span class="ident">token3</span> {

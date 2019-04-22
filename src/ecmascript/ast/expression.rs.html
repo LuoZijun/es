@@ -554,6 +554,10 @@
 <span id="554">554</span>
 <span id="555">555</span>
 <span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">span</span>::{ <span class="ident">Loc</span>, <span class="ident">Span</span>, <span class="ident">LineColumn</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">token</span>::{
@@ -615,7 +619,6 @@
     <span class="ident">Parenthesized</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ParenthesizedExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
 
     <span class="ident">Member</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">MemberExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
-
     <span class="ident">TaggedTemplate</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">TaggedTemplateExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="doccomment">/// This is the `new.target` expression that was introduced in ES2015. </span>
     <span class="doccomment">/// This tells you if the function was called with the new operator.</span>
@@ -831,6 +834,13 @@
         }
     }
 
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_parenthesized_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">Expression</span>::<span class="ident">Parenthesized</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_primary_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
@@ -838,9 +848,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_left_hand_side_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
-
-
-
+    
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_call_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }

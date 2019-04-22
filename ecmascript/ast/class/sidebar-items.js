@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["MethodDefinition",""]],"struct":[["Class",""],["ClassDeclaration",""],["ClassExpression",""],["ClassMethodDefinition",""],["Getter",""],["Method",""],["Setter",""]]});
