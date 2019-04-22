@@ -558,6 +558,16 @@
 <span id="558">558</span>
 <span id="559">559</span>
 <span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">span</span>::{ <span class="ident">Loc</span>, <span class="ident">Span</span>, <span class="ident">LineColumn</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">token</span>::{
@@ -568,9 +578,9 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">operator</span>::{ <span class="ident">PrefixOperator</span>, <span class="ident">InfixOperator</span>, <span class="ident">PostfixOperator</span>, <span class="ident">AssignmentOperator</span>, };
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Float</span>, <span class="ident">Numberic</span>, };
-<span class="comment">// use ast::class::ClassExpression;</span>
-<span class="comment">// use ast::function::{ FunctionExpression, ArrowFunctionExpression, UniqueFormalParameters, };</span>
-<span class="comment">// use ast::jsx::{ JSXFragment, JSXElement, };</span>
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">class</span>::<span class="ident">ClassExpression</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">function</span>::{ <span class="ident">FunctionExpression</span>, <span class="ident">ArrowFunctionExpression</span>, };
+<span class="comment">// use crate::ast::jsx::{ JSXFragment, JSXElement, };</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 
@@ -615,7 +625,9 @@
     <span class="comment">// TODO: </span>
     <span class="comment">// ArrayLiteral(&amp;&#39;ast ArrayLiteral&lt;&#39;ast&gt;),</span>
     <span class="comment">// ObjectLiteral(&amp;&#39;ast ObjectLiteral&lt;&#39;ast&gt;),</span>
-
+    <span class="ident">Function</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">FunctionExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
+    <span class="ident">ArrowFunction</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ArrowFunctionExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
+    <span class="ident">Class</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ClassExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">Parenthesized</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ParenthesizedExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
 
     <span class="ident">Member</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">MemberExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
@@ -665,7 +677,9 @@
             
             <span class="comment">// ArrayLiteral(inner) =&gt; fmt::Debug::fmt(inner, f),</span>
             <span class="comment">// ObjectLiteral(inner) =&gt; fmt::Debug::fmt(inner, f),</span>
-
+            <span class="ident">Expression</span>::<span class="ident">Function</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">ArrowFunction</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">Class</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             <span class="ident">Expression</span>::<span class="ident">Parenthesized</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
 
             <span class="ident">Expression</span>::<span class="ident">Member</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
@@ -709,7 +723,9 @@
             
             <span class="comment">// ArrayLiteral(inner) =&gt; inner.loc,</span>
             <span class="comment">// ObjectLiteral(inner) =&gt; inner.loc,</span>
-
+            <span class="ident">Expression</span>::<span class="ident">Function</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
+            <span class="ident">Expression</span>::<span class="ident">ArrowFunction</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
+            <span class="ident">Expression</span>::<span class="ident">Class</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
             <span class="ident">Expression</span>::<span class="ident">Parenthesized</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
 
             <span class="ident">Expression</span>::<span class="ident">Member</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
@@ -751,7 +767,9 @@
 
             <span class="comment">// ArrayLiteral(inner) =&gt; inner.span,</span>
             <span class="comment">// ObjectLiteral(inner) =&gt; inner.span,</span>
-
+            <span class="ident">Expression</span>::<span class="ident">Function</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
+            <span class="ident">Expression</span>::<span class="ident">ArrowFunction</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
+            <span class="ident">Expression</span>::<span class="ident">Class</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
             <span class="ident">Expression</span>::<span class="ident">Parenthesized</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
 
             <span class="ident">Expression</span>::<span class="ident">Member</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
@@ -848,7 +866,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_left_hand_side_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
-    
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_call_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
@@ -888,7 +906,9 @@
 
             <span class="comment">// ArrayLiteral(inner) =&gt; inner.span,</span>
             <span class="comment">// ObjectLiteral(inner) =&gt; inner.span,</span>
-
+            <span class="ident">Expression</span>::<span class="ident">Function</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">ArrowFunction</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">Class</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
             <span class="ident">Expression</span>::<span class="ident">Parenthesized</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">20</span>,
 
             <span class="ident">Expression</span>::<span class="ident">Member</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">19</span>,
