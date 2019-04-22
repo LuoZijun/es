@@ -255,11 +255,6 @@ impl<'ast> Parser<'ast> {
                         let item = PrefixExpression { loc, span, operator, operand, };
                         Expression::Prefix(self.arena.alloc(item))
                     },
-                    PunctuatorKind::DotDotDot => {
-                        // spread
-                        // ...
-                        unimplemented!()
-                    },
                     _ => {
                         return Err(self.unexpected_token(token));
                     }
@@ -431,15 +426,60 @@ impl<'ast> Parser<'ast> {
                         PunctuatorKind::Comma => {
                             // ,
                             // CommaExpression
-                            unimplemented!()
+                            let mut loc = left_expr.loc();
+                            let mut span = left_expr.span();
+                            let mut items: Vec<Expression<'ast>> = Vec::new();
+                            let op_precedence = 0i8;
+                            
+                            let mut token3 = token2;
+                            loop {
+                                match token3 {
+                                    Token::LineTerminator => continue,
+                                    Token::Punctuator(punct) => {
+                                        match punct.kind {
+                                            PunctuatorKind::Comma => {
+                                                if precedence >= op_precedence {
+                                                    self.token.push(token3);
+                                                    return Ok(left_expr);
+                                                }
+
+                                                let token4 = self.token2()?;
+                                                let item = self.parse_expression(token4, op_precedence)?;
+                                                items.push(item);
+
+                                                match self.token()? {
+                                                    None => {
+                                                        break;
+                                                    },
+                                                    Some(new_token) => {
+                                                        token3 = new_token;
+                                                    }
+                                                }
+                                            },
+                                            _ => {
+                                                self.token.push(token3);
+                                                break;
+                                            }
+                                        }
+                                    },
+                                    _ => {
+                                        self.token.push(token3);
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            let elems = self.arena.alloc_vec(items);
+                            let item = CommaExpression { loc, span, items: elems };
+                            left_expr = Expression::Comma(self.alloc(item));
                         },
                         PunctuatorKind::Question => {
                             // ?
                             // EXPR ? EXPR : EXPR
                             let op_precedence = 4i8;
                             
-                            let mut loc = punct.loc;
-                            let mut span = punct.span;
+                            let mut loc = left_expr.loc();
+                            let mut span = left_expr.span();
 
                             let token3 = self.token2()?;
                             let and_then = self.parse_expression(token3, op_precedence)?;
