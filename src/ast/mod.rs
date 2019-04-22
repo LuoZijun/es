@@ -10,8 +10,8 @@ pub mod expression;
 // pub mod jsx;
 // pub mod pattern;
 // pub mod module;
-// pub mod function;
-// pub mod class;
+pub mod function;
+pub mod class;
 
 
 // #[derive(Debug, PartialEq, Clone)]

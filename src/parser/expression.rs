@@ -330,7 +330,14 @@ impl<'ast> Parser<'ast> {
 
                     KeywordKind::This => Expression::This(self.arena.alloc(kw)),
                     KeywordKind::Super => Expression::Super(self.arena.alloc(kw)),
-                    KeywordKind::Function => unimplemented!(),
+                    KeywordKind::Function => {
+                        // Function or Generator EXPR
+                        unimplemented!()
+                    },
+                    KeywordKind::Class => {
+                        // Class EXPR
+                        unimplemented!()
+                    },
                     KeywordKind::Async => {
                         // AsyncFunctionDeclaration       EXPR
                         // AsyncGeneratorDeclaration      EXPR
@@ -422,7 +429,6 @@ impl<'ast> Parser<'ast> {
                             self.token.push(token2);
                             break;
                         },
-
                         PunctuatorKind::Comma => {
                             // ,
                             // CommaExpression
@@ -430,7 +436,7 @@ impl<'ast> Parser<'ast> {
                             let mut span = left_expr.span();
                             let mut items: Vec<Expression<'ast>> = Vec::new();
                             let op_precedence = 0i8;
-                            
+
                             let mut token3 = token2;
                             loop {
                                 match token3 {

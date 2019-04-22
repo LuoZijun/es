@@ -1,60 +1,60 @@
-use super::function::{
-    FormalParameters, UniqueFormalParameters, 
-    Function, FunctionBody, FormalParameter,
-};
-use super::expression::LeftHandSideExpression;
-use super::statement::Statement;
-use super::pattern::PropertyName;
+use crate::lexer::token::Identifier;
+use crate::ast::statement::Statement;
+use crate::ast::expression::{ Expression, ParenthesizedExpression, };
+use crate::ast::function::{ Function, FunctionBody, };
 
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct ClassDeclaration {
-    pub name: String,
-    pub class: Class,
+// PropertyName
+//      IdentifierName
+//      StringLiteral
+//      NumericLiteral
+//      Expression
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ClassDeclaration<'ast> {
+    pub name: Identifier<'ast>,
+    pub class: Class<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct ClassExpression {
-    pub name: Option<String>,
-    pub class: Class,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ClassExpression<'ast> {
+    pub name: Option<Identifier<'ast>>,
+    pub class: Class<'ast>,
 }
 
 
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct Method {
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct Method<'ast> {
     pub is_async: bool,
     pub is_generator: bool,
-    pub name: PropertyName,
-    pub params: UniqueFormalParameters,
-    pub body: FunctionBody,
+    pub name: Expression<'ast>,
+    pub params: ParenthesizedExpression<'ast>,
+    pub body: FunctionBody<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct Getter {
-    pub name: PropertyName,
-    pub body: FunctionBody,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct Getter<'ast> {
+    pub name: Expression<'ast>,
+    pub body: FunctionBody<'ast>,
 }
 
-pub type PropertySetParameterList = UniqueFormalParameters;
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct Setter {
-    pub name: PropertyName,
-    pub params: PropertySetParameterList,
-    pub body: FunctionBody,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct Setter<'ast> {
+    pub name: Expression<'ast>,
+    pub params: ParenthesizedExpression<'ast>,
+    pub body: FunctionBody<'ast>,
 }
 
 
-#[derive(Debug, PartialEq, Clone)]
-pub enum MethodDefinition {
-    Method(Method),
-    Getter(Getter),
-    Setter(Setter),
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum MethodDefinition<'ast> {
+    Method(Method<'ast>),
+    Getter(Getter<'ast>),
+    Setter(Setter<'ast>),
 }
 
-impl MethodDefinition {
-    pub fn name(&self) -> &PropertyName {
+impl<'ast> MethodDefinition<'ast> {
+    pub fn name(&self) -> &Expression<'ast> {
         match *self {
             MethodDefinition::Getter(ref getter) => &getter.name,
             MethodDefinition::Setter(ref setter) => &setter.name,
@@ -79,14 +79,14 @@ impl MethodDefinition {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct ClassMethodDefinition {
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ClassMethodDefinition<'ast> {
     pub is_static: bool,
-    pub method: MethodDefinition,
+    pub method: MethodDefinition<'ast>,
 }
 
-impl ClassMethodDefinition {
-    pub fn name(&self) -> &PropertyName {
+impl<'ast> ClassMethodDefinition<'ast> {
+    pub fn name(&self) -> &Expression<'ast> {
         self.method.name()
     }
     
@@ -103,8 +103,8 @@ impl ClassMethodDefinition {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct Class {
-    pub heritage: LeftHandSideExpression, // extend
-    pub body: Vec<ClassMethodDefinition>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct Class<'ast> {
+    pub heritage: Expression<'ast>, // extend
+    pub body: &'ast [ ClassMethodDefinition<'ast> ],
 }

@@ -1,60 +1,59 @@
-use ast::expression::{ AssignmentExpression, };
-use ast::pattern::{
-    BindingIdentifier, BindingPattern,
-    BindingElement, BindingRestElement,
-};
-use ast::statement::Statement;
+use crate::lexer::token::Identifier;
+use crate::ast::statement::Statement;
+use crate::ast::expression::{ Expression, ParenthesizedExpression, };
 
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct FunctionDeclaration {
-    pub name: String,
-    pub func: Function,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct FunctionDeclaration<'ast> {
+    pub name: Identifier<'ast>,
+    pub func: Function<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct FunctionExpression {
-    pub name: Option<String>,
-    pub func: Function,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct FunctionExpression<'ast> {
+    pub name: Option<Identifier<'ast>>,
+    pub func: Function<'ast>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct ArrowFunctionExpression {
-    pub is_async: bool,
-    pub name: Option<String>,
-    pub params: ArrowParameters,
-    pub body: ConciseBody,
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum ArrowParameters {
-    One(BindingIdentifier),
-    // CoverParenthesizedExpressionAndArrowParameterList::try_into::<ArrowFormalParameters>()
-    Many(ArrowFormalParameters),
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum ConciseBody {
-    One(AssignmentExpression),
-    Many(FunctionBody),
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct Function {
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct Function<'ast> {
     pub is_async: bool,
     pub is_generator: bool,
-    pub params: FormalParameters,
-    pub body: FunctionBody,
+    pub params: ParenthesizedExpression<'ast>,
+    pub body: &'ast [ Statement<'ast> ],
 }
 
-pub type FunctionBody = Vec<Statement>;
-pub type FormalParameter = BindingElement;
+pub type FunctionBody<'ast> = &'ast [ Statement<'ast> ];
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct FormalParameters {
-    pub items: Vec<FormalParameter>,
-    pub rest_parameter: Option<BindingRestElement>,
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ArrowFunctionExpression<'ast> {
+    pub is_async: bool,
+    pub name: Option<Identifier<'ast>>,
+    pub params: ArrowParameters<'ast>,
+    pub body: ConciseBody<'ast>,
 }
 
-pub type ArrowFormalParameters = UniqueFormalParameters;
-pub type UniqueFormalParameters = FormalParameters;
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum ArrowParameters<'ast> {
+    One(Identifier<'ast>),
+    // CoverParenthesizedExpressionAndArrowParameterList::try_into::<ArrowFormalParameters>()
+    Many(ParenthesizedExpression<'ast>),
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum ConciseBody<'ast> {
+    One(Expression<'ast>),
+    Many(FunctionBody<'ast>),
+}
+
+// pub type FormalParameter = BindingElement;
+
+// #[derive(Debug, PartialEq, Clone)]
+// pub struct FormalParameters {
+//     pub items: Vec<FormalParameter>,
+//     pub rest_parameter: Option<BindingRestElement>,
+// }
+
+// pub type ArrowFormalParameters = UniqueFormalParameters;
+// pub type UniqueFormalParameters = FormalParameters;

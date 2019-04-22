@@ -58,7 +58,6 @@ pub enum Expression<'ast> {
     Parenthesized(&'ast ParenthesizedExpression<'ast>),
 
     Member(&'ast MemberExpression<'ast>),
-
     TaggedTemplate(&'ast TaggedTemplateExpression<'ast>),
     /// This is the `new.target` expression that was introduced in ES2015. 
     /// This tells you if the function was called with the new operator.
@@ -274,6 +273,13 @@ impl<'ast> Expression<'ast> {
         }
     }
 
+    pub fn is_parenthesized_expression(&self) -> bool {
+        match *self {
+            Expression::Parenthesized(_) => true,
+            _ => false,
+        }
+    }
+
     pub fn is_primary_expression(&self) -> bool {
         unimplemented!()
     }
@@ -281,9 +287,7 @@ impl<'ast> Expression<'ast> {
     pub fn is_left_hand_side_expression(&self) -> bool {
         unimplemented!()
     }
-
-
-
+    
     pub fn is_call_expression(&self) -> bool {
         unimplemented!()
     }
