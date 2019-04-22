@@ -28,7 +28,7 @@ Work in progress (WIP).
 * ❌ LiteralObject
 
 * ✅ ThisExpression
-* ✅ MemberExpression (include `SuperMemberExpression`)
+* ✅ MemberExpression ( include `SuperMemberExpression` )
 * ✅ NewTargetExpression
 * ✅ NewExpression ( NOTE: partial )
 * ✅ PrefixExpression
@@ -37,14 +37,15 @@ Work in progress (WIP).
 * ✅ AssignmentExpression
 * ✅ ConditionalExpression
 * ✅ YieldExpression
-* ❌ CallExpression （include `SuperCallExpression`）
-* ❌ TaggedTemplate
-* ❌ SpreadExpression
-* ❌ CommaExpression
+* ❌ CallExpression ( include `SuperCallExpression` )
+* ✅ TaggedTemplate
+* ✅ SpreadExpression
+* ✅ CommaExpression
 * ❌ ParenthesizedExpression ( Grouping )
 
-* ❌ ObjectBindingPattern (Destructuring)
-* ❌ ArrayBindingPattern (Destructuring)
+* ❌ ObjectBindingPattern ( Destructuring )
+* ❌ ArrayBindingPattern ( Destructuring )
+* ❌ ClassExpression
 * ❌ FunctionExpression
 * ❌ GeneratorExpression
 * ❌ AsyncFunctionExpression
