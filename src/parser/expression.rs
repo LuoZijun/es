@@ -23,10 +23,21 @@ use crate::ast::expression::{
     PrefixExpression, InfixExpression, PostfixExpression, AssignmentExpression,
     MemberExpression, NewTargetExpression, NewExpression,
     ConditionalExpression, YieldExpression, CommaExpression,
+    TaggedTemplateExpression, SpreadExpression, 
 };
 
 // 运算符优先级
 // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
+
+// LeftHandSideExpression [?Yield, ?Await] [no LineTerminator here] ++
+// LeftHandSideExpression [?Yield, ?Await] [no LineTerminator here] --
+// continue [no LineTerminator here] LabelIdentifier [?Yield, ?Await];
+// break [no LineTerminator here] LabelIdentifier [?Yield, ?Await];
+// return [no LineTerminator here] Expression [+In, ?Yield, ?Await];
+// throw [no LineTerminator here] Expression [+In, ?Yield, ?Await];
+// ArrowParameters [?Yield, ?Await] [no LineTerminator here] => ConciseBody [?In]
+// yield [no LineTerminator here] AssignmentExpression [?In, +Yield, ?Await]
+// yield [no LineTerminator here] *AssignmentExpression [?In, +Yield, ?Await]
 
 #[inline]
 pub fn punctuator_to_infix_op(punct: PunctuatorKind) -> InfixOperator {
@@ -117,6 +128,22 @@ impl<'ast> Parser<'ast> {
                     PunctuatorKind::Div => {
                         let item = self.parse_literal_regular_expression()?;
                         Expression::RegularExpression(self.arena.alloc(item))
+                    },
+                    PunctuatorKind::DotDotDot => {
+                        // Spread, 展开运算符
+                        // ... 
+                        let mut loc = punct.loc;
+                        let mut span = punct.span;
+
+                        let precedence = 1i8;
+                        let token2 = self.token2()?;
+                        let operand = self.parse_expression(token2, precedence)?;
+
+                        loc.end = operand.loc().end;
+                        span.end = operand.span().end;
+
+                        let item = SpreadExpression { loc, span, item: operand, };
+                        Expression::Spread(self.arena.alloc(item))
                     },
                     PunctuatorKind::Add => {
                         // unary operator
@@ -364,8 +391,6 @@ impl<'ast> Parser<'ast> {
         }
         
         loop {
-            // let precedence = left_expr.precedence();
-
             let token2 = match self.token2() {
                 Ok(token2) => token2,
                 Err(_) => return Ok(left_expr),
@@ -749,6 +774,18 @@ impl<'ast> Parser<'ast> {
                             return Err(self.unexpected_token(token2));
                         },
                     }
+                },
+                Token::TemplateOpenning    => {
+                    // TaggedTemplate
+                    let template = self.parse_literal_template()?;
+
+                    let mut loc = left_expr.loc();
+                    let mut span = left_expr.span();
+                    loc.end = template.loc.end;
+                    span.end = template.span.end;
+
+                    let item = TaggedTemplateExpression { loc, span, tag: left_expr, template };
+                    left_expr = Expression::TaggedTemplate(self.arena.alloc(item));
                 },
                 _ => {
                     return Err(self.unexpected_token(token2));
