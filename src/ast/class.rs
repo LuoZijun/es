@@ -1,3 +1,4 @@
+use crate::lexer::span::{ Loc, Span, LineColumn, };
 use crate::lexer::token::Identifier;
 use crate::ast::statement::Statement;
 use crate::ast::expression::{ Expression, ParenthesizedExpression, };
@@ -12,12 +13,16 @@ use crate::ast::function::{ Function, FunctionBody, };
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct ClassDeclaration<'ast> {
+    pub loc: Loc,
+    pub span: Span,
     pub name: Identifier<'ast>,
     pub class: Class<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct ClassExpression<'ast> {
+    pub loc: Loc,
+    pub span: Span,
     pub name: Option<Identifier<'ast>>,
     pub class: Class<'ast>,
 }
@@ -25,6 +30,8 @@ pub struct ClassExpression<'ast> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Method<'ast> {
+    pub loc: Loc,
+    pub span: Span,
     pub is_async: bool,
     pub is_generator: bool,
     pub name: Expression<'ast>,
@@ -34,12 +41,16 @@ pub struct Method<'ast> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Getter<'ast> {
+    pub loc: Loc,
+    pub span: Span,
     pub name: Expression<'ast>,
     pub body: FunctionBody<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Setter<'ast> {
+    pub loc: Loc,
+    pub span: Span,
     pub name: Expression<'ast>,
     pub params: ParenthesizedExpression<'ast>,
     pub body: FunctionBody<'ast>,
@@ -54,6 +65,22 @@ pub enum MethodDefinition<'ast> {
 }
 
 impl<'ast> MethodDefinition<'ast> {
+    pub fn loc(&self) -> Loc {
+        match *self {
+            MethodDefinition::Method(inner) => inner.loc,
+            MethodDefinition::Getter(inner) => inner.loc,
+            MethodDefinition::Setter(inner) => inner.loc,
+        }
+    }
+
+    pub fn span(&self) -> Span {
+        match *self {
+            MethodDefinition::Method(inner) => inner.span,
+            MethodDefinition::Getter(inner) => inner.span,
+            MethodDefinition::Setter(inner) => inner.span,
+        }
+    }
+
     pub fn name(&self) -> &Expression<'ast> {
         match *self {
             MethodDefinition::Getter(ref getter) => &getter.name,
@@ -86,6 +113,14 @@ pub struct ClassMethodDefinition<'ast> {
 }
 
 impl<'ast> ClassMethodDefinition<'ast> {
+    pub fn loc(&self) -> Loc {
+        self.method.loc()
+    }
+
+    pub fn span(&self) -> Span {
+        self.method.span()
+    }
+
     pub fn name(&self) -> &Expression<'ast> {
         self.method.name()
     }

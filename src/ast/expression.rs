@@ -7,9 +7,9 @@ use crate::lexer::token::{
 use crate::lexer::operator::{ PrefixOperator, InfixOperator, PostfixOperator, AssignmentOperator, };
 
 use crate::ast::numberic::{ Float, Numberic, };
-// use ast::class::ClassExpression;
-// use ast::function::{ FunctionExpression, ArrowFunctionExpression, UniqueFormalParameters, };
-// use ast::jsx::{ JSXFragment, JSXElement, };
+use crate::ast::class::ClassExpression;
+use crate::ast::function::{ FunctionExpression, ArrowFunctionExpression, };
+// use crate::ast::jsx::{ JSXFragment, JSXElement, };
 
 use std::fmt;
 
@@ -54,7 +54,9 @@ pub enum Expression<'ast> {
     // TODO: 
     // ArrayLiteral(&'ast ArrayLiteral<'ast>),
     // ObjectLiteral(&'ast ObjectLiteral<'ast>),
-
+    Function(&'ast FunctionExpression<'ast>),
+    ArrowFunction(&'ast ArrowFunctionExpression<'ast>),
+    Class(&'ast ClassExpression<'ast>),
     Parenthesized(&'ast ParenthesizedExpression<'ast>),
 
     Member(&'ast MemberExpression<'ast>),
@@ -104,7 +106,9 @@ impl<'ast> fmt::Debug for Expression<'ast> {
             
             // ArrayLiteral(inner) => fmt::Debug::fmt(inner, f),
             // ObjectLiteral(inner) => fmt::Debug::fmt(inner, f),
-
+            Expression::Function(inner) => fmt::Debug::fmt(inner, f),
+            Expression::ArrowFunction(inner) => fmt::Debug::fmt(inner, f),
+            Expression::Class(inner) => fmt::Debug::fmt(inner, f),
             Expression::Parenthesized(inner) => fmt::Debug::fmt(inner, f),
 
             Expression::Member(inner) => fmt::Debug::fmt(inner, f),
@@ -148,7 +152,9 @@ impl<'ast> Expression<'ast> {
             
             // ArrayLiteral(inner) => inner.loc,
             // ObjectLiteral(inner) => inner.loc,
-
+            Expression::Function(inner) => inner.loc,
+            Expression::ArrowFunction(inner) => inner.loc,
+            Expression::Class(inner) => inner.loc,
             Expression::Parenthesized(inner) => inner.loc,
 
             Expression::Member(inner) => inner.loc,
@@ -190,7 +196,9 @@ impl<'ast> Expression<'ast> {
 
             // ArrayLiteral(inner) => inner.span,
             // ObjectLiteral(inner) => inner.span,
-
+            Expression::Function(inner) => inner.span,
+            Expression::ArrowFunction(inner) => inner.span,
+            Expression::Class(inner) => inner.span,
             Expression::Parenthesized(inner) => inner.span,
 
             Expression::Member(inner) => inner.span,
@@ -287,7 +295,7 @@ impl<'ast> Expression<'ast> {
     pub fn is_left_hand_side_expression(&self) -> bool {
         unimplemented!()
     }
-    
+
     pub fn is_call_expression(&self) -> bool {
         unimplemented!()
     }
@@ -327,7 +335,9 @@ impl<'ast> Expression<'ast> {
 
             // ArrayLiteral(inner) => inner.span,
             // ObjectLiteral(inner) => inner.span,
-
+            Expression::Function(inner) => -1,
+            Expression::ArrowFunction(inner) => -1,
+            Expression::Class(inner) => -1,
             Expression::Parenthesized(inner) => 20,
 
             Expression::Member(inner) => 19,
