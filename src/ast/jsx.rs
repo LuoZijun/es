@@ -32,6 +32,16 @@ pub struct JSXFragment<'ast> {
     pub children: Option<JSXChildren<'ast>>,
 }
 
+impl<'ast> JSXFragment<'ast> {
+    pub fn loc(&self) -> Loc {
+        self.loc
+    }
+
+    pub fn span(&self) -> Span {
+        self.span
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum JSXElement<'ast> {
     SelfClosing(JSXSelfClosingElement<'ast>),
@@ -39,6 +49,20 @@ pub enum JSXElement<'ast> {
 }
 
 impl<'ast> JSXElement<'ast> {
+    pub fn loc(&self) -> Loc {
+        match *self {
+            JSXElement::SelfClosing(inner) => inner.loc,
+            JSXElement::Normal(inner) => inner.loc,
+        }
+    }
+
+    pub fn span(&self) -> Span {
+        match *self {
+            JSXElement::SelfClosing(inner) => inner.span,
+            JSXElement::Normal(inner) => inner.span,
+        }
+    }
+
     pub fn is_self_closing(&self) -> bool {
         match *self {
             JSXElement::SelfClosing(_) => true,
@@ -82,6 +106,8 @@ pub struct JSXSelfClosingElement<'ast> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct JSXNormalElement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
     pub opening: JSXOpeningElement<'ast>,
     pub children: Option<JSXChildren<'ast>>,
     pub closing: JSXClosingElement<'ast>,
