@@ -400,7 +400,7 @@ pub struct ObjectLiteral {
 pub struct ParenthesizedExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
-    pub elems: &'ast [ Expression<'ast> ],
+    pub items: &'ast [ Expression<'ast> ],
 }
 
 // FunctionExpression

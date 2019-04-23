@@ -186,9 +186,11 @@ impl<'ast> Parser<'ast> {
                     | PunctuatorKind::Increment
                     | PunctuatorKind::Decrement
                     | PunctuatorKind::Not
-                    | PunctuatorKind::BitNot => {
+                    | PunctuatorKind::BitNot
+                    | PunctuatorKind::LParen => {
                         // literal regular expression
                         // unary operator
+                        // (
                         let expr = self.parse_expression(token, expr_precedence)?;
                         Ok(Statement::Expression(self.alloc(expr)))
                     },

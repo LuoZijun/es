@@ -23,7 +23,7 @@ use crate::ast::expression::{
     PrefixExpression, InfixExpression, PostfixExpression, AssignmentExpression,
     MemberExpression, NewTargetExpression, NewExpression,
     ConditionalExpression, YieldExpression, CommaExpression,
-    TaggedTemplateExpression, SpreadExpression, 
+    TaggedTemplateExpression, SpreadExpression, ParenthesizedExpression,
 };
 
 // 运算符优先级
@@ -116,7 +116,34 @@ impl<'ast> Parser<'ast> {
             Token::Identifier(ident)   => {
                 match ident.to_keyword_or_literal() {
                     Some(token) => return self.parse_expression(token, precedence),
-                    None => Expression::Identifier(self.arena.alloc(ident)),
+                    None => {
+                        // Lookahead `=>`
+                        match self.token()? {
+                            None => {
+                                Expression::Identifier(self.arena.alloc(ident))
+                            },
+                            Some(token2) => {
+                                match token2 {
+                                    Token::Punctuator(punct) => {
+                                        match punct.kind {
+                                            PunctuatorKind::FatArrow => {
+                                                // a =>
+                                                unimplemented!()
+                                            },
+                                            _ => {
+                                                self.token.push(token2);
+                                                Expression::Identifier(self.arena.alloc(ident))
+                                            }
+                                        }
+                                    },
+                                    _ => {
+                                        self.token.push(token2);
+                                        Expression::Identifier(self.arena.alloc(ident))
+                                    }
+                                }
+                            }
+                        }
+                    },
                 }
             },
             Token::TemplateOpenning    => {
@@ -125,6 +152,56 @@ impl<'ast> Parser<'ast> {
             },
             Token::Punctuator(punct) => {
                 match punct.kind {
+                    PunctuatorKind::LParen => {
+                        // ParenthesizedExpression
+                        // (
+                        let mut loc = punct.loc;
+                        let mut span = punct.span;
+                        let mut items: Vec<Expression<'ast>> = Vec::new();
+                        let op_precedence = 20i8;
+
+                        let mut is_first: bool = true;
+                        loop {
+                            let mut token2 = self.token2()?;
+                            match token2 {
+                                Token::LineTerminator => continue,
+                                Token::Punctuator(punct) => {
+                                    match punct.kind {
+                                        PunctuatorKind::RParen => {
+                                            // )
+                                            loc.end = punct.loc.end;
+                                            span.end = punct.span.end;
+                                            break;
+                                        },
+                                        _ => {
+                                            if !is_first {
+                                                return Err(self.unexpected_token(token2));
+                                            }
+
+                                            let item = self.parse_expression(token2, -1)?;
+                                            items.push(item);
+                                            
+                                            is_first = false;
+                                        }
+                                    }
+                                },
+                                _ => {
+                                    if !is_first {
+                                        return Err(self.unexpected_token(token2));
+                                    }
+
+                                    let item = self.parse_expression(token2, -1)?;
+                                    items.push(item);
+                                    
+                                    is_first = false;
+                                }
+                            }
+                        }
+                        
+                        let elems = self.arena.alloc_vec(items);
+                        let item = ParenthesizedExpression { loc, span, items: elems };
+                        Expression::Parenthesized(self.alloc(item))
+                    },
                     PunctuatorKind::Div => {
                         let item = self.parse_literal_regular_expression()?;
                         Expression::RegularExpression(self.arena.alloc(item))
@@ -434,7 +511,7 @@ impl<'ast> Parser<'ast> {
                             // CommaExpression
                             let mut loc = left_expr.loc();
                             let mut span = left_expr.span();
-                            let mut items: Vec<Expression<'ast>> = Vec::new();
+                            let mut items: Vec<Expression<'ast>> = vec![ left_expr ];
                             let op_precedence = 0i8;
 
                             let mut token3 = token2;

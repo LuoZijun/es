@@ -41,7 +41,7 @@ Work in progress (WIP).
 * ✅ TaggedTemplate
 * ✅ SpreadExpression
 * ✅ CommaExpression
-* ❌ ParenthesizedExpression ( Grouping )
+* ✅ ParenthesizedExpression ( Grouping )
 
 * ❌ ObjectBindingPattern ( Destructuring )
 * ❌ ArrayBindingPattern ( Destructuring )
