@@ -117,34 +117,7 @@ impl<'ast> Parser<'ast> {
             Token::Identifier(ident)   => {
                 match ident.to_keyword_or_literal() {
                     Some(token) => return self.parse_expression(token, precedence),
-                    None => {
-                        // Lookahead `=>`
-                        match self.token()? {
-                            None => {
-                                Expression::Identifier(self.arena.alloc(ident))
-                            },
-                            Some(token2) => {
-                                match token2 {
-                                    Token::Punctuator(punct) => {
-                                        match punct.kind {
-                                            PunctuatorKind::FatArrow => {
-                                                // a =>
-                                                unimplemented!()
-                                            },
-                                            _ => {
-                                                self.token.push(token2);
-                                                Expression::Identifier(self.arena.alloc(ident))
-                                            }
-                                        }
-                                    },
-                                    _ => {
-                                        self.token.push(token2);
-                                        Expression::Identifier(self.arena.alloc(ident))
-                                    }
-                                }
-                            }
-                        }
-                    },
+                    None => Expression::Identifier(self.arena.alloc(ident)),
                 }
             },
             Token::TemplateOpenning    => {
@@ -420,7 +393,6 @@ impl<'ast> Parser<'ast> {
                         // AsyncFunctionDeclaration       EXPR
                         // AsyncGeneratorDeclaration      EXPR
                         // AsyncArrowFunctionExpression   EXPR
-                        // AsyncArrowGeneratorExpression  EXPR
                         unimplemented!()
                     },
                     KeywordKind::New => {
@@ -466,6 +438,33 @@ impl<'ast> Parser<'ast> {
             },
         };
         
+        // Lookahead `=>`
+        if left_expr.is_identifier() || left_expr.is_parenthesized_expression() {
+            match self.token()? {
+                None => { },
+                Some(token2) => {
+                    match token2 {
+                        Token::Punctuator(punct) => {
+                            match punct.kind {
+                                PunctuatorKind::FatArrow => {
+                                    // AsyncArrowFunctionExpression
+                                    // a =>
+                                    unimplemented!()
+                                },
+                                _ => {
+                                    self.token.push(token2);
+                                }
+                            }
+                        },
+                        _ => {
+                            self.token.push(token2);
+                        }
+                    }
+                }
+            }
+        }
+
+
         if left_expr.precedence() > precedence {
             return Ok(left_expr);
         }
@@ -1017,7 +1016,6 @@ impl<'ast> Parser<'ast> {
                                         let item = NewTargetExpression { loc, span, };
                                         
                                         return Ok(Expression::NewTarget(self.alloc(item)));
-
                                     } else {
                                         return Err(self.unexpected_token(token3));
                                     }
@@ -1027,7 +1025,6 @@ impl<'ast> Parser<'ast> {
                                 }
                             }
                         },
-
                         _ => {
                             self.token.push(token2);
                             break;
@@ -1055,19 +1052,49 @@ impl<'ast> Parser<'ast> {
         Ok(Expression::New(self.alloc(item)))
     }
 
-    pub fn parse_prefix_expression(&mut self) -> Result<Expression<'ast>, Error> {
-        unimplemented!()
-    }
-
-    pub fn parse_postfix_expression(&mut self) -> Result<Expression<'ast>, Error> {
-        unimplemented!()
-    }
-
     pub fn parse_object_binding_pattern(&mut self) -> Result<Expression<'ast>, Error> {
         unimplemented!()
     }
 
     pub fn parse_array_binding_pattern(&mut self) -> Result<Expression<'ast>, Error> {
+        unimplemented!()
+    }
+
+    pub fn parse_brace_expression(&mut self, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
+        // {}
+        // LiteralObject
+        // ObjectBindingPattern
+        let (mut loc, mut span) = match token {
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::LBrace => {
+                        (punct.loc, punct.span)
+                    },
+                    _ => unreachable!(),
+                }
+            },
+            _ => unreachable!(),
+        };
+
+        unimplemented!()
+    }
+
+    pub fn parse_bracket_expression(&mut self, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
+        // []
+        // LiteralArray
+        // ArrayBindingPattern
+        let (mut loc, mut span) = match token {
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::LBracket => {
+                        (punct.loc, punct.span)
+                    },
+                    _ => unreachable!(),
+                }
+            },
+            _ => unreachable!(),
+        };
+
         unimplemented!()
     }
 }

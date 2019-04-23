@@ -42,6 +42,21 @@ impl<'ast> Parser<'ast> {
                     }
                 }
             },
+            Token::Keyword(kw) => {
+                match kw.kind {
+                    KeywordKind::Async => {
+                        // NOTE: 由于该关键字有歧义，需要单独处理
+                        // AsyncFunctionDeclaration       STMT
+                        // AsyncGeneratorDeclaration      STMT
+                        // AsyncArrowFunctionExpression   EXPR
+                        // AsyncArrowGeneratorExpression  EXPR
+                        unimplemented!()
+                    },
+                    _ => {
+                        unimplemented!()
+                    }
+                }
+            },
             _ => {
                 unimplemented!()
             }
@@ -54,6 +69,19 @@ impl<'ast> Parser<'ast> {
 
     pub fn parse_variable_statement(&mut self, token: Token<'ast>) -> Result<Statement<'ast>, Error> {
         // var/let/const
+        unimplemented!()
+    }
+
+    pub fn parse_async_statement(&mut self, token: Token<'ast>) -> Result<Statement<'ast>, Error> {
+        // AsyncFunctionDeclaration       STMT
+        // AsyncGeneratorDeclaration      STMT
+        // AsyncArrowFunctionExpression   EXPR
+        // AsyncArrowGeneratorExpression  EXPR
+        unimplemented!()
+    }
+
+    pub fn parse_block_statement(&mut self, token: Token<'ast>) -> Result<Statement<'ast>, Error> {
+        // { }
         unimplemented!()
     }
 }

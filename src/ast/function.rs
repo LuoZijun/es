@@ -25,7 +25,7 @@ pub struct Function<'ast> {
     pub is_async: bool,
     pub is_generator: bool,
     pub params: ParenthesizedExpression<'ast>,
-    pub body: &'ast [ Statement<'ast> ],
+    pub body: FunctionBody<'ast>,
 }
 
 pub type FunctionBody<'ast> = &'ast [ Statement<'ast> ];
@@ -37,15 +37,9 @@ pub struct ArrowFunctionExpression<'ast> {
     pub span: Span,
     pub is_async: bool,
     pub name: Option<Identifier<'ast>>,
-    pub params: ArrowParameters<'ast>,
+    // Identifier or ParenthesizedExpression
+    pub params: Expression<'ast>,
     pub body: ConciseBody<'ast>,
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub enum ArrowParameters<'ast> {
-    One(Identifier<'ast>),
-    // CoverParenthesizedExpressionAndArrowParameterList::try_into::<ArrowFormalParameters>()
-    Many(ParenthesizedExpression<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]

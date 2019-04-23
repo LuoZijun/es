@@ -129,7 +129,6 @@ impl<'ast> Parser<'ast> {
                         // AsyncFunctionDeclaration       STMT
                         // AsyncGeneratorDeclaration      STMT
                         // AsyncArrowFunctionExpression   EXPR
-                        // AsyncArrowGeneratorExpression  EXPR
                         unimplemented!()
                     },
                     KeywordKind::Var
@@ -173,7 +172,6 @@ impl<'ast> Parser<'ast> {
                     }
                 }
             },
-            
             Token::Punctuator(punct) => {
                 match punct.kind {
                     PunctuatorKind::Semicolon => {
@@ -196,6 +194,14 @@ impl<'ast> Parser<'ast> {
                         // (
                         let expr = self.parse_expression(token, 20i8)?;
                         Ok(Statement::Expression(self.alloc(expr)))
+                    },
+                    PunctuatorKind::LBracket => {
+                        // [
+                        unimplemented!()
+                    },
+                    PunctuatorKind::LBrace => {
+                        // {
+                        unimplemented!()
                     },
                     _ => {
                         return Err(self.unexpected_token(token));
@@ -236,19 +242,19 @@ impl<'ast> Parser<'ast> {
 
 pub fn parse(source: &str, filename: &str) {
     let arena = Arena::new();
-    println!("Code:\n{}", source);
-    
+    println!("Code:\n{}\n", source);
+
     let code = arena.alloc_vec(source.chars().collect::<Vec<char>>());
     let filename = arena.alloc_str(filename);
 
     let mut parser = Parser::new(&arena, &code, &filename);
     match parser.parse() {
         Ok(_) => {
-            println!("TokenList:");
-            for token in parser.tokens {
-                println!("    {:?}", token);
-            }
-            println!("\n");
+            // println!("TokenList:");
+            // for token in parser.tokens {
+            //     println!("    {:?}", token);
+            // }
+            // println!("\n");
 
             println!("StatementList:");
             for stmt in parser.body {
