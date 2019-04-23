@@ -1071,6 +1071,33 @@
 <span id="1071">1071</span>
 <span id="1072">1072</span>
 <span id="1073">1073</span>
+<span id="1074">1074</span>
+<span id="1075">1075</span>
+<span id="1076">1076</span>
+<span id="1077">1077</span>
+<span id="1078">1078</span>
+<span id="1079">1079</span>
+<span id="1080">1080</span>
+<span id="1081">1081</span>
+<span id="1082">1082</span>
+<span id="1083">1083</span>
+<span id="1084">1084</span>
+<span id="1085">1085</span>
+<span id="1086">1086</span>
+<span id="1087">1087</span>
+<span id="1088">1088</span>
+<span id="1089">1089</span>
+<span id="1090">1090</span>
+<span id="1091">1091</span>
+<span id="1092">1092</span>
+<span id="1093">1093</span>
+<span id="1094">1094</span>
+<span id="1095">1095</span>
+<span id="1096">1096</span>
+<span id="1097">1097</span>
+<span id="1098">1098</span>
+<span id="1099">1099</span>
+<span id="1100">1100</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -1191,34 +1218,7 @@
             <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="ident">ident</span>)   <span class="op">=&gt;</span> {
                 <span class="kw">match</span> <span class="ident">ident</span>.<span class="ident">to_keyword_or_literal</span>() {
                     <span class="prelude-val">Some</span>(<span class="ident">token</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token</span>, <span class="ident">precedence</span>),
-                    <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
-                        <span class="comment">// Lookahead `=&gt;`</span>
-                        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">token</span>()<span class="question-mark">?</span> {
-                            <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
-                                <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">ident</span>))
-                            },
-                            <span class="prelude-val">Some</span>(<span class="ident">token2</span>) <span class="op">=&gt;</span> {
-                                <span class="kw">match</span> <span class="ident">token2</span> {
-                                    <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
-                                        <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
-                                            <span class="ident">PunctuatorKind</span>::<span class="ident">FatArrow</span> <span class="op">=&gt;</span> {
-                                                <span class="comment">// a =&gt;</span>
-                                                <span class="macro">unimplemented</span><span class="macro">!</span>()
-                                            },
-                                            <span class="kw">_</span> <span class="op">=&gt;</span> {
-                                                <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">push</span>(<span class="ident">token2</span>);
-                                                <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">ident</span>))
-                                            }
-                                        }
-                                    },
-                                    <span class="kw">_</span> <span class="op">=&gt;</span> {
-                                        <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">push</span>(<span class="ident">token2</span>);
-                                        <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">ident</span>))
-                                    }
-                                }
-                            }
-                        }
-                    },
+                    <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="self">self</span>.<span class="ident">arena</span>.<span class="ident">alloc</span>(<span class="ident">ident</span>)),
                 }
             },
             <span class="ident">Token</span>::<span class="ident">TemplateOpenning</span>    <span class="op">=&gt;</span> {
@@ -1494,7 +1494,6 @@
                         <span class="comment">// AsyncFunctionDeclaration       EXPR</span>
                         <span class="comment">// AsyncGeneratorDeclaration      EXPR</span>
                         <span class="comment">// AsyncArrowFunctionExpression   EXPR</span>
-                        <span class="comment">// AsyncArrowGeneratorExpression  EXPR</span>
                         <span class="macro">unimplemented</span><span class="macro">!</span>()
                     },
                     <span class="ident">KeywordKind</span>::<span class="ident">New</span> <span class="op">=&gt;</span> {
@@ -1540,6 +1539,33 @@
             },
         };
         
+        <span class="comment">// Lookahead `=&gt;`</span>
+        <span class="kw">if</span> <span class="ident">left_expr</span>.<span class="ident">is_identifier</span>() <span class="op">||</span> <span class="ident">left_expr</span>.<span class="ident">is_parenthesized_expression</span>() {
+            <span class="kw">match</span> <span class="self">self</span>.<span class="ident">token</span>()<span class="question-mark">?</span> {
+                <span class="prelude-val">None</span> <span class="op">=&gt;</span> { },
+                <span class="prelude-val">Some</span>(<span class="ident">token2</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">match</span> <span class="ident">token2</span> {
+                        <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
+                            <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
+                                <span class="ident">PunctuatorKind</span>::<span class="ident">FatArrow</span> <span class="op">=&gt;</span> {
+                                    <span class="comment">// AsyncArrowFunctionExpression</span>
+                                    <span class="comment">// a =&gt;</span>
+                                    <span class="macro">unimplemented</span><span class="macro">!</span>()
+                                },
+                                <span class="kw">_</span> <span class="op">=&gt;</span> {
+                                    <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">push</span>(<span class="ident">token2</span>);
+                                }
+                            }
+                        },
+                        <span class="kw">_</span> <span class="op">=&gt;</span> {
+                            <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">push</span>(<span class="ident">token2</span>);
+                        }
+                    }
+                }
+            }
+        }
+
+
         <span class="kw">if</span> <span class="ident">left_expr</span>.<span class="ident">precedence</span>() <span class="op">&gt;</span> <span class="ident">precedence</span> {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">left_expr</span>);
         }
@@ -2091,7 +2117,6 @@
                                         <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">NewTargetExpression</span> { <span class="ident">loc</span>, <span class="ident">span</span>, };
                                         
                                         <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Expression</span>::<span class="ident">NewTarget</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">item</span>)));
-
                                     } <span class="kw">else</span> {
                                         <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token3</span>));
                                     }
@@ -2101,7 +2126,6 @@
                                 }
                             }
                         },
-
                         <span class="kw">_</span> <span class="op">=&gt;</span> {
                             <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">push</span>(<span class="ident">token2</span>);
                             <span class="kw">break</span>;
@@ -2129,19 +2153,49 @@
         <span class="prelude-val">Ok</span>(<span class="ident">Expression</span>::<span class="ident">New</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">item</span>)))
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_prefix_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="macro">unimplemented</span><span class="macro">!</span>()
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_postfix_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="macro">unimplemented</span><span class="macro">!</span>()
-    }
-
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_object_binding_pattern</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_array_binding_pattern</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="macro">unimplemented</span><span class="macro">!</span>()
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_brace_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="comment">// {}</span>
+        <span class="comment">// LiteralObject</span>
+        <span class="comment">// ObjectBindingPattern</span>
+        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">loc</span>, <span class="kw-2">mut</span> <span class="ident">span</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">token</span> {
+            <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
+                <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
+                    <span class="ident">PunctuatorKind</span>::<span class="ident">LBrace</span> <span class="op">=&gt;</span> {
+                        (<span class="ident">punct</span>.<span class="ident">loc</span>, <span class="ident">punct</span>.<span class="ident">span</span>)
+                    },
+                    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                }
+            },
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        };
+
+        <span class="macro">unimplemented</span><span class="macro">!</span>()
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_bracket_expression</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="comment">// []</span>
+        <span class="comment">// LiteralArray</span>
+        <span class="comment">// ArrayBindingPattern</span>
+        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">loc</span>, <span class="kw-2">mut</span> <span class="ident">span</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">token</span> {
+            <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
+                <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
+                    <span class="ident">PunctuatorKind</span>::<span class="ident">LBracket</span> <span class="op">=&gt;</span> {
+                        (<span class="ident">punct</span>.<span class="ident">loc</span>, <span class="ident">punct</span>.<span class="ident">span</span>)
+                    },
+                    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                }
+            },
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        };
+
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
 }</pre></div>

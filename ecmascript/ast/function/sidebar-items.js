@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ArrowParameters",""],["ConciseBody",""]],"struct":[["ArrowFunctionExpression",""],["Function",""],["FunctionDeclaration",""],["FunctionExpression",""]],"type":[["FunctionBody",""]]});
+initSidebarItems({"enum":[["ConciseBody",""]],"struct":[["ArrowFunctionExpression",""],["Function",""],["FunctionDeclaration",""],["FunctionExpression",""]],"type":[["FunctionBody",""]]});
