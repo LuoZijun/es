@@ -262,6 +262,7 @@
 <span id="262">262</span>
 <span id="263">263</span>
 <span id="264">264</span>
+<span id="265">265</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -501,7 +502,8 @@
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">source</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">filename</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) {
     <span class="kw">let</span> <span class="ident">arena</span> <span class="op">=</span> <span class="ident">Arena</span>::<span class="ident">new</span>();
-
+    <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Code:\n{}&quot;</span>, <span class="ident">source</span>);
+    
     <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="ident">arena</span>.<span class="ident">alloc_vec</span>(<span class="ident">source</span>.<span class="ident">chars</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;&gt;</span>());
     <span class="kw">let</span> <span class="ident">filename</span> <span class="op">=</span> <span class="ident">arena</span>.<span class="ident">alloc_str</span>(<span class="ident">filename</span>);
 
