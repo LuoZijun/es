@@ -30,7 +30,7 @@ Work in progress (WIP).
 * ✅ ThisExpression
 * ✅ MemberExpression ( include `SuperMemberExpression` )
 * ✅ NewTargetExpression
-* ✅ NewExpression ( NOTE: partial )
+* ✅ NewExpression
 * ✅ PrefixExpression
 * ✅ InfixExpression
 * ✅ PostfixExpression
