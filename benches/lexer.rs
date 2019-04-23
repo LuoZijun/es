@@ -134,6 +134,24 @@ fn bench_tokenization(b: &mut test::Bencher) {
     });
 }
 
+#[bench]
+fn bench_parse_to_ast(b: &mut test::Bencher) {
+    let source = include_str!("../in.js");
+    let filename = "src/main.js";
+
+    let arena = Arena::new();
+
+    let code = arena.alloc_vec(source.chars().collect::<Vec<char>>());
+    let filename = arena.alloc_str(filename);
+
+    b.bytes = source.len() as u64;
+    b.iter(|| {
+        let mut parser = ecmascript::parser::Parser::new(&arena, &code, &filename);
+        let ret = parser.parse();
+        assert!(ret.is_ok());
+    });
+}
+
 
 #[bench]
 fn bench_escape_html_with_str(b: &mut test::Bencher) {

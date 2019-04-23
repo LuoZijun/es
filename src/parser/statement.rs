@@ -15,7 +15,8 @@ use crate::parser::parser::ParserErrorKind::{ self, * };
 use crate::ast::numberic::{ Numberic, Float, };
 use crate::ast::statement::{ 
     Statement, StatementList,
-    EmptyStatement, VariableStatement, LexicalDeclarationKind, LexicalBinding,
+    EmptyStatement, DebuggerStatement,
+    VariableStatement, LexicalDeclarationKind, LexicalBinding,
 };
 use crate::ast::expression::{
     Expression, LiteralTemplateExpression,
@@ -51,6 +52,22 @@ impl<'ast> Parser<'ast> {
                         // AsyncArrowFunctionExpression   EXPR
                         // AsyncArrowGeneratorExpression  EXPR
                         unimplemented!()
+                    },
+                    KeywordKind::Class => {
+                        unimplemented!()
+                    },
+                    KeywordKind::Function => {
+                        // FunctionDeclaration
+                        // GeneratorDeclaration
+                        unimplemented!()
+                    },
+                    KeywordKind::Debugger => {
+                        let loc =  kw.loc;
+                        let span = kw.span;
+
+                        let item = DebuggerStatement { loc, span };
+                        
+                        return Ok(Statement::Debugger(self.alloc(item)))
                     },
                     _ => {
                         unimplemented!()

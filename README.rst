@@ -15,43 +15,81 @@ Work in progress (WIP).
 *   🔜 编译器 (Compiler)
 *   🔜 解释器 (Interpreter)
 
+**Lexer**:
+
+*JSX*:
+
+*   JSXText
+
 **Parser**:
 
-* ✅ Identifier
-* ✅ LiteralNull
-* ✅ LiteralBoolean
-* ✅ LiteralString
-* ✅ LiteralNumeric
-* ✅ LiteralRegularExpression
-* ✅ LiteralTemplateExpression
-* ❌ LiteralArray
-* ❌ LiteralObject
+*   ✅ EmptyStatement
+*   ✅ DebuggerStatement
+*   ❌ Expression
 
-* ✅ ThisExpression
-* ✅ MemberExpression ( include `SuperMemberExpression` )
-* ✅ NewTargetExpression
-* ✅ NewExpression
-* ✅ PrefixExpression
-* ✅ InfixExpression
-* ✅ PostfixExpression
-* ✅ AssignmentExpression
-* ✅ ConditionalExpression
-* ✅ YieldExpression
-* ✅ CallExpression ( include `SuperCallExpression` )
-* ✅ TaggedTemplate
-* ✅ SpreadExpression
-* ✅ CommaExpression
-* ✅ ParenthesizedExpression ( Grouping )
+    *   ✅ Identifier
+    *   ✅ LiteralNull
+    *   ✅ LiteralBoolean
+    *   ✅ LiteralString
+    *   ✅ LiteralNumeric
+    *   ✅ LiteralRegularExpression
+    *   ✅ LiteralTemplateExpression
+    *   ❌ LiteralArray
+    *   ❌ LiteralObject
+    *   ✅ ThisExpression
+    *   ✅ MemberExpression ( include `SuperMemberExpression` )
+    *   ✅ NewTargetExpression
+    *   ✅ NewExpression
+    *   ✅ PrefixExpression
+    *   ✅ InfixExpression
+    *   ✅ PostfixExpression
+    *   ✅ AssignmentExpression
+    *   ✅ ConditionalExpression
+    *   ✅ YieldExpression
+    *   ✅ CallExpression ( include `SuperCallExpression` )
+    *   ✅ TaggedTemplate
+    *   ✅ SpreadExpression
+    *   ✅ CommaExpression
+    *   ✅ ParenthesizedExpression ( Grouping )
+    *   ❌ ObjectBindingPattern ( Destructuring )
+    *   ❌ ArrayBindingPattern ( Destructuring )
+    *   ❌ ClassExpression
+    *   ❌ FunctionExpression
+    *   ❌ GeneratorExpression
+    *   ❌ AsyncFunctionExpression
+    *   ❌ AsyncGeneratorExpression
+    *   ❌ ArrowFunctionExpression
+    *   ❌ AsyncArrowFunctionExpression
 
-* ❌ ObjectBindingPattern ( Destructuring )
-* ❌ ArrayBindingPattern ( Destructuring )
-* ❌ ClassExpression
-* ❌ FunctionExpression
-* ❌ GeneratorExpression
-* ❌ AsyncFunctionExpression
-* ❌ AsyncGeneratorExpression
-* ❌ ArrowFunctionExpression
-* ❌ AsyncArrowFunctionExpression
+*   ❌ VariableStatement
+*   ❌ BlockStatement
+*   ❌ IfStatement
+*   ❌ DoWhileStatement
+*   ❌ WhileStatement
+*   ❌ ForStatement
+*   ❌ ForInStatement
+*   ❌ ForOfStatement
+*   ❌ ForAwaitOfStatement
+*   ❌ ContinueStatement
+*   ❌ BreakStatement
+*   ❌ ReturnStatement
+*   ❌ WithStatement
+*   ❌ SwitchStatement
+*   ❌ LabelledStatement
+*   ❌ ThrowStatement
+*   ❌ TryStatement
+*   ❌ FunctionDeclaration
+*   ❌ ClassDeclaration
+
+*JSX*:
+
+*   ❌ JSXFragment
+*   ❌ JSXElement ( JSXSelfClosingElement, JSXNormalElement, )
+
+*Scripts and Modules*:
+
+*   ❌ ImportDeclaration
+*   ❌ ExportDeclaration
 
 
 原则
