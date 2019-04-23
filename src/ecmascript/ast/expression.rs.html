@@ -571,6 +571,18 @@
 <span id="571">571</span>
 <span id="572">572</span>
 <span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">span</span>::{ <span class="ident">Loc</span>, <span class="ident">Span</span>, <span class="ident">LineColumn</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">token</span>::{
@@ -656,8 +668,8 @@
     <span class="comment">// ArrayBindingPattern(&amp;&#39;ast ArrayBindingPattern&lt;&#39;ast&gt;),</span>
     
     <span class="comment">// JSX</span>
-    <span class="comment">// JSXFragment(JSXFragment),</span>
-    <span class="comment">// JSXElement(JSXElement),</span>
+    <span class="ident">JSXFragment</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">JSXFragment</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
+    <span class="ident">JSXElement</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">JSXElement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
@@ -702,6 +714,9 @@
             <span class="ident">Expression</span>::<span class="ident">Yield</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+
+            <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
         }
     }
 }
@@ -748,6 +763,9 @@
             <span class="ident">Expression</span>::<span class="ident">Yield</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
+
+            <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>(),
+            <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>(),
         }
     }
 
@@ -792,6 +810,9 @@
             <span class="ident">Expression</span>::<span class="ident">Yield</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
+
+            <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>(),
+            <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>(),
         }
     }
 
@@ -876,7 +897,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_left_hand_side_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
-    
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_assignment_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#prod-AssignmentExpression</span>
         <span class="comment">// use self::Expression::*;</span>
@@ -935,6 +956,9 @@
             <span class="ident">Expression</span>::<span class="ident">Yield</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">2</span>,
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
+
+            <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
         }
     }
 }
