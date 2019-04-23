@@ -1,7 +1,9 @@
 // document: https://facebook.github.io/jsx/
 
-
-use ast::expression::AssignmentExpression;
+use crate::lexer::span::{ Loc, Span, LineColumn, };
+use crate::lexer::token::{ Identifier, LiteralString, LiteralBoolean, LiteralNumeric, };
+use crate::ast::statement::Statement;
+use crate::ast::expression::{ Expression, ParenthesizedExpression, };
 
 
 // React only.
@@ -11,28 +13,32 @@ pub const CREATE_JSX_FRAGMENT: &str = "React.Fragment";
 // IdentifierStart
 // JSXIdentifier IdentifierPart
 // JSXIdentifier NO WHITESPACE OR COMMENT -
-pub type JSXIdentifier = String;
-pub type JSXAttributes = Vec<JSXAttribute>;
-pub type JSXChildren = Vec<JSXChild>;
-pub type JSXMemberExpression = Vec<JSXIdentifier>;
+pub type JSXIdentifier<'ast> = Identifier<'ast>;
+pub type JSXAttributes<'ast> = &'ast [ JSXAttribute<'ast> ];
+
+pub type JSXMemberExpression<'ast> = &'ast [ JSXIdentifier<'ast> ];
 // SourceCharacter but not one of {, <, > or }
-pub type JSXText = String;
-pub type JSXChildExpression = Vec<AssignmentExpression>;
+pub type JSXText<'ast> = LiteralString<'ast>;
+pub type JSXChildExpression<'ast> = &'ast [ Expression<'ast> ];
+
+pub type JSXChildren<'ast> = &'ast [ JSXChild<'ast> ];
 
 
 // PrimaryExpression: JSXFragment, JSXElement
 #[derive(Debug, PartialEq, Clone)]
-pub struct JSXFragment {
-    pub children: Option<JSXChildren>,
+pub struct JSXFragment<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub children: Option<JSXChildren<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum JSXElement {
-    SelfClosing(JSXSelfClosingElement),
-    Normal(JSXNormalElement)
+pub enum JSXElement<'ast> {
+    SelfClosing(JSXSelfClosingElement<'ast>),
+    Normal(JSXNormalElement<'ast>),
 }
 
-impl JSXElement {
+impl<'ast> JSXElement<'ast> {
     pub fn is_self_closing(&self) -> bool {
         match *self {
             JSXElement::SelfClosing(_) => true,
@@ -51,74 +57,84 @@ impl JSXElement {
 
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct JSXOpeningElement {
-    pub name: JSXElementName,
-    pub attrs: Option<JSXAttributes>,
+pub struct JSXOpeningElement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub name: JSXElementName<'ast>,
+    pub attrs: Option<JSXAttributes<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct JSXClosingElement {
-    pub name: JSXElementName,
+pub struct JSXClosingElement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub name: JSXElementName<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct JSXSelfClosingElement {
-    pub name: JSXElementName,
-    pub attrs: Option<JSXAttributes>,
-}
-
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct JSXNormalElement {
-    pub opening: JSXOpeningElement,
-    pub children: Option<JSXChildren>,
-    pub closing: JSXClosingElement,
-}
-
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum JSXElementName {
-    Identifier(JSXIdentifier),
-    NamespacedName(JSXNamespacedName),
-    MemberExpression(JSXMemberExpression),
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct JSXNamespacedName {
-    pub namespace: JSXIdentifier,
-    pub name: JSXIdentifier,
+pub struct JSXSelfClosingElement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub name: JSXElementName<'ast>,
+    pub attrs: Option<JSXAttributes<'ast>>,
 }
 
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum JSXAttribute {
-    Normal(JSXNormalAttribute),
-    Spread(AssignmentExpression),
+pub struct JSXNormalElement<'ast> {
+    pub opening: JSXOpeningElement<'ast>,
+    pub children: Option<JSXChildren<'ast>>,
+    pub closing: JSXClosingElement<'ast>,
+}
+
+
+#[derive(Debug, PartialEq, Clone)]
+pub enum JSXElementName<'ast> {
+    Identifier(JSXIdentifier<'ast>),
+    NamespacedName(JSXNamespacedName<'ast>),
+    MemberExpression(JSXMemberExpression<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct JSXNormalAttribute {
-    pub name: JSXNormalAttributeName,
-    pub init: Option<JSXNormalAttributeInitializer>,
+pub struct JSXNamespacedName<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub namespace: JSXIdentifier<'ast>,
+    pub name: JSXIdentifier<'ast>,
+}
+
+
+#[derive(Debug, PartialEq, Clone)]
+pub enum JSXAttribute<'ast> {
+    Normal(JSXNormalAttribute<'ast>),
+    Spread(Expression<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum JSXNormalAttributeName {
-    Identifier(JSXIdentifier),
-    NamespacedName(JSXNamespacedName),
+pub struct JSXNormalAttribute<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub name: JSXNormalAttributeName<'ast>,
+    pub init: Option<JSXNormalAttributeInitializer<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum JSXNormalAttributeInitializer {
-    Identifier(JSXIdentifier),
-    Assignment(AssignmentExpression),
-    Element(JSXElement),
-    Fragment(JSXFragment),
+pub enum JSXNormalAttributeName<'ast> {
+    Identifier(JSXIdentifier<'ast>),
+    NamespacedName(JSXNamespacedName<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum JSXChild {
-    Text(JSXText),
-    Element(JSXElement),
-    ChildExpression(Option<JSXChildExpression>),
+pub enum JSXNormalAttributeInitializer<'ast> {
+    Identifier(JSXIdentifier<'ast>),
+    Assignment(Expression<'ast>),
+    Element(JSXElement<'ast>),
+    Fragment(JSXFragment<'ast>),
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub enum JSXChild<'ast> {
+    Text(JSXText<'ast>),
+    Element(JSXElement<'ast>),
+    ChildExpression(Option<JSXChildExpression<'ast>>),
 }

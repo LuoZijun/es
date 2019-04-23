@@ -5,14 +5,14 @@ pub mod ustring;
 
 pub mod statement;
 pub mod expression;
-
-// pub mod declaration;
-// pub mod jsx;
-// pub mod pattern;
-// pub mod module;
 pub mod function;
 pub mod class;
 
+// pub mod declaration;
+// pub mod pattern;
+// pub mod module;
+
+pub mod jsx;
 
 // #[derive(Debug, PartialEq, Clone)]
 // pub struct Module {
