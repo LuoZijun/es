@@ -1,5 +1,5 @@
 #![cfg_attr(feature = "nightly", feature(test, repeat_generic_slice, duration_constants, const_fn))]
-#![recursion_limit="128"]
+#![recursion_limit="1024"]
 #![allow(
     unused_imports, unused_variables, unused_must_use, 
     non_snake_case, unreachable_code, dead_code, unused_mut,

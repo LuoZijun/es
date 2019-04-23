@@ -236,7 +236,8 @@ impl<'ast> Parser<'ast> {
 
 pub fn parse(source: &str, filename: &str) {
     let arena = Arena::new();
-
+    println!("Code:\n{}", source);
+    
     let code = arena.alloc_vec(source.chars().collect::<Vec<char>>());
     let filename = arena.alloc_str(filename);
 
