@@ -37,7 +37,7 @@ Work in progress (WIP).
 * ✅ AssignmentExpression
 * ✅ ConditionalExpression
 * ✅ YieldExpression
-* ❌ CallExpression ( include `SuperCallExpression` )
+* ✅ CallExpression ( include `SuperCallExpression` )
 * ✅ TaggedTemplate
 * ✅ SpreadExpression
 * ✅ CommaExpression
