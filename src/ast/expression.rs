@@ -442,7 +442,7 @@ pub struct CallExpression<'ast> {
     pub span: Span,
     pub callee: Expression<'ast>,
     // TODO:
-    pub arguments: &'ast [ Expression<'ast> ],
+    pub arguments: ParenthesizedExpression<'ast>,
 }
 
 
@@ -454,7 +454,7 @@ pub struct NewExpression<'ast> {
     pub span: Span,
     pub callee: Expression<'ast>,
     // NOTE: 支持无参数
-    pub arguments: Option<&'ast [ Expression<'ast> ]>,
+    pub arguments: Option<ParenthesizedExpression<'ast>>,
 }
 
 // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table

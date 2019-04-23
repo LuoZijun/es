@@ -24,6 +24,7 @@ use crate::ast::expression::{
     MemberExpression, NewTargetExpression, NewExpression,
     ConditionalExpression, YieldExpression, CommaExpression,
     TaggedTemplateExpression, SpreadExpression, ParenthesizedExpression,
+    CallExpression, 
 };
 
 // 运算符优先级
@@ -178,7 +179,7 @@ impl<'ast> Parser<'ast> {
                                                 return Err(self.unexpected_token(token2));
                                             }
 
-                                            let item = self.parse_expression(token2, -1)?;
+                                            let item = self.parse_expression(token2, precedence)?;
                                             items.push(item);
                                             
                                             is_first = false;
@@ -190,7 +191,7 @@ impl<'ast> Parser<'ast> {
                                         return Err(self.unexpected_token(token2));
                                     }
 
-                                    let item = self.parse_expression(token2, -1)?;
+                                    let item = self.parse_expression(token2, precedence)?;
                                     items.push(item);
                                     
                                     is_first = false;
@@ -465,10 +466,11 @@ impl<'ast> Parser<'ast> {
             },
         };
         
+
         if left_expr.precedence() > precedence {
             return Ok(left_expr);
         }
-        
+
         loop {
             let token2 = match self.token2() {
                 Ok(token2) => token2,
@@ -649,11 +651,34 @@ impl<'ast> Parser<'ast> {
                             // [
                             left_expr = self.parse_member_expression(left_expr, token2)?;
                         },
+                        PunctuatorKind::LParen => {
+                            // Call
+                            // (
+                            let op_precedence = 19i8;
+                            if precedence >= op_precedence {
+                                self.token.push(token2);
+                                return Ok(left_expr);
+                            }
+
+                            let mut loc = left_expr.loc();
+                            let mut span = left_expr.span();
+                            
+                            let callee = left_expr;
+                            let arguments = match self.parse_expression(token2, op_precedence)? {
+                                Expression::Parenthesized(inner) => *inner,
+                                _ => {
+                                    return Err(self.unexpected_token(token2))
+                                },
+                            };
+
+                            let item = CallExpression { loc, span, callee, arguments, };
+                            left_expr = Expression::Call(self.arena.alloc(item));
+                        },
 
                         // Infix expr
                         PunctuatorKind::Add => {
                             let op = punctuator_to_infix_op(punct.kind);
-                            if precedence >= op.precedence() {
+                            if left_expr.precedence() < 16 && precedence >= op.precedence() {
                                 self.token.push(token2);
                                 return Ok(left_expr);
                             }
@@ -1070,7 +1095,7 @@ impl<'ast> Parser<'ast> {
                             // [
                             let token2 = self.token2()?;
 
-                            let right_expr = self.parse_expression(token2, 0i8)?;
+                            let right_expr = self.parse_expression(token2, -1i8)?;
 
                             loop {
                                 let end_token = self.token2()?;
@@ -1253,7 +1278,7 @@ impl<'ast> Parser<'ast> {
             };
 
             let precedence = operator.precedence();
-            if left_expr.precedence() > precedence {
+            if left_expr.precedence() < 16 && left_expr.precedence() > precedence {
                 self.token.push(token);
                 break;
             }

@@ -186,12 +186,15 @@ impl<'ast> Parser<'ast> {
                     | PunctuatorKind::Increment
                     | PunctuatorKind::Decrement
                     | PunctuatorKind::Not
-                    | PunctuatorKind::BitNot
-                    | PunctuatorKind::LParen => {
+                    | PunctuatorKind::BitNot => {
                         // literal regular expression
                         // unary operator
-                        // (
                         let expr = self.parse_expression(token, expr_precedence)?;
+                        Ok(Statement::Expression(self.alloc(expr)))
+                    },
+                    PunctuatorKind::LParen => {
+                        // (
+                        let expr = self.parse_expression(token, 20i8)?;
                         Ok(Statement::Expression(self.alloc(expr)))
                     },
                     _ => {
