@@ -257,6 +257,8 @@
 <span id="257">257</span>
 <span id="258">258</span>
 <span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -446,9 +448,11 @@
                     <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">Increment</span>
                     <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">Decrement</span>
                     <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">Not</span>
-                    <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">BitNot</span> <span class="op">=&gt;</span> {
+                    <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">BitNot</span>
+                    <span class="op">|</span> <span class="ident">PunctuatorKind</span>::<span class="ident">LParen</span> <span class="op">=&gt;</span> {
                         <span class="comment">// literal regular expression</span>
                         <span class="comment">// unary operator</span>
+                        <span class="comment">// (</span>
                         <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token</span>, <span class="ident">expr_precedence</span>)<span class="question-mark">?</span>;
                         <span class="prelude-val">Ok</span>(<span class="ident">Statement</span>::<span class="ident">Expression</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">expr</span>)))
                     },
