@@ -242,7 +242,7 @@ impl<'ast> Parser<'ast> {
 
 pub fn parse(source: &str, filename: &str) {
     let arena = Arena::new();
-    println!("Code:\n{}\n", source);
+    println!("Code:\n```ecmascript\n{}\n```\n", source);
 
     let code = arena.alloc_vec(source.chars().collect::<Vec<char>>());
     let filename = arena.alloc_str(filename);
