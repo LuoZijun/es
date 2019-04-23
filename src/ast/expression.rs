@@ -82,8 +82,8 @@ pub enum Expression<'ast> {
     // ArrayBindingPattern(&'ast ArrayBindingPattern<'ast>),
     
     // JSX
-    // JSXFragment(JSXFragment),
-    // JSXElement(JSXElement),
+    JSXFragment(&'ast JSXFragment<'ast>),
+    JSXElement(&'ast JSXElement<'ast>),
 }
 
 impl<'ast> fmt::Debug for Expression<'ast> {
@@ -128,6 +128,9 @@ impl<'ast> fmt::Debug for Expression<'ast> {
             Expression::Yield(inner) => fmt::Debug::fmt(inner, f),
             
             Expression::Comma(inner) => fmt::Debug::fmt(inner, f),
+
+            Expression::JSXFragment(inner) => fmt::Debug::fmt(inner, f),
+            Expression::JSXElement(inner) => fmt::Debug::fmt(inner, f),
         }
     }
 }
@@ -174,6 +177,9 @@ impl<'ast> Expression<'ast> {
             Expression::Yield(inner) => inner.loc,
             
             Expression::Comma(inner) => inner.loc,
+
+            Expression::JSXFragment(inner) => inner.loc(),
+            Expression::JSXElement(inner) => inner.loc(),
         }
     }
 
@@ -218,6 +224,9 @@ impl<'ast> Expression<'ast> {
             Expression::Yield(inner) => inner.span,
             
             Expression::Comma(inner) => inner.span,
+
+            Expression::JSXFragment(inner) => inner.span(),
+            Expression::JSXElement(inner) => inner.span(),
         }
     }
 
@@ -302,7 +311,7 @@ impl<'ast> Expression<'ast> {
     pub fn is_left_hand_side_expression(&self) -> bool {
         unimplemented!()
     }
-    
+
     pub fn is_assignment_expression(&self) -> bool {
         // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-AssignmentExpression
         // use self::Expression::*;
@@ -361,6 +370,9 @@ impl<'ast> Expression<'ast> {
             Expression::Yield(inner) => 2,
             
             Expression::Comma(inner) => 0,
+
+            Expression::JSXFragment(inner) => -1,
+            Expression::JSXElement(inner) => -1,
         }
     }
 }
