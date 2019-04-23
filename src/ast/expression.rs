@@ -288,6 +288,13 @@ impl<'ast> Expression<'ast> {
         }
     }
 
+    pub fn is_call_expression(&self) -> bool {
+        match *self {
+            Expression::Call(_) => true,
+            _ => false,
+        }
+    }
+
     pub fn is_primary_expression(&self) -> bool {
         unimplemented!()
     }
@@ -295,11 +302,7 @@ impl<'ast> Expression<'ast> {
     pub fn is_left_hand_side_expression(&self) -> bool {
         unimplemented!()
     }
-
-    pub fn is_call_expression(&self) -> bool {
-        unimplemented!()
-    }
-
+    
     pub fn is_assignment_expression(&self) -> bool {
         // https://www.ecma-international.org/ecma-262/9.0/index.html#prod-AssignmentExpression
         // use self::Expression::*;
