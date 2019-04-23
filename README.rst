@@ -19,7 +19,7 @@ Work in progress (WIP).
 
 *JSX*:
 
-*   JSXText
+*   ❌ JSXText
 
 **Parser**:
 
