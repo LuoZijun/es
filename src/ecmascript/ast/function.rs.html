@@ -55,15 +55,13 @@
 <span id="55">55</span>
 <span id="56">56</span>
 <span id="57">57</span>
-<span id="58">58</span>
-<span id="59">59</span>
-<span id="60">60</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">span</span>::{ <span class="ident">Loc</span>, <span class="ident">Span</span>, <span class="ident">LineColumn</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">token</span>::<span class="ident">Identifier</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">statement</span>::<span class="ident">Statement</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">expression</span>::{ <span class="ident">Expression</span>, <span class="ident">ParenthesizedExpression</span>, };
 
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">FunctionBody</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> [ <span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> ];
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FunctionDeclaration</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
@@ -89,15 +87,11 @@
     <span class="kw">pub</span> <span class="ident">body</span>: <span class="ident">FunctionBody</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">FunctionBody</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> [ <span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> ];
-
-
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ArrowFunctionExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
     <span class="kw">pub</span> <span class="ident">is_async</span>: <span class="ident">bool</span>,
-    <span class="kw">pub</span> <span class="ident">name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Identifier</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
     <span class="comment">// Identifier or ParenthesizedExpression</span>
     <span class="kw">pub</span> <span class="ident">params</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">body</span>: <span class="ident">ConciseBody</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
@@ -105,8 +99,8 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ConciseBody</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
-    <span class="ident">One</span>(<span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
-    <span class="ident">Many</span>(<span class="ident">FunctionBody</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
+    <span class="ident">Expr</span>(<span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
+    <span class="ident">Stmt</span>(<span class="ident">FunctionBody</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
 }
 
 <span class="comment">// pub type FormalParameter = BindingElement;</span>

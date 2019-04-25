@@ -583,6 +583,33 @@
 <span id="583">583</span>
 <span id="584">584</span>
 <span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">span</span>::{ <span class="ident">Loc</span>, <span class="ident">Span</span>, <span class="ident">LineColumn</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">token</span>::{
@@ -664,8 +691,8 @@
     <span class="ident">Comma</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">CommaExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
 
     <span class="comment">// TODO:</span>
-    <span class="comment">// ObjectBindingPattern(&amp;&#39;ast ObjectBindingPattern&lt;&#39;ast&gt;),</span>
-    <span class="comment">// ArrayBindingPattern(&amp;&#39;ast ArrayBindingPattern&lt;&#39;ast&gt;),</span>
+    <span class="ident">ObjectBindingPattern</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ObjectBindingPattern</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
+    <span class="ident">ArrayBindingPattern</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ArrayBindingPattern</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     
     <span class="comment">// JSX</span>
     <span class="ident">JSXFragment</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">JSXFragment</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
@@ -714,6 +741,9 @@
             <span class="ident">Expression</span>::<span class="ident">Yield</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+
+            <span class="ident">Expression</span>::<span class="ident">ObjectBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">ArrayBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
 
             <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
@@ -764,6 +794,9 @@
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
 
+            <span class="ident">Expression</span>::<span class="ident">ObjectBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
+            <span class="ident">Expression</span>::<span class="ident">ArrayBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
+
             <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>(),
             <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>(),
         }
@@ -810,6 +843,9 @@
             <span class="ident">Expression</span>::<span class="ident">Yield</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
+
+            <span class="ident">Expression</span>::<span class="ident">ObjectBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
+            <span class="ident">Expression</span>::<span class="ident">ArrayBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
 
             <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>(),
             <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>(),
@@ -890,6 +926,20 @@
         }
     }
 
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_function_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">Expression</span>::<span class="ident">Function</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_arrow_function_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+            <span class="ident">Expression</span>::<span class="ident">ArrowFunction</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_primary_expression</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
@@ -957,6 +1007,9 @@
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
 
+            <span class="ident">Expression</span>::<span class="ident">ObjectBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">ArrayBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+
             <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
             <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
         }
@@ -1003,14 +1056,6 @@
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
     <span class="kw">pub</span> <span class="ident">items</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> [ <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> ],
 }
-
-<span class="comment">// FunctionExpression</span>
-<span class="comment">// ClassExpression</span>
-<span class="comment">// GeneratorExpression</span>
-<span class="comment">// AsyncFunctionExpression</span>
-<span class="comment">// AsyncGeneratorExpression</span>
-
-
 
 <span class="comment">// Left-Hand-Side Expressions</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
@@ -1139,35 +1184,44 @@
 }
 
 
-<span class="comment">// #[derive(Debug, PartialEq, Clone, Copy)]</span>
-<span class="comment">// pub struct BindingElement {</span>
-<span class="comment">//     // Identifier           Option&lt;Initializer&gt;</span>
-<span class="comment">//     // ArrayBindingPattern  Initializer</span>
-<span class="comment">//     // ObjectBindingPattern Initializer</span>
-<span class="comment">//     pub key: Box&lt;Expression&gt;,</span>
-<span class="comment">//     pub initializer: Option&lt;Box&lt;Expression&gt;&gt;,</span>
-<span class="comment">// }</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BindingElement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
+    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
+    <span class="comment">// Identifier           Option&lt;Initializer&gt;</span>
+    <span class="comment">// ArrayBindingPattern  Initializer</span>
+    <span class="comment">// ObjectBindingPattern Initializer</span>
+    <span class="kw">pub</span> <span class="ident">key</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">initializer</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
+}
 
-<span class="comment">// #[derive(Debug, PartialEq, Clone, Copy)]</span>
-<span class="comment">// pub struct ArrayBindingPattern {</span>
-<span class="comment">//     pub elems: Vec&lt;Option&lt;BindingElement&gt;&gt;,</span>
-<span class="comment">//     pub rest_elem: Option&lt;Box&lt;Expression&gt;&gt;,</span>
-<span class="comment">// }</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ArrayBindingPattern</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
+    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
+    <span class="kw">pub</span> <span class="ident">elems</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> [ <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BindingElement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span> ],
+    <span class="kw">pub</span> <span class="ident">rest_elem</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SpreadExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
+}
 
 
-<span class="comment">// #[derive(Debug, PartialEq, Clone, Copy)]</span>
-<span class="comment">// pub struct BindingProperty {</span>
-<span class="comment">//     // Identifier           Option&lt;Initializer&gt;</span>
-<span class="comment">//     // ArrayBindingPattern  Initializer</span>
-<span class="comment">//     // ObjectBindingPattern Initializer</span>
-<span class="comment">//     pub key: Box&lt;Expression&gt;,</span>
-<span class="comment">//     pub initializer: Option&lt;Box&lt;Expression&gt;&gt;,</span>
-<span class="comment">// }</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BindingProperty</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
+    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
+    <span class="comment">// Identifier           Option&lt;Initializer&gt;</span>
+    <span class="comment">// ArrayBindingPattern  Initializer</span>
+    <span class="comment">// ObjectBindingPattern Initializer</span>
+    <span class="kw">pub</span> <span class="ident">key</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">initializer</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
+}
 
-<span class="comment">// #[derive(Debug, PartialEq, Clone, Copy)]</span>
-<span class="comment">// pub struct ObjectBindingPattern {</span>
-<span class="comment">//     pub properties: Vec&lt;BindingProperty&gt;,</span>
-<span class="comment">//     pub rest_property: Option&lt;Box&lt;Expression&gt;&gt;,  // BindingIdentifier</span>
-<span class="comment">// }</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ObjectBindingPattern</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
+    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
+    <span class="comment">// BindingProperty, BindingProperty, Option&lt;SpreadExpression&gt;</span>
+    <span class="kw">pub</span> <span class="ident">properties</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> [ <span class="ident">BindingProperty</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> ],
+    <span class="kw">pub</span> <span class="ident">rest_property</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SpreadExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,  <span class="comment">// BindingIdentifier</span>
+}
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "ecmascript";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
