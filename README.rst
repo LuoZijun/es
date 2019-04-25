@@ -54,15 +54,15 @@ Work in progress (WIP).
     *   ❌ ObjectBindingPattern ( Destructuring )
     *   ❌ ArrayBindingPattern ( Destructuring )
     *   ❌ ClassExpression
-    *   ❌ FunctionExpression
-    *   ❌ GeneratorExpression
-    *   ❌ AsyncFunctionExpression
-    *   ❌ AsyncGeneratorExpression
-    *   ❌ ArrowFunctionExpression
-    *   ❌ AsyncArrowFunctionExpression
+    *   ✅ FunctionExpression
+    *   ✅ GeneratorExpression
+    *   ✅ AsyncFunctionExpression
+    *   ✅ AsyncGeneratorExpression
+    *   ✅ ArrowFunctionExpression
+    *   ✅ AsyncArrowFunctionExpression
 
 *   ❌ VariableStatement
-*   ❌ BlockStatement
+*   ✅ BlockStatement
 *   ❌ IfStatement
 *   ❌ DoWhileStatement
 *   ❌ WhileStatement
