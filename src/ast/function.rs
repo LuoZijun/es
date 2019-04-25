@@ -3,6 +3,7 @@ use crate::lexer::token::Identifier;
 use crate::ast::statement::Statement;
 use crate::ast::expression::{ Expression, ParenthesizedExpression, };
 
+pub type FunctionBody<'ast> = &'ast [ Statement<'ast> ];
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct FunctionDeclaration<'ast> {
@@ -28,15 +29,11 @@ pub struct Function<'ast> {
     pub body: FunctionBody<'ast>,
 }
 
-pub type FunctionBody<'ast> = &'ast [ Statement<'ast> ];
-
-
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct ArrowFunctionExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
     pub is_async: bool,
-    pub name: Option<Identifier<'ast>>,
     // Identifier or ParenthesizedExpression
     pub params: Expression<'ast>,
     pub body: ConciseBody<'ast>,
@@ -44,8 +41,8 @@ pub struct ArrowFunctionExpression<'ast> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ConciseBody<'ast> {
-    One(Expression<'ast>),
-    Many(FunctionBody<'ast>),
+    Expr(Expression<'ast>),
+    Stmt(FunctionBody<'ast>),
 }
 
 // pub type FormalParameter = BindingElement;

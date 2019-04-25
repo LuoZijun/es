@@ -78,8 +78,8 @@ pub enum Expression<'ast> {
     Comma(&'ast CommaExpression<'ast>),
 
     // TODO:
-    // ObjectBindingPattern(&'ast ObjectBindingPattern<'ast>),
-    // ArrayBindingPattern(&'ast ArrayBindingPattern<'ast>),
+    ObjectBindingPattern(&'ast ObjectBindingPattern<'ast>),
+    ArrayBindingPattern(&'ast ArrayBindingPattern<'ast>),
     
     // JSX
     JSXFragment(&'ast JSXFragment<'ast>),
@@ -128,6 +128,9 @@ impl<'ast> fmt::Debug for Expression<'ast> {
             Expression::Yield(inner) => fmt::Debug::fmt(inner, f),
             
             Expression::Comma(inner) => fmt::Debug::fmt(inner, f),
+
+            Expression::ObjectBindingPattern(inner) => fmt::Debug::fmt(inner, f),
+            Expression::ArrayBindingPattern(inner) => fmt::Debug::fmt(inner, f),
 
             Expression::JSXFragment(inner) => fmt::Debug::fmt(inner, f),
             Expression::JSXElement(inner) => fmt::Debug::fmt(inner, f),
@@ -178,6 +181,9 @@ impl<'ast> Expression<'ast> {
             
             Expression::Comma(inner) => inner.loc,
 
+            Expression::ObjectBindingPattern(inner) => inner.loc,
+            Expression::ArrayBindingPattern(inner) => inner.loc,
+
             Expression::JSXFragment(inner) => inner.loc(),
             Expression::JSXElement(inner) => inner.loc(),
         }
@@ -224,6 +230,9 @@ impl<'ast> Expression<'ast> {
             Expression::Yield(inner) => inner.span,
             
             Expression::Comma(inner) => inner.span,
+
+            Expression::ObjectBindingPattern(inner) => inner.span,
+            Expression::ArrayBindingPattern(inner) => inner.span,
 
             Expression::JSXFragment(inner) => inner.span(),
             Expression::JSXElement(inner) => inner.span(),
@@ -304,6 +313,20 @@ impl<'ast> Expression<'ast> {
         }
     }
 
+    pub fn is_function_expression(&self) -> bool {
+        match *self {
+            Expression::Function(_) => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_arrow_function_expression(&self) -> bool {
+        match *self {
+            Expression::ArrowFunction(_) => true,
+            _ => false,
+        }
+    }
+
     pub fn is_primary_expression(&self) -> bool {
         unimplemented!()
     }
@@ -371,6 +394,9 @@ impl<'ast> Expression<'ast> {
             
             Expression::Comma(inner) => 0,
 
+            Expression::ObjectBindingPattern(inner) => -1,
+            Expression::ArrayBindingPattern(inner) => -1,
+
             Expression::JSXFragment(inner) => -1,
             Expression::JSXElement(inner) => -1,
         }
@@ -417,14 +443,6 @@ pub struct ParenthesizedExpression<'ast> {
     pub span: Span,
     pub items: &'ast [ Expression<'ast> ],
 }
-
-// FunctionExpression
-// ClassExpression
-// GeneratorExpression
-// AsyncFunctionExpression
-// AsyncGeneratorExpression
-
-
 
 // Left-Hand-Side Expressions
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -553,33 +571,42 @@ pub struct CommaExpression<'ast> {
 }
 
 
-// #[derive(Debug, PartialEq, Clone, Copy)]
-// pub struct BindingElement {
-//     // Identifier           Option<Initializer>
-//     // ArrayBindingPattern  Initializer
-//     // ObjectBindingPattern Initializer
-//     pub key: Box<Expression>,
-//     pub initializer: Option<Box<Expression>>,
-// }
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct BindingElement<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    // Identifier           Option<Initializer>
+    // ArrayBindingPattern  Initializer
+    // ObjectBindingPattern Initializer
+    pub key: Expression<'ast>,
+    pub initializer: Option<Expression<'ast>>,
+}
 
-// #[derive(Debug, PartialEq, Clone, Copy)]
-// pub struct ArrayBindingPattern {
-//     pub elems: Vec<Option<BindingElement>>,
-//     pub rest_elem: Option<Box<Expression>>,
-// }
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ArrayBindingPattern<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    pub elems: &'ast [ Option<BindingElement<'ast>> ],
+    pub rest_elem: Option<SpreadExpression<'ast>>,
+}
 
 
-// #[derive(Debug, PartialEq, Clone, Copy)]
-// pub struct BindingProperty {
-//     // Identifier           Option<Initializer>
-//     // ArrayBindingPattern  Initializer
-//     // ObjectBindingPattern Initializer
-//     pub key: Box<Expression>,
-//     pub initializer: Option<Box<Expression>>,
-// }
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct BindingProperty<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    // Identifier           Option<Initializer>
+    // ArrayBindingPattern  Initializer
+    // ObjectBindingPattern Initializer
+    pub key: Expression<'ast>,
+    pub initializer: Option<Expression<'ast>>,
+}
 
-// #[derive(Debug, PartialEq, Clone, Copy)]
-// pub struct ObjectBindingPattern {
-//     pub properties: Vec<BindingProperty>,
-//     pub rest_property: Option<Box<Expression>>,  // BindingIdentifier
-// }
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ObjectBindingPattern<'ast> {
+    pub loc: Loc,
+    pub span: Span,
+    // BindingProperty, BindingProperty, Option<SpreadExpression>
+    pub properties: &'ast [ BindingProperty<'ast> ],
+    pub rest_property: Option<SpreadExpression<'ast>>,  // BindingIdentifier
+}
