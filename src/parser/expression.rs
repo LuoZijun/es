@@ -4,10 +4,12 @@ use crate::version::ECMAScriptVersion;
 use crate::error::{ ErrorKind, Error, };
 
 use crate::lexer::Lexer;
-use crate::lexer::token::{ Token, LiteralString, LiteralRegularExpression, LiteralTemplate, };
+use crate::lexer::span::{ Loc, Span, LineColumn, };
+use crate::lexer::token::{ Token, Identifier, LiteralString, LiteralRegularExpression, LiteralTemplate, };
 use crate::lexer::operator::{ PrefixOperator, InfixOperator, PostfixOperator, AssignmentOperator, };
 use crate::lexer::punctuator::PunctuatorKind;
 use crate::lexer::keyword::KeywordKind;
+
 use crate::lexer::LexerErrorKind;
 
 use crate::parser::parser::Parser;
@@ -26,6 +28,7 @@ use crate::ast::expression::{
     TaggedTemplateExpression, SpreadExpression, ParenthesizedExpression,
     CallExpression, 
 };
+use crate::ast::function::{ FunctionExpression, Function, ArrowFunctionExpression, ConciseBody, };
 
 // 运算符优先级
 // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
@@ -383,7 +386,7 @@ impl<'ast> Parser<'ast> {
                     KeywordKind::Super => Expression::Super(self.arena.alloc(kw)),
                     KeywordKind::Function => {
                         // Function or Generator EXPR
-                        unimplemented!()
+                        self.parse_function_expression(token)?
                     },
                     KeywordKind::Class => {
                         // Class EXPR
@@ -393,7 +396,7 @@ impl<'ast> Parser<'ast> {
                         // AsyncFunctionDeclaration       EXPR
                         // AsyncGeneratorDeclaration      EXPR
                         // AsyncArrowFunctionExpression   EXPR
-                        unimplemented!()
+                        self.parse_async_expression(token)?
                     },
                     KeywordKind::New => {
                         self.parse_new_expression(token)?
@@ -438,38 +441,13 @@ impl<'ast> Parser<'ast> {
             },
         };
         
-        // Lookahead `=>`
-        if left_expr.is_identifier() || left_expr.is_parenthesized_expression() {
-            match self.token()? {
-                None => { },
-                Some(token2) => {
-                    match token2 {
-                        Token::Punctuator(punct) => {
-                            match punct.kind {
-                                PunctuatorKind::FatArrow => {
-                                    // AsyncArrowFunctionExpression
-                                    // a =>
-                                    unimplemented!()
-                                },
-                                _ => {
-                                    self.token.push(token2);
-                                }
-                            }
-                        },
-                        _ => {
-                            self.token.push(token2);
-                        }
-                    }
-                }
-            }
-        }
-
-
-        if left_expr.precedence() > precedence {
-            return Ok(left_expr);
-        }
+        // if left_expr.precedence() >= precedence {
+        //         return Ok(left_expr);
+        //     }
 
         loop {
+            
+
             let token2 = match self.token2() {
                 Ok(token2) => {
                     match token2 {
@@ -506,7 +484,7 @@ impl<'ast> Parser<'ast> {
                             self.token.push(token2);
                             break;
                         },
-                        PunctuatorKind::RBrace => {
+                        PunctuatorKind::LBrace | PunctuatorKind::RBrace => {
                             // }
                             self.token.push(token2);
                             break;
@@ -515,6 +493,16 @@ impl<'ast> Parser<'ast> {
                             // :
                             self.token.push(token2);
                             break;
+                        },
+                        PunctuatorKind::FatArrow => {
+                            // Lookahead `=>`
+                            // AsyncArrowFunctionExpression
+                            // a =>
+                            if !left_expr.is_identifier() && !left_expr.is_parenthesized_expression() {
+                                return Err(self.unexpected_token(token2));
+                            }
+
+                            left_expr = self.parse_arrow_function_expression(left_expr)?;
                         },
                         PunctuatorKind::Comma => {
                             // ,
@@ -531,11 +519,12 @@ impl<'ast> Parser<'ast> {
                                     Token::Punctuator(punct) => {
                                         match punct.kind {
                                             PunctuatorKind::Comma => {
-                                                if precedence >= op_precedence {
+                                                // FIXME: 需要处理优先级问题
+                                                // if precedence >= op_precedence {
+                                                if left_expr.precedence() >= op_precedence {
                                                     self.token.push(token3);
                                                     return Ok(left_expr);
                                                 }
-
                                                 let token4 = self.token2()?;
                                                 let item = self.parse_expression(token4, op_precedence)?;
                                                 items.push(item);
@@ -879,14 +868,6 @@ impl<'ast> Parser<'ast> {
         Ok(LiteralTemplateExpression { loc, span, strings: strings_ref, bounds: self.arena.alloc_vec(bounds) })
     }
 
-    pub fn parse_async_expression(&mut self, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
-        // AsyncFunctionDeclaration       EXPR
-        // AsyncGeneratorDeclaration      EXPR
-        // AsyncArrowFunctionExpression   EXPR
-        // AsyncArrowGeneratorExpression  EXPR
-        unimplemented!()
-    }
-
     pub fn parse_member_expression(&mut self, mut left_expr: Expression<'ast>, mut token: Token<'ast>) -> Result<Expression<'ast>, Error> {
         let op_precedence = 19;
 
@@ -1095,6 +1076,225 @@ impl<'ast> Parser<'ast> {
             _ => unreachable!(),
         };
 
+        unimplemented!()
+    }
+
+    pub fn parse_arrow_function_expression(&mut self, params: Expression<'ast>) -> Result<Expression<'ast>, Error> {
+        let mut loc = params.loc();
+        let mut span = params.span();
+        
+        let token = self.token2()?;
+        match token {
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::LBrace => {
+                        // {
+                        let block = self.parse_block_statement(token)?;
+                        
+                        loc.end = block.loc.end;
+                        span.end = block.span.end;
+
+                        let is_async = false;
+                        let body = ConciseBody::Stmt(block.body);
+
+                        let item = ArrowFunctionExpression { loc, span, is_async, params, body, };
+                        return Ok(Expression::ArrowFunction(self.alloc(item)));
+                    },
+                    _ => {
+
+                    }
+                }
+            },
+            _ => {
+
+            }
+        }
+
+        // FIXME: 或许需要把优先级设定为 0 ？这样 `逗号表达式` 将不会被允许作为 函数的 Body.
+        let precedence = 0; // -1 or 0
+        let expr = self.parse_expression(token, precedence)?;
+        loc.end = expr.loc().end;
+        span.end = expr.span().end;
+
+        let is_async = false;
+        let body = ConciseBody::Expr(expr);
+        
+        let item = ArrowFunctionExpression { loc, span, is_async, params, body, };
+        
+        Ok(Expression::ArrowFunction(self.alloc(item)))
+    }
+
+    pub fn parse_function_expression(&mut self, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
+        // AsyncFunctionDeclaration       EXPR
+        // AsyncGeneratorDeclaration      EXPR
+        let (mut loc, mut span) = match token {
+            Token::Keyword(kw) => {
+                (kw.loc, kw.span)
+            },
+            _ => unreachable!(),
+        };
+
+        let is_async = false;
+        let mut is_generator: bool = false;
+        let mut name: Option<Identifier<'ast>> = None;
+        
+        let mut get_token = |parser: &mut Parser<'ast>| -> Result<Token<'ast>, Error> {
+            loop {
+                let mut token2 = parser.token2()?;
+                match token2 {
+                    Token::LineTerminator => continue,
+                    Token::Identifier(ident) => {
+                        match ident.to_keyword_or_literal() {
+                            Some(token2) => return Ok(token2),
+                            None => return Ok(token2),
+                        }
+                    },
+                    _ => return Ok(token2),
+                }
+            }
+        };
+        
+        let mut token2 = get_token(self)?;
+        match token2 {
+            Token::Identifier(ident) => {
+                name = Some(ident);
+                token2 = get_token(self)?;
+            },
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::Mul => {
+                        is_generator = true;
+                        let token3 = get_token(self)?;
+                        match token3 {
+                            Token::Identifier(ident) => {
+                                name = Some(ident);
+                                token2 = get_token(self)?;
+                            },
+                            Token::Punctuator(punct) => {
+                                match punct.kind {
+                                    PunctuatorKind::LParen => {
+                                        // (
+                                        token2 = token3;
+                                    },
+                                    _ => {
+                                        return Err(self.unexpected_token(token3));
+                                    }
+                                }
+                            },
+                            _ => {
+                                return Err(self.unexpected_token(token3));
+                            }
+                        }
+                    },
+                    PunctuatorKind::LParen => {
+                        // (
+                    },
+                    _ => {
+                        return Err(self.unexpected_token(token2));
+                    }
+                }
+            },
+            _ => {
+                return Err(self.unexpected_token(token2));
+            }
+        }
+        
+        match token2 {
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::LParen => {
+                        // (
+                    },
+                    _ => {
+                        return Err(self.unexpected_token(token2));
+                    }
+                }
+            },
+            _ => {
+                return Err(self.unexpected_token(token2));
+            }
+        }
+        
+        let params = match self.parse_expression(token2, 20i8)? {
+            Expression::Parenthesized(inner) => inner,
+            _ => unreachable!(),
+        };
+        
+        let token3 = get_token(self)?;
+        match token3 {
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::LBrace => {
+                        // {
+                    },
+                    _ => {
+                        return Err(self.unexpected_token(token3));
+                    }
+                }
+            },
+            _ => {
+                return Err(self.unexpected_token(token3));
+            }
+        }
+
+        let block = self.parse_block_statement(token3)?;
+
+        loc.end = block.loc.end;
+        span.end = block.span.end;
+
+        let is_async = false;
+        let body = block.body;
+
+        let func = Function { is_async, is_generator, params: params.to_owned(), body, };
+        let item = FunctionExpression { loc, span, name, func, };
+        
+        Ok(Expression::Function(self.alloc(item)))
+    }
+
+    pub fn parse_async_expression(&mut self, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
+        // AsyncFunctionDeclaration       EXPR
+        // AsyncGeneratorDeclaration      EXPR
+        // AsyncArrowFunctionExpression   EXPR
+        let (mut loc, mut span) = match token {
+            Token::Keyword(kw) => {
+                (kw.loc, kw.span)
+            },
+            _ => unreachable!(),
+        };
+
+        let token2 = self.token2()?;
+        match token2 {
+            Token::LineTerminator => {
+                return Err(self.unexpected_token(token2));
+            },
+            _ => { }
+        }
+
+        let expr = self.parse_expression(token2, -1i8)?;
+
+        match expr {
+            Expression::Function(function) => {
+                let mut f = function.to_owned();
+                f.loc.start = loc.start;
+                f.span.start = span.start;
+
+                f.func.is_async = true;
+                Ok(Expression::Function(self.alloc(f)))
+            },
+            Expression::ArrowFunction(arrow_function) => {
+                let mut f = arrow_function.to_owned();
+                f.loc.start = loc.start;
+                f.span.start = span.start;
+                f.is_async = true;
+                Ok(Expression::ArrowFunction(self.alloc(f)))
+            },
+            _ => {
+                return Err(self.unexpected_token(token2));
+            }
+        }
+    }
+
+    pub fn parse_class_expression(&mut self, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
         unimplemented!()
     }
 }

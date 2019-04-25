@@ -258,7 +258,7 @@ pub fn parse(source: &str, filename: &str) {
 
             println!("StatementList:");
             for stmt in parser.body {
-                println!("    {:?}", stmt);
+                println!("    {:#?}", stmt);
             }
             println!("\n");
 

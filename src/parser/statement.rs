@@ -16,6 +16,7 @@ use crate::ast::numberic::{ Numberic, Float, };
 use crate::ast::statement::{ 
     Statement, StatementList,
     EmptyStatement, DebuggerStatement,
+    BlockStatement,
     VariableStatement, LexicalDeclarationKind, LexicalBinding,
 };
 use crate::ast::expression::{
@@ -97,7 +98,7 @@ impl<'ast> Parser<'ast> {
         unimplemented!()
     }
 
-    pub fn parse_block_statement(&mut self, token: Token<'ast>) -> Result<Statement<'ast>, Error> {
+    pub fn parse_block_statement(&mut self, token: Token<'ast>) -> Result<BlockStatement<'ast>, Error> {
         // { }
         unimplemented!()
     }
