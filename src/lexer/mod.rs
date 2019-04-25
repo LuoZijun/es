@@ -955,6 +955,10 @@ impl<'ast> Lexer<'ast> {
                             _ => Ok(Some(punct!(Eq)))
                         }
                     },
+                    '>' => {
+                        // =>
+                        bump_with_punct!(FatArrow);
+                    },
                     _ => Ok(Some(punct!(Assign)))
                 }
             },
