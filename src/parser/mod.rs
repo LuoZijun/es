@@ -3,6 +3,8 @@ mod parser;
 mod expression;
 mod statement;
 
+mod class;
+
 pub use self::parser::{ Parser, parse, };
 
 
