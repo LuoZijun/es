@@ -9,6 +9,8 @@ pub type FunctionBody<'ast> = &'ast [ Statement<'ast> ];
 pub struct FunctionDeclaration<'ast> {
     pub loc: Loc,
     pub span: Span,
+    pub is_async: bool,
+    pub is_generator: bool,
     pub name: Identifier<'ast>,
     pub func: Function<'ast>,
 }
@@ -17,14 +19,16 @@ pub struct FunctionDeclaration<'ast> {
 pub struct FunctionExpression<'ast> {
     pub loc: Loc,
     pub span: Span,
+    pub is_async: bool,
+    pub is_generator: bool,
     pub name: Option<Identifier<'ast>>,
     pub func: Function<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Function<'ast> {
-    pub is_async: bool,
-    pub is_generator: bool,
+    pub loc: Loc,
+    pub span: Span,
     pub params: ParenthesizedExpression<'ast>,
     pub body: FunctionBody<'ast>,
 }

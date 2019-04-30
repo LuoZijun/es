@@ -78,7 +78,7 @@ Work in progress (WIP).
 *   ❌ LabelledStatement
 *   ❌ ThrowStatement
 *   ❌ TryStatement
-*   ❌ FunctionDeclaration
+*   ✅ FunctionDeclaration
 *   ✅ ClassDeclaration
 
 *JSX*:

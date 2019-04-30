@@ -6,8 +6,8 @@ use crate::lexer::token::{
     Punctuator, Keyword,
 };
 use crate::ast::expression::{ Expression, };
-// use ast::class::ClassDeclaration;
-// use ast::function::FunctionDeclaration;
+use crate::ast::class::ClassDeclaration;
+use crate::ast::function::FunctionDeclaration;
 
 
 pub type StatementList<'ast> = Vec<Statement<'ast>>;
@@ -21,8 +21,8 @@ pub enum Statement<'ast> {
     Expression(&'ast Expression<'ast>),
 
     Variable(&'ast VariableStatement<'ast>),
-    // Function(FunctionDeclaration),
-    // Class(ClassDeclaration),
+    Function(&'ast FunctionDeclaration<'ast>),
+    Class(&'ast ClassDeclaration<'ast>),
 
     Block(&'ast BlockStatement<'ast>),
     If(&'ast IfStatement<'ast>),
@@ -54,8 +54,8 @@ impl<'ast> Statement<'ast> {
             Statement::Expression(inner) => inner.loc(),
 
             Statement::Variable(inner) => inner.loc,
-            // Function(FunctionDeclaration),
-            // Class(ClassDeclaration),
+            Statement::Function(inner) => inner.loc,
+            Statement::Class(inner) => inner.loc,
 
             Statement::Block(inner) => inner.loc,
             Statement::If(inner) => inner.loc,
@@ -86,9 +86,9 @@ impl<'ast> Statement<'ast> {
             Statement::Expression(inner) => inner.span(),
 
             Statement::Variable(inner) => inner.span,
-            // Function(FunctionDeclaration),
-            // Class(ClassDeclaration),
-
+            Statement::Function(inner) => inner.span,
+            Statement::Class(inner) => inner.span,
+            
             Statement::Block(inner) => inner.span,
             Statement::If(inner) => inner.span,
 

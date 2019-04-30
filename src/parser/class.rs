@@ -40,22 +40,6 @@ const GET: &'static [char] = &['g', 'e', 't'];
 const SET: &'static [char] = &['s', 'e', 't'];
 
 
-fn get_token<'ast>(parser: &mut Parser<'ast>) -> Result<Token<'ast>, Error> {
-    loop {
-        let mut token2 = parser.token2()?;
-        match token2 {
-            Token::LineTerminator => continue,
-            Token::Identifier(ident) => {
-                match ident.to_keyword_or_literal() {
-                    Some(token2) => return Ok(token2),
-                    None => return Ok(token2),
-                }
-            },
-            _ => return Ok(token2),
-        }
-    }
-}
-
 impl<'ast> Parser<'ast> {
     pub fn parse_class(&mut self, mut token: Token<'ast>) -> Result<Class<'ast>, Error> {
         // Class Heritage
@@ -70,11 +54,11 @@ impl<'ast> Parser<'ast> {
                         loc = kw.loc;
                         span = kw.span;
 
-                        let token2 = get_token(self)?;
+                        let token2 = self.token4()?;
                         let expr = self.parse_expression(token2, -1)?;
 
                         heritage = Some(expr);
-                        token = get_token(self)?;
+                        token = self.token4()?;
                     },
                     _ => {
 
@@ -110,7 +94,7 @@ impl<'ast> Parser<'ast> {
 
         // class method
         loop {
-            let token2 = get_token(self)?;
+            let token2 = self.token4()?;
             match token2 {
                 Token::Punctuator(punct) => {
                     match punct.kind {
@@ -147,7 +131,7 @@ impl<'ast> Parser<'ast> {
         let name: Identifier<'ast>;
 
         // class name
-        let mut token2 = get_token(self)?;
+        let mut token2 = self.token4()?;
         match token2 {
             Token::Identifier(ident) => {
                 name = ident;
@@ -178,11 +162,11 @@ impl<'ast> Parser<'ast> {
         let mut name: Option<Identifier<'ast>> = None;
         
         // class name
-        let mut token2 = get_token(self)?;
+        let mut token2 = self.token4()?;
         match token2 {
             Token::Identifier(ident) => {
                 name = Some(ident);
-                token2 = get_token(self)?;
+                token2 = self.token4()?;
             },
             _ => {
 
@@ -227,16 +211,7 @@ impl<'ast> Parser<'ast> {
                     KeywordKind::Static => {
                         // static
                         is_static = true;
-                        loop {
-                            let token2 = self.token2()?;
-                            match token2 {
-                                Token::LineTerminator => continue,
-                                _ => {
-                                    token = token2;
-                                    break;
-                                }
-                            }
-                        }
+                        token = self.token4()?;
                     },
                     _ => unreachable!()
                 }
@@ -295,7 +270,7 @@ impl<'ast> Parser<'ast> {
                         loc = punct.loc;
                         span = punct.span;
 
-                        token = self.token2()?;
+                        token = self.token4()?;
                     },
                     PunctuatorKind::LBracket => {
                         // ComputedPropertyName
@@ -314,7 +289,7 @@ impl<'ast> Parser<'ast> {
                         loc = kw.loc;
                         span = kw.span;
 
-                        let token2 = self.token2()?;
+                        let token2 = self.token4()?;
                         match token2 {
                             Token::Identifier(_) 
                             | Token::LiteralString(_)
@@ -326,7 +301,7 @@ impl<'ast> Parser<'ast> {
                                     PunctuatorKind::Mul => {
                                         // *
                                         is_generator = true;
-                                        token = self.token2()?;
+                                        token = self.token4()?;
                                     },
                                     PunctuatorKind::LBracket => {
                                         // ComputedPropertyName
@@ -353,15 +328,11 @@ impl<'ast> Parser<'ast> {
         if !is_generator && !is_async {
             match token {
                 Token::Identifier(ident) => {
-                    if let Some(_) = ident.to_keyword_or_literal() {
-                        return Err(self.unexpected_token(token));
-                    }
-                    
                     is_setter = ident.raw == SET;
                     is_getter = ident.raw == GET;
 
                     if is_setter || is_getter {
-                        let token2 = self.token2()?;
+                        let token2 = self.token4()?;
                         let fallback = match token2 {
                             Token::Identifier(_)
                             | Token::LiteralString(_)
@@ -380,7 +351,7 @@ impl<'ast> Parser<'ast> {
                             },
                             _ => true
                         };
-                        
+
                         if fallback {
                             is_setter = false;
                             is_getter = false;
@@ -397,10 +368,6 @@ impl<'ast> Parser<'ast> {
         // PropertyName
         match token {
             Token::Identifier(ident) => {
-                if let Some(_) = ident.to_keyword_or_literal() {
-                    return Err(self.unexpected_token(token));
-                }
-
                 property_name = Expression::Identifier(self.alloc(ident));
             },
             Token::LiteralString(lit_str) => {
@@ -414,26 +381,23 @@ impl<'ast> Parser<'ast> {
                     PunctuatorKind::LBracket => {
                         // ComputedPropertyName
                         // [
+                        token = self.token4()?;
                         property_name = self.parse_expression(token, -1)?;
-                        
-                        loop {
-                            let token3 = self.token2()?;
-                            match token3 {
-                                Token::LineTerminator => continue,
-                                Token::Punctuator(punct) => {
-                                    match punct.kind {
-                                        PunctuatorKind::RBracket => {
-                                            // ]
-                                            break;
-                                        },
-                                        _ => {
-                                            return Err(self.unexpected_token(token3));
-                                        }
+                        let end_token = self.token4()?; // ]
+
+                        match end_token {
+                            Token::Punctuator(punct) => {
+                                match punct.kind {
+                                    PunctuatorKind::RBracket => {
+                                        // ]
+                                    },
+                                    _ => {
+                                        return Err(self.unexpected_token(end_token));
                                     }
-                                },
-                                _ => {
-                                    return Err(self.unexpected_token(token3));
                                 }
+                            },
+                            _ => {
+                                return Err(self.unexpected_token(end_token));
                             }
                         }
                     },
@@ -453,35 +417,29 @@ impl<'ast> Parser<'ast> {
         }
         
         let parse_function_body = |parser: &mut Parser<'ast>| -> Result<BlockStatement<'ast>, Error> {
-            let block;
-            loop {
-                let token3 = parser.token2()?;
-                match token3 {
-                    Token::LineTerminator => continue,
-                    Token::Punctuator(punct) => {
-                        match punct.kind {
-                            PunctuatorKind::LBrace => {
-                                // {
-                                block = parser.parse_block_statement(token3)?;
-                                break;
-                            },
-                            _ => {
-                                return Err(parser.unexpected_token(token3));
-                            }
-                        }
-                    },
-                    _ => {
-                        return Err(parser.unexpected_token(token3));
-                    }
-                }
-            };
+            let token3 = parser.token4()?;
 
-            Ok(block)
+            match token3 {
+                Token::Punctuator(punct) => {
+                    match punct.kind {
+                        PunctuatorKind::LBrace => {
+                            // {
+                            return Ok(parser.parse_block_statement(token3)?);
+                        },
+                        _ => {
+                            return Err(parser.unexpected_token(token3));
+                        }
+                    }
+                },
+                _ => {
+                    return Err(parser.unexpected_token(token3));
+                }
+            }
         };
 
         if !is_getter && !is_setter {
             // Method
-            let token2 = self.token2()?;
+            let token2 = self.token4()?;
             let params = match self.parse_expression(token2, -1)? {
                 Expression::Parenthesized(inner) => inner.to_owned(),
                 _ => return Err(self.unexpected_token(token2)),
@@ -501,6 +459,41 @@ impl<'ast> Parser<'ast> {
 
         if is_getter {
             // Getter
+            
+            let token2 = self.token4()?; // (
+            match token2 {
+                Token::Punctuator(punct) => {
+                    match punct.kind {
+                        PunctuatorKind::LParen => {
+                            // (
+                        },
+                        _ => {
+                            return Err(self.unexpected_token(token2));
+                        }
+                    }
+                },
+                _ => {
+                    return Err(self.unexpected_token(token2));
+                }
+            }
+
+            let token2 = self.token4()?; // )
+            match token2 {
+                Token::Punctuator(punct) => {
+                    match punct.kind {
+                        PunctuatorKind::RParen => {
+                            // )
+                        },
+                        _ => {
+                            return Err(self.unexpected_token(token2));
+                        }
+                    }
+                },
+                _ => {
+                    return Err(self.unexpected_token(token2));
+                }
+            }
+            
             let block = parse_function_body(self)?;
             
             loc.end = block.loc.end;
@@ -515,7 +508,7 @@ impl<'ast> Parser<'ast> {
 
         if is_setter {
             // Setter
-            let token2 = self.token2()?;
+            let token2 = self.token4()?;
             let params = match self.parse_expression(token2, -1)? {
                 Expression::Parenthesized(inner) => inner.to_owned(),
                 _ => return Err(self.unexpected_token(token2)),

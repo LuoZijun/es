@@ -4,6 +4,7 @@ mod expression;
 mod statement;
 
 mod class;
+mod function;
 
 pub use self::parser::{ Parser, parse, };
 

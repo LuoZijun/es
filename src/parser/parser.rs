@@ -94,14 +94,42 @@ impl<'ast> Parser<'ast> {
             Err(e) => Err(e),
         }
     }
-    
+
+    #[inline]
+    pub fn token3(&mut self) -> Result<Token<'ast>, Error> {
+        // NOTE: 自动 翻译 Ident
+        let token = self.token2()?;
+        match token {
+            Token::LineTerminator => return Ok(token),
+            Token::Identifier(ident) => {
+                match ident.to_keyword_or_literal() {
+                    Some(token) => return Ok(token),
+                    None => return Ok(token),
+                }
+            },
+            _ => return Ok(token),
+        }
+    }
+
+    #[inline]
+    pub fn token4(&mut self) -> Result<Token<'ast>, Error> {
+        // NOTE: 忽略 LineTerminator
+        loop {
+            let token = self.token3()?;
+            match token {
+                Token::LineTerminator => continue,
+                _ => return Ok(token),
+            }
+        }
+    }
+
     #[inline]
     pub fn alloc<T: Copy>(&mut self, item: T) -> &'ast T {
         self.arena.alloc(item)
     }
     
     #[inline]
-    fn process(&mut self, token: Token<'ast>) -> Result<Statement<'ast>, Error> {
+    pub fn process(&mut self, token: Token<'ast>) -> Result<Statement<'ast>, Error> {
         let expr_precedence = -1i8;
 
         match token {
@@ -125,11 +153,13 @@ impl<'ast> Parser<'ast> {
             Token::Keyword(kw) => {
                 match kw.kind {
                     KeywordKind::Async => {
+                        // // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-expression-statement
                         // NOTE: 由于该关键字有歧义，需要单独处理
                         // AsyncFunctionDeclaration       STMT
                         // AsyncGeneratorDeclaration      STMT
                         // AsyncArrowFunctionExpression   EXPR
-                        unimplemented!()
+                        // unimplemented!()
+                        self.parse_statement(token)
                     },
                     KeywordKind::Var
                     | KeywordKind::Let
