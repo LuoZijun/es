@@ -529,13 +529,6 @@
 <span id="529">529</span>
 <span id="530">530</span>
 <span id="531">531</span>
-<span id="532">532</span>
-<span id="533">533</span>
-<span id="534">534</span>
-<span id="535">535</span>
-<span id="536">536</span>
-<span id="537">537</span>
-<span id="538">538</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -579,22 +572,6 @@
 <span class="kw">const</span> <span class="ident">SET</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="ident">char</span>] <span class="op">=</span> <span class="kw-2">&amp;</span>[<span class="string">&#39;s&#39;</span>, <span class="string">&#39;e&#39;</span>, <span class="string">&#39;t&#39;</span>];
 
 
-<span class="kw">fn</span> <span class="ident">get_token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>(<span class="ident">parser</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">loop</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">token2</span> <span class="op">=</span> <span class="ident">parser</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
-        <span class="kw">match</span> <span class="ident">token2</span> {
-            <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> <span class="kw">continue</span>,
-            <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> {
-                <span class="kw">match</span> <span class="ident">ident</span>.<span class="ident">to_keyword_or_literal</span>() {
-                    <span class="prelude-val">Some</span>(<span class="ident">token2</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">token2</span>),
-                    <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">token2</span>),
-                }
-            },
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">token2</span>),
-        }
-    }
-}
-
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_class</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Class</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="comment">// Class Heritage</span>
@@ -609,11 +586,11 @@
                         <span class="ident">loc</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">loc</span>;
                         <span class="ident">span</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="ident">get_token</span>(<span class="self">self</span>)<span class="question-mark">?</span>;
+                        <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="op">-</span><span class="number">1</span>)<span class="question-mark">?</span>;
 
                         <span class="ident">heritage</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">expr</span>);
-                        <span class="ident">token</span> <span class="op">=</span> <span class="ident">get_token</span>(<span class="self">self</span>)<span class="question-mark">?</span>;
+                        <span class="ident">token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
                     },
                     <span class="kw">_</span> <span class="op">=&gt;</span> {
 
@@ -649,7 +626,7 @@
 
         <span class="comment">// class method</span>
         <span class="kw">loop</span> {
-            <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="ident">get_token</span>(<span class="self">self</span>)<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
             <span class="kw">match</span> <span class="ident">token2</span> {
                 <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
                     <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
@@ -686,7 +663,7 @@
         <span class="kw">let</span> <span class="ident">name</span>: <span class="ident">Identifier</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>;
 
         <span class="comment">// class name</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">token2</span> <span class="op">=</span> <span class="ident">get_token</span>(<span class="self">self</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
         <span class="kw">match</span> <span class="ident">token2</span> {
             <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> {
                 <span class="ident">name</span> <span class="op">=</span> <span class="ident">ident</span>;
@@ -717,11 +694,11 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Identifier</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span> <span class="op">=</span> <span class="prelude-val">None</span>;
         
         <span class="comment">// class name</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">token2</span> <span class="op">=</span> <span class="ident">get_token</span>(<span class="self">self</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
         <span class="kw">match</span> <span class="ident">token2</span> {
             <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> {
                 <span class="ident">name</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">ident</span>);
-                <span class="ident">token2</span> <span class="op">=</span> <span class="ident">get_token</span>(<span class="self">self</span>)<span class="question-mark">?</span>;
+                <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
             },
             <span class="kw">_</span> <span class="op">=&gt;</span> {
 
@@ -766,16 +743,7 @@
                     <span class="ident">KeywordKind</span>::<span class="ident">Static</span> <span class="op">=&gt;</span> {
                         <span class="comment">// static</span>
                         <span class="ident">is_static</span> <span class="op">=</span> <span class="bool-val">true</span>;
-                        <span class="kw">loop</span> {
-                            <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
-                            <span class="kw">match</span> <span class="ident">token2</span> {
-                                <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> <span class="kw">continue</span>,
-                                <span class="kw">_</span> <span class="op">=&gt;</span> {
-                                    <span class="ident">token</span> <span class="op">=</span> <span class="ident">token2</span>;
-                                    <span class="kw">break</span>;
-                                }
-                            }
-                        }
+                        <span class="ident">token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
                     },
                     <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>()
                 }
@@ -834,7 +802,7 @@
                         <span class="ident">loc</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">loc</span>;
                         <span class="ident">span</span> <span class="op">=</span> <span class="ident">punct</span>.<span class="ident">span</span>;
 
-                        <span class="ident">token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                        <span class="ident">token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
                     },
                     <span class="ident">PunctuatorKind</span>::<span class="ident">LBracket</span> <span class="op">=&gt;</span> {
                         <span class="comment">// ComputedPropertyName</span>
@@ -853,7 +821,7 @@
                         <span class="ident">loc</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">loc</span>;
                         <span class="ident">span</span> <span class="op">=</span> <span class="ident">kw</span>.<span class="ident">span</span>;
 
-                        <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                        <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
                         <span class="kw">match</span> <span class="ident">token2</span> {
                             <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="kw">_</span>) 
                             <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralString</span>(<span class="kw">_</span>)
@@ -865,7 +833,7 @@
                                     <span class="ident">PunctuatorKind</span>::<span class="ident">Mul</span> <span class="op">=&gt;</span> {
                                         <span class="comment">// *</span>
                                         <span class="ident">is_generator</span> <span class="op">=</span> <span class="bool-val">true</span>;
-                                        <span class="ident">token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                                        <span class="ident">token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
                                     },
                                     <span class="ident">PunctuatorKind</span>::<span class="ident">LBracket</span> <span class="op">=&gt;</span> {
                                         <span class="comment">// ComputedPropertyName</span>
@@ -892,15 +860,11 @@
         <span class="kw">if</span> <span class="op">!</span><span class="ident">is_generator</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">is_async</span> {
             <span class="kw">match</span> <span class="ident">token</span> {
                 <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> {
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=</span> <span class="ident">ident</span>.<span class="ident">to_keyword_or_literal</span>() {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token</span>));
-                    }
-                    
                     <span class="ident">is_setter</span> <span class="op">=</span> <span class="ident">ident</span>.<span class="ident">raw</span> <span class="op">==</span> <span class="ident">SET</span>;
                     <span class="ident">is_getter</span> <span class="op">=</span> <span class="ident">ident</span>.<span class="ident">raw</span> <span class="op">==</span> <span class="ident">GET</span>;
 
                     <span class="kw">if</span> <span class="ident">is_setter</span> <span class="op">||</span> <span class="ident">is_getter</span> {
-                        <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+                        <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
                         <span class="kw">let</span> <span class="ident">fallback</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">token2</span> {
                             <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="kw">_</span>)
                             <span class="op">|</span> <span class="ident">Token</span>::<span class="ident">LiteralString</span>(<span class="kw">_</span>)
@@ -919,7 +883,7 @@
                             },
                             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>
                         };
-                        
+
                         <span class="kw">if</span> <span class="ident">fallback</span> {
                             <span class="ident">is_setter</span> <span class="op">=</span> <span class="bool-val">false</span>;
                             <span class="ident">is_getter</span> <span class="op">=</span> <span class="bool-val">false</span>;
@@ -936,10 +900,6 @@
         <span class="comment">// PropertyName</span>
         <span class="kw">match</span> <span class="ident">token</span> {
             <span class="ident">Token</span>::<span class="ident">Identifier</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=</span> <span class="ident">ident</span>.<span class="ident">to_keyword_or_literal</span>() {
-                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token</span>));
-                }
-
                 <span class="ident">property_name</span> <span class="op">=</span> <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">ident</span>));
             },
             <span class="ident">Token</span>::<span class="ident">LiteralString</span>(<span class="ident">lit_str</span>) <span class="op">=&gt;</span> {
@@ -953,26 +913,23 @@
                     <span class="ident">PunctuatorKind</span>::<span class="ident">LBracket</span> <span class="op">=&gt;</span> {
                         <span class="comment">// ComputedPropertyName</span>
                         <span class="comment">// [</span>
+                        <span class="ident">token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
                         <span class="ident">property_name</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token</span>, <span class="op">-</span><span class="number">1</span>)<span class="question-mark">?</span>;
-                        
-                        <span class="kw">loop</span> {
-                            <span class="kw">let</span> <span class="ident">token3</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
-                            <span class="kw">match</span> <span class="ident">token3</span> {
-                                <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> <span class="kw">continue</span>,
-                                <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
-                                    <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
-                                        <span class="ident">PunctuatorKind</span>::<span class="ident">RBracket</span> <span class="op">=&gt;</span> {
-                                            <span class="comment">// ]</span>
-                                            <span class="kw">break</span>;
-                                        },
-                                        <span class="kw">_</span> <span class="op">=&gt;</span> {
-                                            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token3</span>));
-                                        }
+                        <span class="kw">let</span> <span class="ident">end_token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>; <span class="comment">// ]</span>
+
+                        <span class="kw">match</span> <span class="ident">end_token</span> {
+                            <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
+                                <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
+                                    <span class="ident">PunctuatorKind</span>::<span class="ident">RBracket</span> <span class="op">=&gt;</span> {
+                                        <span class="comment">// ]</span>
+                                    },
+                                    <span class="kw">_</span> <span class="op">=&gt;</span> {
+                                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">end_token</span>));
                                     }
-                                },
-                                <span class="kw">_</span> <span class="op">=&gt;</span> {
-                                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token3</span>));
                                 }
+                            },
+                            <span class="kw">_</span> <span class="op">=&gt;</span> {
+                                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">end_token</span>));
                             }
                         }
                     },
@@ -992,35 +949,29 @@
         }
         
         <span class="kw">let</span> <span class="ident">parse_function_body</span> <span class="op">=</span> <span class="op">|</span><span class="ident">parser</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span><span class="op">|</span> <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BlockStatement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-            <span class="kw">let</span> <span class="ident">block</span>;
-            <span class="kw">loop</span> {
-                <span class="kw">let</span> <span class="ident">token3</span> <span class="op">=</span> <span class="ident">parser</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
-                <span class="kw">match</span> <span class="ident">token3</span> {
-                    <span class="ident">Token</span>::<span class="ident">LineTerminator</span> <span class="op">=&gt;</span> <span class="kw">continue</span>,
-                    <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
-                        <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
-                            <span class="ident">PunctuatorKind</span>::<span class="ident">LBrace</span> <span class="op">=&gt;</span> {
-                                <span class="comment">// {</span>
-                                <span class="ident">block</span> <span class="op">=</span> <span class="ident">parser</span>.<span class="ident">parse_block_statement</span>(<span class="ident">token3</span>)<span class="question-mark">?</span>;
-                                <span class="kw">break</span>;
-                            },
-                            <span class="kw">_</span> <span class="op">=&gt;</span> {
-                                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">parser</span>.<span class="ident">unexpected_token</span>(<span class="ident">token3</span>));
-                            }
-                        }
-                    },
-                    <span class="kw">_</span> <span class="op">=&gt;</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">parser</span>.<span class="ident">unexpected_token</span>(<span class="ident">token3</span>));
-                    }
-                }
-            };
+            <span class="kw">let</span> <span class="ident">token3</span> <span class="op">=</span> <span class="ident">parser</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
 
-            <span class="prelude-val">Ok</span>(<span class="ident">block</span>)
+            <span class="kw">match</span> <span class="ident">token3</span> {
+                <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">LBrace</span> <span class="op">=&gt;</span> {
+                            <span class="comment">// {</span>
+                            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">parser</span>.<span class="ident">parse_block_statement</span>(<span class="ident">token3</span>)<span class="question-mark">?</span>);
+                        },
+                        <span class="kw">_</span> <span class="op">=&gt;</span> {
+                            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">parser</span>.<span class="ident">unexpected_token</span>(<span class="ident">token3</span>));
+                        }
+                    }
+                },
+                <span class="kw">_</span> <span class="op">=&gt;</span> {
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">parser</span>.<span class="ident">unexpected_token</span>(<span class="ident">token3</span>));
+                }
+            }
         };
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">is_getter</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">is_setter</span> {
             <span class="comment">// Method</span>
-            <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
             <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="op">-</span><span class="number">1</span>)<span class="question-mark">?</span> {
                 <span class="ident">Expression</span>::<span class="ident">Parenthesized</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">to_owned</span>(),
                 <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>)),
@@ -1040,6 +991,41 @@
 
         <span class="kw">if</span> <span class="ident">is_getter</span> {
             <span class="comment">// Getter</span>
+            
+            <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>; <span class="comment">// (</span>
+            <span class="kw">match</span> <span class="ident">token2</span> {
+                <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">LParen</span> <span class="op">=&gt;</span> {
+                            <span class="comment">// (</span>
+                        },
+                        <span class="kw">_</span> <span class="op">=&gt;</span> {
+                            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
+                        }
+                    }
+                },
+                <span class="kw">_</span> <span class="op">=&gt;</span> {
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
+                }
+            }
+
+            <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>; <span class="comment">// )</span>
+            <span class="kw">match</span> <span class="ident">token2</span> {
+                <span class="ident">Token</span>::<span class="ident">Punctuator</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">match</span> <span class="ident">punct</span>.<span class="ident">kind</span> {
+                        <span class="ident">PunctuatorKind</span>::<span class="ident">RParen</span> <span class="op">=&gt;</span> {
+                            <span class="comment">// )</span>
+                        },
+                        <span class="kw">_</span> <span class="op">=&gt;</span> {
+                            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
+                        }
+                    }
+                },
+                <span class="kw">_</span> <span class="op">=&gt;</span> {
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>));
+                }
+            }
+            
             <span class="kw">let</span> <span class="ident">block</span> <span class="op">=</span> <span class="ident">parse_function_body</span>(<span class="self">self</span>)<span class="question-mark">?</span>;
             
             <span class="ident">loc</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">block</span>.<span class="ident">loc</span>.<span class="ident">end</span>;
@@ -1054,7 +1040,7 @@
 
         <span class="kw">if</span> <span class="ident">is_setter</span> {
             <span class="comment">// Setter</span>
-            <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token2</span>()<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="ident">token2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token4</span>()<span class="question-mark">?</span>;
             <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">parse_expression</span>(<span class="ident">token2</span>, <span class="op">-</span><span class="number">1</span>)<span class="question-mark">?</span> {
                 <span class="ident">Expression</span>::<span class="ident">Parenthesized</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">to_owned</span>(),
                 <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token2</span>)),

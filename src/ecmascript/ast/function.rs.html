@@ -55,6 +55,10 @@
 <span id="55">55</span>
 <span id="56">56</span>
 <span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">span</span>::{ <span class="ident">Loc</span>, <span class="ident">Span</span>, <span class="ident">LineColumn</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">token</span>::<span class="ident">Identifier</span>;
@@ -67,6 +71,8 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FunctionDeclaration</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
+    <span class="kw">pub</span> <span class="ident">is_async</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">is_generator</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">Identifier</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">func</span>: <span class="ident">Function</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
 }
@@ -75,14 +81,16 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FunctionExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
+    <span class="kw">pub</span> <span class="ident">is_async</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">is_generator</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Identifier</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
     <span class="kw">pub</span> <span class="ident">func</span>: <span class="ident">Function</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Function</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="ident">is_async</span>: <span class="ident">bool</span>,
-    <span class="kw">pub</span> <span class="ident">is_generator</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
+    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
     <span class="kw">pub</span> <span class="ident">params</span>: <span class="ident">ParenthesizedExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">body</span>: <span class="ident">FunctionBody</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
 }
