@@ -140,6 +140,8 @@ impl<'ast> ClassMethodDefinition<'ast> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Class<'ast> {
-    pub heritage: Expression<'ast>, // extend
+    pub loc: Loc,
+    pub span: Span,
+    pub heritage: Option<Expression<'ast>>, // extend
     pub body: &'ast [ ClassMethodDefinition<'ast> ],
 }

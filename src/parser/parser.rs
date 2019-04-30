@@ -248,6 +248,7 @@ pub fn parse(source: &str, filename: &str) {
     let filename = arena.alloc_str(filename);
 
     let mut parser = Parser::new(&arena, &code, &filename);
+
     match parser.parse() {
         Ok(_) => {
             // println!("TokenList:");
@@ -265,7 +266,16 @@ pub fn parse(source: &str, filename: &str) {
             trace!("EOF.");
         },
         Err(e) => {
+            println!("Early Error:");
             println!("{:?}", e);
         }
+    }
+    
+    if parser.errors.len() == 0 {
+        return ();
+    }
+    
+    for e in parser.errors {
+        println!("{:?}", e);
     }
 }

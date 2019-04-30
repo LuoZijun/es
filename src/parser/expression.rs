@@ -446,8 +446,6 @@ impl<'ast> Parser<'ast> {
         //     }
 
         loop {
-            
-
             let token2 = match self.token2() {
                 Ok(token2) => {
                     match token2 {
@@ -1292,9 +1290,5 @@ impl<'ast> Parser<'ast> {
                 return Err(self.unexpected_token(token2));
             }
         }
-    }
-
-    pub fn parse_class_expression(&mut self, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
-        unimplemented!()
     }
 }

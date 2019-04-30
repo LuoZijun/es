@@ -35,13 +35,218 @@ use crate::ast::class::{
     MethodDefinition, Method, Getter, Setter,
 };
 
+
 const GET: &'static [char] = &['g', 'e', 't'];
 const SET: &'static [char] = &['s', 'e', 't'];
 
 
+fn get_token<'ast>(parser: &mut Parser<'ast>) -> Result<Token<'ast>, Error> {
+    loop {
+        let mut token2 = parser.token2()?;
+        match token2 {
+            Token::LineTerminator => continue,
+            Token::Identifier(ident) => {
+                match ident.to_keyword_or_literal() {
+                    Some(token2) => return Ok(token2),
+                    None => return Ok(token2),
+                }
+            },
+            _ => return Ok(token2),
+        }
+    }
+}
+
 impl<'ast> Parser<'ast> {
-    pub fn parse_class(&mut self, token: Token<'ast>) -> Result<Expression<'ast>, Error> {
-        unimplemented!()
+    pub fn parse_class(&mut self, mut token: Token<'ast>) -> Result<Class<'ast>, Error> {
+        // Class Heritage
+        let mut heritage: Option<Expression<'ast>> = None;
+        let mut loc: Loc = Loc::default();
+        let mut span: Span = Span::default();
+
+        match token {
+            Token::Keyword(kw) => {
+                match kw.kind {
+                    KeywordKind::Extends => {
+                        loc = kw.loc;
+                        span = kw.span;
+
+                        let token2 = get_token(self)?;
+                        let expr = self.parse_expression(token2, -1)?;
+
+                        heritage = Some(expr);
+                        token = get_token(self)?;
+                    },
+                    _ => {
+
+                    }
+                }
+            },
+            _ => {
+
+            }
+        }
+
+        // Class Body
+        let mut body: Vec<ClassMethodDefinition<'ast>> = vec![];
+        match token {
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::LBrace => {
+                        // {
+                        if heritage.is_none() {
+                            loc = punct.loc;
+                            span = punct.span;
+                        }
+                    },
+                    _ => {
+                        return Err(self.unexpected_token(token));
+                    }
+                }
+            },
+            _ => {
+                return Err(self.unexpected_token(token));
+            }
+        }
+
+        // class method
+        loop {
+            let token2 = get_token(self)?;
+            match token2 {
+                Token::Punctuator(punct) => {
+                    match punct.kind {
+                        PunctuatorKind::RBrace => {
+                            // }
+                            loc.end = punct.loc.end;
+                            span.end = punct.span.end;
+                            break;
+                        },
+                        _ => { }
+                    }
+                },
+                _ => { }
+            }
+
+            let class_method = self.parse_class_element(token2)?;
+            body.push(class_method);
+        }
+        
+        let item = Class { loc, span, heritage, body: self.arena.alloc_vec(body) };
+
+        Ok(item)
+    }
+
+    pub fn parse_class_declaration(&mut self, token: Token<'ast>) -> Result<ClassDeclaration<'ast>, Error> {
+        let (mut loc, mut span) = match token {
+            Token::Keyword(kw) => {
+                assert_eq!(kw.kind, KeywordKind::Class);
+                (kw.loc, kw.span)
+            },
+            _ => unreachable!(),
+        };
+
+        let name: Identifier<'ast>;
+
+        // class name
+        let mut token2 = get_token(self)?;
+        match token2 {
+            Token::Identifier(ident) => {
+                name = ident;
+            },
+            _ => {
+                return Err(self.unexpected_token(token2));
+            }
+        }
+
+        let token2 = self.token2()?;
+        let class = self.parse_class(token2)?;
+        loc.end = class.loc.end;
+        span.end = class.span.end;
+        let item = ClassDeclaration { loc, span, name, class, };
+
+        Ok(item)
+    }
+
+    pub fn parse_class_expression(&mut self, token: Token<'ast>) -> Result<ClassExpression<'ast>, Error> {
+        let (mut loc, mut span) = match token {
+            Token::Keyword(kw) => {
+                assert_eq!(kw.kind, KeywordKind::Class);
+                (kw.loc, kw.span)
+            },
+            _ => unreachable!(),
+        };
+        
+        let mut name: Option<Identifier<'ast>> = None;
+        
+        // class name
+        let mut token2 = get_token(self)?;
+        match token2 {
+            Token::Identifier(ident) => {
+                name = Some(ident);
+                token2 = get_token(self)?;
+            },
+            _ => {
+
+            }
+        }
+
+        let class = self.parse_class(token2)?;
+        loc.end = class.loc.end;
+        span.end = class.span.end;
+        let item = ClassExpression { loc, span, name, class, };
+
+        Ok(item)
+    }
+
+    pub fn parse_class_element(&mut self, mut token: Token<'ast>) -> Result<ClassMethodDefinition<'ast>, Error> {
+        // MethodDefinition
+        // static MethodDefinition
+        let mut is_static: bool = false;
+        
+        match token {
+            Token::Identifier(_)
+            | Token::LiteralString(_)
+            | Token::LiteralNumeric(_) => {
+                
+            },
+            Token::Punctuator(punct) => {
+                match punct.kind {
+                    PunctuatorKind::Mul
+                    | PunctuatorKind::LBracket => {
+                        // *
+                        // ComputedPropertyName
+                        // [
+                    },
+                    _ => unreachable!(),
+                }
+            },
+            Token::Keyword(kw) => {
+                match kw.kind {
+                    KeywordKind::Async => {
+                        // async
+                    },
+                    KeywordKind::Static => {
+                        // static
+                        is_static = true;
+                        loop {
+                            let token2 = self.token2()?;
+                            match token2 {
+                                Token::LineTerminator => continue,
+                                _ => {
+                                    token = token2;
+                                    break;
+                                }
+                            }
+                        }
+                    },
+                    _ => unreachable!()
+                }
+            },
+            _ => unreachable!()
+        }
+
+        let method = self.parse_method_definition(token)?;
+        let item = ClassMethodDefinition { is_static, method, };
+        Ok(item)
     }
 
     pub fn parse_method_definition(&mut self, mut token: Token<'ast>) -> Result<MethodDefinition<'ast>, Error> {
@@ -156,7 +361,33 @@ impl<'ast> Parser<'ast> {
                     is_getter = ident.raw == GET;
 
                     if is_setter || is_getter {
-                        token = self.token2()?;
+                        let token2 = self.token2()?;
+                        let fallback = match token2 {
+                            Token::Identifier(_)
+                            | Token::LiteralString(_)
+                            | Token::LiteralNumeric(_) => {
+                                false
+                            },
+                            Token::Punctuator(punct) => {
+                                match punct.kind {
+                                    PunctuatorKind::LBracket => {
+                                        // ComputedPropertyName
+                                        // [
+                                        false
+                                    },
+                                    _ => true,
+                                }
+                            },
+                            _ => true
+                        };
+                        
+                        if fallback {
+                            is_setter = false;
+                            is_getter = false;
+                            self.token.push(token2);
+                        } else {
+                            token = token2;
+                        }
                     }
                 },
                 _ => { }

@@ -204,7 +204,7 @@ pub struct VariableStatement<'ast> {
     pub loc: Loc,
     pub span: Span,
     pub kind: LexicalDeclarationKind,
-    pub declarators: &'ast [LexicalBinding<'ast>],
+    pub declarators: &'ast [ LexicalBinding<'ast> ],
 }
 
 impl<'ast> VariableStatement<'ast> {
@@ -345,8 +345,8 @@ pub struct SwitchStatement<'ast> {
     pub loc: Loc,
     pub span: Span,
     pub value: Expression<'ast>,
+    // default_clause: Option<SwitchStatementCaseClause<'ast>>
     pub clauses: &'ast [ SwitchStatementCaseClause<'ast> ],
-    pub default_clause: SwitchStatementCaseClause<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]

@@ -53,7 +53,7 @@ Work in progress (WIP).
     *   ✅ ParenthesizedExpression ( Grouping )
     *   ❌ ObjectBindingPattern ( Destructuring )
     *   ❌ ArrayBindingPattern ( Destructuring )
-    *   ❌ ClassExpression
+    *   ✅ ClassExpression
     *   ✅ FunctionExpression
     *   ✅ GeneratorExpression
     *   ✅ AsyncFunctionExpression
@@ -79,7 +79,7 @@ Work in progress (WIP).
 *   ❌ ThrowStatement
 *   ❌ TryStatement
 *   ❌ FunctionDeclaration
-*   ❌ ClassDeclaration
+*   ✅ ClassDeclaration
 
 *JSX*:
 
