@@ -390,7 +390,8 @@ impl<'ast> Parser<'ast> {
                     },
                     KeywordKind::Class => {
                         // Class EXPR
-                        unimplemented!()
+                        let class_expr = self.parse_class_expression(token)?;
+                        Expression::Class(self.alloc(class_expr))
                     },
                     KeywordKind::Async => {
                         // AsyncFunctionDeclaration       EXPR
