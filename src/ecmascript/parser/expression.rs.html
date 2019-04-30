@@ -1292,6 +1292,7 @@
 <span id="1292">1292</span>
 <span id="1293">1293</span>
 <span id="1294">1294</span>
+<span id="1295">1295</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -1685,7 +1686,8 @@
                     },
                     <span class="ident">KeywordKind</span>::<span class="ident">Class</span> <span class="op">=&gt;</span> {
                         <span class="comment">// Class EXPR</span>
-                        <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        <span class="kw">let</span> <span class="ident">class_expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_class_expression</span>(<span class="ident">token</span>)<span class="question-mark">?</span>;
+                        <span class="ident">Expression</span>::<span class="ident">Class</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">class_expr</span>))
                     },
                     <span class="ident">KeywordKind</span>::<span class="ident">Async</span> <span class="op">=&gt;</span> {
                         <span class="comment">// AsyncFunctionDeclaration       EXPR</span>
