@@ -33,6 +33,27 @@ pub enum PropertyName<'ast> {
     Computed(Expression<'ast>),
 }
 
+impl<'ast> PropertyName<'ast> {
+    pub fn loc(&self) -> Loc {
+        match *self {
+            PropertyName::Identifier(inner) => inner.loc,
+            PropertyName::Numberic(inner) => inner.loc,
+            PropertyName::String(inner) => inner.loc,
+            PropertyName::Computed(inner) => inner.loc(),
+        }
+    }
+
+    pub fn span(&self) -> Span {
+        match *self {
+            PropertyName::Identifier(inner) => inner.span,
+            PropertyName::Numberic(inner) => inner.span,
+            PropertyName::String(inner) => inner.span,
+            PropertyName::Computed(inner) => inner.span(),
+        }
+    }
+}
+
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum PropertyDefinition<'ast> {
     // Destructuring or ObjectLiteral
@@ -72,6 +93,22 @@ pub enum PropertyDefinition<'ast> {
 pub enum BindingPattern<'ast> {
     Object(ObjectBindingPattern<'ast>),
     Array(ArrayBindingPattern<'ast>),
+}
+
+impl<'ast> BindingPattern<'ast> {
+    pub fn loc(&self) -> Loc {
+        match *self {
+            BindingPattern::Object(inner) => inner.loc,
+            BindingPattern::Array(inner) => inner.loc,
+        }
+    }
+
+    pub fn span(&self) -> Span {
+        match *self {
+            BindingPattern::Object(inner) => inner.span,
+            BindingPattern::Array(inner) => inner.span,
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -144,6 +181,22 @@ pub enum AssignmentPattern<'ast> {
     Array(ArrayAssignmentPattern<'ast>),
 }
 
+impl<'ast> AssignmentPattern<'ast> {
+    pub fn loc(&self) -> Loc {
+        match *self {
+            AssignmentPattern::Object(inner) => inner.loc,
+            AssignmentPattern::Array(inner) => inner.loc,
+        }
+    }
+
+    pub fn span(&self) -> Span {
+        match *self {
+            AssignmentPattern::Object(inner) => inner.span,
+            AssignmentPattern::Array(inner) => inner.span,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct ObjectAssignmentPattern<'ast> {
     pub loc: Loc,
@@ -182,6 +235,7 @@ pub enum AssignmentProperty<'ast> {
         span: Span,
         name: PropertyName<'ast>,
         puct: Punctuator,                // :
+        // NOTE: elem 看起来似乎必须为 Identifier , 这个在 AST 生成后，再做正确性检查。
         value: AssignmentElement<'ast>,
     },
     Spread {
@@ -207,6 +261,8 @@ pub struct ObjectLiteral<'ast> {
 pub enum ObjectProperty<'ast> {
     Identifier(Identifier<'ast>),
     Property {
+        loc: Loc,
+        span: Span,
         name: PropertyName<'ast>,
         puct: Punctuator,                      // :
         value: Expression<'ast>

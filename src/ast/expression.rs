@@ -10,11 +10,15 @@ use crate::ast::numberic::{ Float, Numberic, };
 use crate::ast::class::ClassExpression;
 use crate::ast::function::{ FunctionExpression, ArrowFunctionExpression, };
 use crate::ast::jsx::{ JSXFragment, JSXElement, };
+use crate::ast::pattern::{
+    ObjectLiteral, ArrayLiteral, BindingPattern, AssignmentPattern, 
+    ObjectBindingPattern, ArrayBindingPattern,
+    ObjectAssignmentPattern, ArrayAssignmentPattern, 
+};
+
 
 use std::fmt;
 
-
-pub type ExpressionList<'ast> = Vec<Expression<'ast>>;
 
 
 // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table
@@ -34,15 +38,12 @@ impl Default for Direction {
 #[derive(PartialEq, Clone, Copy)]
 pub enum Expression<'ast> {
     // Comment(&'ast Comment<'ast>),
-
     This(&'ast Keyword),
 
     // NOTE: 特殊表达式，`Spread` 和 `Super` 无法独立成为一个表达式，必须要依附于其它表达式类型。
     Spread(&'ast SpreadExpression<'ast>),
     Super(&'ast Keyword),
-    // BindingElement(&'ast BindingElement<'ast>),
-    // BindingProperty(&'ast BindingProperty<'ast>),
-    
+
     Identifier(&'ast Identifier<'ast>),
     Null(&'ast LiteralNull),
     Boolean(&'ast LiteralBoolean),
@@ -51,11 +52,9 @@ pub enum Expression<'ast> {
     RegularExpression(&'ast LiteralRegularExpression<'ast>),
     Template(&'ast LiteralTemplateExpression<'ast>),
     
-    // TODO: 
-    /// Array Initializer
-    // ArrayLiteral(&'ast ArrayLiteral<'ast>),
-    /// Object Initializer
-    // ObjectLiteral(&'ast ObjectLiteral<'ast>),
+    ArrayLiteral(&'ast ArrayLiteral<'ast>),
+    ObjectLiteral(&'ast ObjectLiteral<'ast>),
+
     Function(&'ast FunctionExpression<'ast>),
     ArrowFunction(&'ast ArrowFunctionExpression<'ast>),
     Class(&'ast ClassExpression<'ast>),
@@ -63,8 +62,6 @@ pub enum Expression<'ast> {
 
     Member(&'ast MemberExpression<'ast>),
     TaggedTemplate(&'ast TaggedTemplateExpression<'ast>),
-    /// This is the `new.target` expression that was introduced in ES2015. 
-    /// This tells you if the function was called with the new operator.
     NewTarget(&'ast NewTargetExpression),
     Call(&'ast CallExpression<'ast>),
     New(&'ast NewExpression<'ast>),
@@ -79,10 +76,9 @@ pub enum Expression<'ast> {
     
     Comma(&'ast CommaExpression<'ast>),
 
-    // TODO:
-    ObjectBindingPattern(&'ast ObjectBindingPattern<'ast>),
-    ArrayBindingPattern(&'ast ArrayBindingPattern<'ast>),
-    
+    AssignmentPattern(&'ast AssignmentPattern<'ast>),
+    BindingPattern(&'ast BindingPattern<'ast>),
+
     // JSX
     JSXFragment(&'ast JSXFragment<'ast>),
     JSXElement(&'ast JSXElement<'ast>),
@@ -95,9 +91,6 @@ impl<'ast> fmt::Debug for Expression<'ast> {
             Expression::Spread(inner) => fmt::Debug::fmt(inner, f),
             Expression::Super(inner) => fmt::Debug::fmt(inner, f),
 
-            // BindingElement(inner) => fmt::Debug::fmt(inner, f),
-            // BindingProperty(inner) => fmt::Debug::fmt(inner, f),
-            
             Expression::Identifier(inner) => fmt::Debug::fmt(inner, f),
             Expression::Null(inner) => fmt::Debug::fmt(inner, f),
             Expression::Boolean(inner) => fmt::Debug::fmt(inner, f),
@@ -106,8 +99,9 @@ impl<'ast> fmt::Debug for Expression<'ast> {
             Expression::RegularExpression(inner) => fmt::Debug::fmt(inner, f),
             Expression::Template(inner) => fmt::Debug::fmt(inner, f),
             
-            // ArrayLiteral(inner) => fmt::Debug::fmt(inner, f),
-            // ObjectLiteral(inner) => fmt::Debug::fmt(inner, f),
+            Expression::ArrayLiteral(inner) => fmt::Debug::fmt(inner, f),
+            Expression::ObjectLiteral(inner) => fmt::Debug::fmt(inner, f),
+
             Expression::Function(inner) => fmt::Debug::fmt(inner, f),
             Expression::ArrowFunction(inner) => fmt::Debug::fmt(inner, f),
             Expression::Class(inner) => fmt::Debug::fmt(inner, f),
@@ -131,8 +125,8 @@ impl<'ast> fmt::Debug for Expression<'ast> {
             
             Expression::Comma(inner) => fmt::Debug::fmt(inner, f),
 
-            Expression::ObjectBindingPattern(inner) => fmt::Debug::fmt(inner, f),
-            Expression::ArrayBindingPattern(inner) => fmt::Debug::fmt(inner, f),
+            Expression::AssignmentPattern(inner) => fmt::Debug::fmt(inner, f),
+            Expression::BindingPattern(inner) => fmt::Debug::fmt(inner, f),
 
             Expression::JSXFragment(inner) => fmt::Debug::fmt(inner, f),
             Expression::JSXElement(inner) => fmt::Debug::fmt(inner, f),
@@ -147,9 +141,6 @@ impl<'ast> Expression<'ast> {
             Expression::Spread(inner) => inner.loc,
             Expression::Super(inner) => inner.loc,
 
-            // BindingElement(inner) => inner.loc,
-            // BindingProperty(inner) => inner.loc,
-            
             Expression::Identifier(inner) => inner.loc,
             Expression::Null(inner) => inner.loc,
             Expression::Boolean(inner) => inner.loc,
@@ -158,8 +149,9 @@ impl<'ast> Expression<'ast> {
             Expression::RegularExpression(inner) => inner.loc,
             Expression::Template(inner) => inner.loc,
             
-            // ArrayLiteral(inner) => inner.loc,
-            // ObjectLiteral(inner) => inner.loc,
+            Expression::ArrayLiteral(inner) => inner.loc,
+            Expression::ObjectLiteral(inner) => inner.loc,
+
             Expression::Function(inner) => inner.loc,
             Expression::ArrowFunction(inner) => inner.loc,
             Expression::Class(inner) => inner.loc,
@@ -182,9 +174,9 @@ impl<'ast> Expression<'ast> {
             Expression::Yield(inner) => inner.loc,
             
             Expression::Comma(inner) => inner.loc,
-
-            Expression::ObjectBindingPattern(inner) => inner.loc,
-            Expression::ArrayBindingPattern(inner) => inner.loc,
+            
+            Expression::AssignmentPattern(inner) => inner.loc(),
+            Expression::BindingPattern(inner) => inner.loc(),
 
             Expression::JSXFragment(inner) => inner.loc(),
             Expression::JSXElement(inner) => inner.loc(),
@@ -197,9 +189,6 @@ impl<'ast> Expression<'ast> {
             Expression::Spread(inner) => inner.span,
             Expression::Super(inner) => inner.span,
 
-            // BindingElement(inner) => inner.span,
-            // BindingProperty(inner) => inner.span,
-            
             Expression::Identifier(inner) => inner.span,
             Expression::Null(inner) => inner.span,
             Expression::Boolean(inner) => inner.span,
@@ -208,8 +197,9 @@ impl<'ast> Expression<'ast> {
             Expression::RegularExpression(inner) => inner.span,
             Expression::Template(inner) => inner.span,
 
-            // ArrayLiteral(inner) => inner.span,
-            // ObjectLiteral(inner) => inner.span,
+            Expression::ArrayLiteral(inner) => inner.span,
+            Expression::ObjectLiteral(inner) => inner.span,
+
             Expression::Function(inner) => inner.span,
             Expression::ArrowFunction(inner) => inner.span,
             Expression::Class(inner) => inner.span,
@@ -233,8 +223,8 @@ impl<'ast> Expression<'ast> {
             
             Expression::Comma(inner) => inner.span,
 
-            Expression::ObjectBindingPattern(inner) => inner.span,
-            Expression::ArrayBindingPattern(inner) => inner.span,
+            Expression::AssignmentPattern(inner) => inner.span(),
+            Expression::BindingPattern(inner) => inner.span(),
 
             Expression::JSXFragment(inner) => inner.span(),
             Expression::JSXElement(inner) => inner.span(),
@@ -359,9 +349,6 @@ impl<'ast> Expression<'ast> {
             Expression::Spread(inner) => 1,
             Expression::Super(inner) => -1,
 
-            // BindingElement(inner) => inner.span,
-            // BindingProperty(inner) => inner.span,
-            
             Expression::Identifier(inner) => -1,
             Expression::Null(inner) => -1,
             Expression::Boolean(inner) => -1,
@@ -370,8 +357,9 @@ impl<'ast> Expression<'ast> {
             Expression::RegularExpression(inner) => -1,
             Expression::Template(inner) => -1,
 
-            // ArrayLiteral(inner) => inner.span,
-            // ObjectLiteral(inner) => inner.span,
+            Expression::ArrayLiteral(inner) => -1,
+            Expression::ObjectLiteral(inner) => -1,
+
             Expression::Function(inner) => -1,
             Expression::ArrowFunction(inner) => -1,
             Expression::Class(inner) => -1,
@@ -396,8 +384,8 @@ impl<'ast> Expression<'ast> {
             
             Expression::Comma(inner) => 0,
 
-            Expression::ObjectBindingPattern(inner) => -1,
-            Expression::ArrayBindingPattern(inner) => -1,
+            Expression::AssignmentPattern(inner) => -1,
+            Expression::BindingPattern(inner) => -1,
 
             Expression::JSXFragment(inner) => -1,
             Expression::JSXElement(inner) => -1,
@@ -422,21 +410,6 @@ pub struct LiteralTemplateExpression<'ast> {
     pub bounds: &'ast [ Expression<'ast> ],
 }
 
-// [ ]
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct ArrayLiteral {
-    pub loc: Loc,
-    pub span: Span,
-    // TODO:
-}
-
-// { }
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct ObjectLiteral {
-    pub loc: Loc,
-    pub span: Span,
-    // TODO:
-}
 
 // ( Expression, + )
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -574,45 +547,4 @@ pub struct CommaExpression<'ast> {
     pub span: Span,
     // TODO:
     pub items: &'ast [ Expression<'ast> ],
-}
-
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct BindingElement<'ast> {
-    pub loc: Loc,
-    pub span: Span,
-    // Identifier           Option<Initializer>
-    // ArrayBindingPattern  Initializer
-    // ObjectBindingPattern Initializer
-    pub key: Expression<'ast>,
-    pub initializer: Option<Expression<'ast>>,
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct ArrayBindingPattern<'ast> {
-    pub loc: Loc,
-    pub span: Span,
-    pub elems: &'ast [ Option<BindingElement<'ast>> ],
-    pub rest_elem: Option<SpreadExpression<'ast>>,
-}
-
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct BindingProperty<'ast> {
-    pub loc: Loc,
-    pub span: Span,
-    // Identifier           Option<Initializer>
-    // ArrayBindingPattern  Initializer
-    // ObjectBindingPattern Initializer
-    pub key: Expression<'ast>,
-    pub initializer: Option<Expression<'ast>>,
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct ObjectBindingPattern<'ast> {
-    pub loc: Loc,
-    pub span: Span,
-    // BindingProperty, BindingProperty, Option<SpreadExpression>
-    pub properties: &'ast [ BindingProperty<'ast> ],
-    pub rest_property: Option<SpreadExpression<'ast>>,  // BindingIdentifier
 }
