@@ -52,7 +52,9 @@ pub enum Expression<'ast> {
     Template(&'ast LiteralTemplateExpression<'ast>),
     
     // TODO: 
+    /// Array Initializer
     // ArrayLiteral(&'ast ArrayLiteral<'ast>),
+    /// Object Initializer
     // ObjectLiteral(&'ast ObjectLiteral<'ast>),
     Function(&'ast FunctionExpression<'ast>),
     ArrowFunction(&'ast ArrowFunctionExpression<'ast>),
@@ -511,7 +513,11 @@ pub struct InfixExpression<'ast> {
 
 impl<'ast> fmt::Debug for InfixExpression<'ast> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "InfixExpression{{ left: {:?}, operator: {:?}, right: {:?} }}", self.left, self.operator, self.right)
+        f.debug_struct("InfixExpression")
+            .field("left", &self.left)
+            .field("operator", &self.operator)
+            .field("right", &self.right)
+            .finish()
     }
 }
 

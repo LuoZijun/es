@@ -1,11 +1,10 @@
 use crate::vlq;
-use crate::serde::ser::{Serialize, SerializeStruct, Serializer};
+use crate::serde::ser::{ Serialize, SerializeStruct, Serializer, };
 
 use crate::lexer::span::{ Loc, Span, LineColumn, };
 
-
 use std::io::{ Write, Cursor, };
-use std::path::{Path, PathBuf};
+use std::path::{ Path, PathBuf, };
 
 // Source Map Revision 3 Proposal
 //      https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit#

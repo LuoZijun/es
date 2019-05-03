@@ -5,6 +5,8 @@ mod statement;
 
 mod class;
 mod function;
+mod pattern;
+
 
 pub use self::parser::{ Parser, parse, };
 

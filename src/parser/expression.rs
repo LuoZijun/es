@@ -17,7 +17,7 @@ use crate::parser::parser::ParserErrorKind::{ self, * };
 
 use crate::ast::numberic::{ Numberic, Float, };
 use crate::ast::statement::{ 
-    Statement, StatementList,
+    Statement,
     VariableStatement, LexicalDeclarationKind, LexicalBinding,
 };
 use crate::ast::expression::{
@@ -445,7 +445,7 @@ impl<'ast> Parser<'ast> {
         
         // if left_expr.precedence() >= precedence {
         //         return Ok(left_expr);
-        //     }
+        // }
 
         loop {
             let token2 = match self.token2() {

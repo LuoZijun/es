@@ -8,7 +8,7 @@ pub enum Instruction {
 
 #[derive(Debug)]
 pub struct ByteCode {
-    kind: Instruction,
-    offset: usize,
-    size: usize,
+    pub kind: Instruction,
+    pub offset: usize,
+    pub size: usize,
 }

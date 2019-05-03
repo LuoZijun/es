@@ -14,7 +14,7 @@ use crate::parser::parser::ParserErrorKind::{ self, * };
 
 use crate::ast::numberic::{ Numberic, Float, };
 use crate::ast::statement::{ 
-    Statement, StatementList,
+    Statement, 
     EmptyStatement, DebuggerStatement,
     BlockStatement,
     VariableStatement, LexicalDeclarationKind, LexicalBinding,
@@ -38,6 +38,13 @@ impl<'ast> Parser<'ast> {
                         let item = EmptyStatement { loc, span };
                         
                         return Ok(Statement::Empty(self.alloc(item)))
+                    },
+                    PunctuatorKind::LBrace => {
+                        // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-expression-statement
+                        // BlockStatement
+                        let item = self.parse_block_statement(token)?;
+
+                        return Ok(Statement::Block(self.alloc(item)));
                     },
                     _ => {
                         unimplemented!()
@@ -108,7 +115,8 @@ impl<'ast> Parser<'ast> {
     fn parse_lexical_binding(&mut self) -> Result<Vec<LexicalBinding>, Error> {
         unimplemented!()
     }
-
+    
+    /// var/let/const
     pub fn parse_variable_statement(&mut self, token: Token<'ast>) -> Result<Statement<'ast>, Error> {
         // var/let/const
         unimplemented!()

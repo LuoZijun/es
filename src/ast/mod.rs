@@ -7,9 +7,9 @@ pub mod statement;
 pub mod expression;
 pub mod function;
 pub mod class;
+pub mod pattern;
 
 // pub mod declaration;
-// pub mod pattern;
 // pub mod module;
 
 pub mod jsx;

@@ -9,11 +9,10 @@ use crate::ast::expression::{ Expression, };
 use crate::ast::class::ClassDeclaration;
 use crate::ast::function::FunctionDeclaration;
 
+use std::fmt;
 
-pub type StatementList<'ast> = Vec<Statement<'ast>>;
 
-
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum Statement<'ast> {
     Empty(&'ast EmptyStatement),
     Debugger(&'ast DebuggerStatement),
@@ -43,6 +42,40 @@ pub enum Statement<'ast> {
     Labelled(&'ast LabelledStatement<'ast>),
     Throw(&'ast ThrowStatement<'ast>),
     Try(&'ast TryStatement<'ast>),
+}
+
+impl<'ast> fmt::Debug for Statement<'ast> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Statement::Empty(inner) => fmt::Debug::fmt(inner, f),
+            Statement::Debugger(inner) => fmt::Debug::fmt(inner, f),
+            
+            Statement::Expression(inner) => fmt::Debug::fmt(inner, f),
+
+            Statement::Variable(inner) => fmt::Debug::fmt(inner, f),
+            Statement::Function(inner) => fmt::Debug::fmt(inner, f),
+            Statement::Class(inner) => fmt::Debug::fmt(inner, f),
+
+            Statement::Block(inner) => fmt::Debug::fmt(inner, f),
+            Statement::If(inner) => fmt::Debug::fmt(inner, f),
+
+            Statement::DoWhile(inner) => fmt::Debug::fmt(inner, f),
+            Statement::While(inner) => fmt::Debug::fmt(inner, f),
+            Statement::For(inner) => fmt::Debug::fmt(inner, f),
+            Statement::ForIn(inner) => fmt::Debug::fmt(inner, f),
+            Statement::ForOf(inner) => fmt::Debug::fmt(inner, f),
+            Statement::ForAwaitOf(inner) => fmt::Debug::fmt(inner, f),
+
+            Statement::Continue(inner) => fmt::Debug::fmt(inner, f),
+            Statement::Break(inner) => fmt::Debug::fmt(inner, f),
+            Statement::Return(inner) => fmt::Debug::fmt(inner, f),
+            Statement::With(inner) => fmt::Debug::fmt(inner, f),
+            Statement::Switch(inner) => fmt::Debug::fmt(inner, f),
+            Statement::Labelled(inner) => fmt::Debug::fmt(inner, f),
+            Statement::Throw(inner) => fmt::Debug::fmt(inner, f),
+            Statement::Try(inner) => fmt::Debug::fmt(inner, f),
+        }
+    }
 }
 
 impl<'ast> Statement<'ast> {

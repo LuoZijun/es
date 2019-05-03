@@ -11,7 +11,7 @@ use crate::lexer::LexerErrorKind;
 
 use crate::ast::numberic::{ Numberic, Float, };
 use crate::ast::statement::{ 
-    Statement, StatementList,
+    Statement,
     VariableStatement, LexicalDeclarationKind, LexicalBinding,
 };
 use crate::ast::expression::{
@@ -230,8 +230,9 @@ impl<'ast> Parser<'ast> {
                         unimplemented!()
                     },
                     PunctuatorKind::LBrace => {
+                        // Block
                         // {
-                        unimplemented!()
+                        self.parse_statement(token)
                     },
                     _ => {
                         return Err(self.unexpected_token(token));
@@ -289,7 +290,7 @@ pub fn parse(source: &str, filename: &str) {
 
             println!("StatementList:");
             for stmt in parser.body {
-                println!("    {:#?}", stmt);
+                println!("{:#?}", stmt);
             }
             println!("\n");
 
