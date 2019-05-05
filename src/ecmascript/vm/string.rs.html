@@ -174,11 +174,6 @@
 <span id="174">174</span>
 <span id="175">175</span>
 <span id="176">176</span>
-<span id="177">177</span>
-<span id="178">178</span>
-<span id="179">179</span>
-<span id="180">180</span>
-<span id="181">181</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>;
@@ -187,11 +182,6 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;nightly&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">alloc</span>::{ <span class="ident">alloc</span>, <span class="ident">dealloc</span>, <span class="ident">Layout</span>, };
 
-<span class="comment">// </span>
-<span class="comment">// </span>
-<span class="comment">// NOTE: </span>
-<span class="comment">//      ECMAScript String 和 Rust String 不一样，Rust String 存储在堆上，而 ECMAScript String 存储在栈上。</span>
-<span class="comment">//      ECMAScript 除了  `Object` 类型，其余的类型传递时均为值传递。</span>
 <span class="comment">// </span>
 <span class="comment">// Feature: alloc_layout_extra</span>
 <span class="comment">// </span>
