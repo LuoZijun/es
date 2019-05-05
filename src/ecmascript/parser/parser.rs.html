@@ -309,6 +309,7 @@
 <span id="309">309</span>
 <span id="310">310</span>
 <span id="311">311</span>
+<span id="312">312</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -323,7 +324,7 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Numberic</span>, <span class="ident">Float</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">statement</span>::{ 
-    <span class="ident">Statement</span>, <span class="ident">StatementList</span>,
+    <span class="ident">Statement</span>,
     <span class="ident">VariableStatement</span>, <span class="ident">LexicalDeclarationKind</span>, <span class="ident">LexicalBinding</span>,
 };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">expression</span>::{
@@ -542,8 +543,9 @@
                         <span class="macro">unimplemented</span><span class="macro">!</span>()
                     },
                     <span class="ident">PunctuatorKind</span>::<span class="ident">LBrace</span> <span class="op">=&gt;</span> {
+                        <span class="comment">// Block</span>
                         <span class="comment">// {</span>
-                        <span class="macro">unimplemented</span><span class="macro">!</span>()
+                        <span class="self">self</span>.<span class="ident">parse_statement</span>(<span class="ident">token</span>)
                     },
                     <span class="kw">_</span> <span class="op">=&gt;</span> {
                         <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">unexpected_token</span>(<span class="ident">token</span>));
@@ -601,7 +603,7 @@
 
             <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;StatementList:&quot;</span>);
             <span class="kw">for</span> <span class="ident">stmt</span> <span class="kw">in</span> <span class="ident">parser</span>.<span class="ident">body</span> {
-                <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;    {:#?}&quot;</span>, <span class="ident">stmt</span>);
+                <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{:#?}&quot;</span>, <span class="ident">stmt</span>);
             }
             <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;\n&quot;</span>);
 

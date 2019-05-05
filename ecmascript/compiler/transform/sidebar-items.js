@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["Transform",""]]});
+initSidebarItems({"trait":[["ByteCodeGen",""],["DebugSourceCodeGen",""],["ToSourceCode",""],["Transform",""]]});

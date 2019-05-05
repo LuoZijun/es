@@ -34,8 +34,10 @@
 <span id="34">34</span>
 <span id="35">35</span>
 <span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;nightly&quot;</span>, <span class="ident">feature</span>(<span class="ident">test</span>, <span class="ident">repeat_generic_slice</span>, <span class="ident">duration_constants</span>, <span class="ident">const_fn</span>))]</span>
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;nightly&quot;</span>, <span class="ident">feature</span>(<span class="ident">test</span>, <span class="ident">repeat_generic_slice</span>, <span class="ident">duration_constants</span>, <span class="ident">const_fn</span>, <span class="ident">alloc_layout_extra</span>))]</span>
 <span class="attribute">#![<span class="ident">recursion_limit</span><span class="op">=</span><span class="string">&quot;1024&quot;</span>]</span>
 <span class="attribute">#![<span class="ident">allow</span>(
     <span class="ident">unused_imports</span>, <span class="ident">unused_variables</span>, <span class="ident">unused_must_use</span>, 
@@ -53,6 +55,8 @@
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">serde_json</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">vlq</span>;
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">time</span>;
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">num</span>;
 
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">rc_ref</span>;

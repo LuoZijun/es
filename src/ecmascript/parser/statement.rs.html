@@ -162,6 +162,14 @@
 <span id="162">162</span>
 <span id="163">163</span>
 <span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">toolshed</span>::{ <span class="ident">Arena</span>, };
 
@@ -179,7 +187,7 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">numberic</span>::{ <span class="ident">Numberic</span>, <span class="ident">Float</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">statement</span>::{ 
-    <span class="ident">Statement</span>, <span class="ident">StatementList</span>,
+    <span class="ident">Statement</span>, 
     <span class="ident">EmptyStatement</span>, <span class="ident">DebuggerStatement</span>,
     <span class="ident">BlockStatement</span>,
     <span class="ident">VariableStatement</span>, <span class="ident">LexicalDeclarationKind</span>, <span class="ident">LexicalBinding</span>,
@@ -203,6 +211,13 @@
                         <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">EmptyStatement</span> { <span class="ident">loc</span>, <span class="ident">span</span> };
                         
                         <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Statement</span>::<span class="ident">Empty</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">item</span>)))
+                    },
+                    <span class="ident">PunctuatorKind</span>::<span class="ident">LBrace</span> <span class="op">=&gt;</span> {
+                        <span class="comment">// https://www.ecma-international.org/ecma-262/9.0/index.html#sec-expression-statement</span>
+                        <span class="comment">// BlockStatement</span>
+                        <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_block_statement</span>(<span class="ident">token</span>)<span class="question-mark">?</span>;
+
+                        <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Statement</span>::<span class="ident">Block</span>(<span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">item</span>)));
                     },
                     <span class="kw">_</span> <span class="op">=&gt;</span> {
                         <span class="macro">unimplemented</span><span class="macro">!</span>()
@@ -273,7 +288,8 @@
     <span class="kw">fn</span> <span class="ident">parse_lexical_binding</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">LexicalBinding</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
-
+    
+    <span class="doccomment">/// var/let/const</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_variable_statement</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="comment">// var/let/const</span>
         <span class="macro">unimplemented</span><span class="macro">!</span>()

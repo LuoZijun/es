@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["builtin",""],["isolate",""],["scope",""],["value",""]]});
+initSidebarItems({"mod":[["builtin",""],["intrinsics",""],["isolate",""],["scope",""],["string",""],["value",""]]});

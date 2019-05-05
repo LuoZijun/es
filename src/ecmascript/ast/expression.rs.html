@@ -548,68 +548,6 @@
 <span id="548">548</span>
 <span id="549">549</span>
 <span id="550">550</span>
-<span id="551">551</span>
-<span id="552">552</span>
-<span id="553">553</span>
-<span id="554">554</span>
-<span id="555">555</span>
-<span id="556">556</span>
-<span id="557">557</span>
-<span id="558">558</span>
-<span id="559">559</span>
-<span id="560">560</span>
-<span id="561">561</span>
-<span id="562">562</span>
-<span id="563">563</span>
-<span id="564">564</span>
-<span id="565">565</span>
-<span id="566">566</span>
-<span id="567">567</span>
-<span id="568">568</span>
-<span id="569">569</span>
-<span id="570">570</span>
-<span id="571">571</span>
-<span id="572">572</span>
-<span id="573">573</span>
-<span id="574">574</span>
-<span id="575">575</span>
-<span id="576">576</span>
-<span id="577">577</span>
-<span id="578">578</span>
-<span id="579">579</span>
-<span id="580">580</span>
-<span id="581">581</span>
-<span id="582">582</span>
-<span id="583">583</span>
-<span id="584">584</span>
-<span id="585">585</span>
-<span id="586">586</span>
-<span id="587">587</span>
-<span id="588">588</span>
-<span id="589">589</span>
-<span id="590">590</span>
-<span id="591">591</span>
-<span id="592">592</span>
-<span id="593">593</span>
-<span id="594">594</span>
-<span id="595">595</span>
-<span id="596">596</span>
-<span id="597">597</span>
-<span id="598">598</span>
-<span id="599">599</span>
-<span id="600">600</span>
-<span id="601">601</span>
-<span id="602">602</span>
-<span id="603">603</span>
-<span id="604">604</span>
-<span id="605">605</span>
-<span id="606">606</span>
-<span id="607">607</span>
-<span id="608">608</span>
-<span id="609">609</span>
-<span id="610">610</span>
-<span id="611">611</span>
-<span id="612">612</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">span</span>::{ <span class="ident">Loc</span>, <span class="ident">Span</span>, <span class="ident">LineColumn</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lexer</span>::<span class="ident">token</span>::{
@@ -623,11 +561,15 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">class</span>::<span class="ident">ClassExpression</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">function</span>::{ <span class="ident">FunctionExpression</span>, <span class="ident">ArrowFunctionExpression</span>, };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">jsx</span>::{ <span class="ident">JSXFragment</span>, <span class="ident">JSXElement</span>, };
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::<span class="ident">pattern</span>::{
+    <span class="ident">ObjectLiteral</span>, <span class="ident">ArrayLiteral</span>, <span class="ident">BindingPattern</span>, <span class="ident">AssignmentPattern</span>, 
+    <span class="ident">ObjectBindingPattern</span>, <span class="ident">ArrayBindingPattern</span>,
+    <span class="ident">ObjectAssignmentPattern</span>, <span class="ident">ArrayAssignmentPattern</span>, 
+};
+
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 
-
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ExpressionList</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>;
 
 
 <span class="comment">// https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#Table</span>
@@ -647,15 +589,12 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="comment">// Comment(&amp;&#39;ast Comment&lt;&#39;ast&gt;),</span>
-
     <span class="ident">This</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">Keyword</span>),
 
     <span class="comment">// NOTE: 特殊表达式，`Spread` 和 `Super` 无法独立成为一个表达式，必须要依附于其它表达式类型。</span>
     <span class="ident">Spread</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">SpreadExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">Super</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">Keyword</span>),
-    <span class="comment">// BindingElement(&amp;&#39;ast BindingElement&lt;&#39;ast&gt;),</span>
-    <span class="comment">// BindingProperty(&amp;&#39;ast BindingProperty&lt;&#39;ast&gt;),</span>
-    
+
     <span class="ident">Identifier</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">Identifier</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">Null</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">LiteralNull</span>),
     <span class="ident">Boolean</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">LiteralBoolean</span>),
@@ -664,9 +603,9 @@
     <span class="ident">RegularExpression</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">LiteralRegularExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">Template</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">LiteralTemplateExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     
-    <span class="comment">// TODO: </span>
-    <span class="comment">// ArrayLiteral(&amp;&#39;ast ArrayLiteral&lt;&#39;ast&gt;),</span>
-    <span class="comment">// ObjectLiteral(&amp;&#39;ast ObjectLiteral&lt;&#39;ast&gt;),</span>
+    <span class="ident">ArrayLiteral</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ArrayLiteral</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
+    <span class="ident">ObjectLiteral</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ObjectLiteral</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
+
     <span class="ident">Function</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">FunctionExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">ArrowFunction</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ArrowFunctionExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">Class</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ClassExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
@@ -674,8 +613,6 @@
 
     <span class="ident">Member</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">MemberExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">TaggedTemplate</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">TaggedTemplateExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
-    <span class="doccomment">/// This is the `new.target` expression that was introduced in ES2015. </span>
-    <span class="doccomment">/// This tells you if the function was called with the new operator.</span>
     <span class="ident">NewTarget</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">NewTargetExpression</span>),
     <span class="ident">Call</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">CallExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">New</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">NewExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
@@ -690,10 +627,9 @@
     
     <span class="ident">Comma</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">CommaExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
 
-    <span class="comment">// TODO:</span>
-    <span class="ident">ObjectBindingPattern</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ObjectBindingPattern</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
-    <span class="ident">ArrayBindingPattern</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">ArrayBindingPattern</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
-    
+    <span class="ident">AssignmentPattern</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">AssignmentPattern</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
+    <span class="ident">BindingPattern</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">BindingPattern</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
+
     <span class="comment">// JSX</span>
     <span class="ident">JSXFragment</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">JSXFragment</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
     <span class="ident">JSXElement</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> <span class="ident">JSXElement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>),
@@ -706,9 +642,6 @@
             <span class="ident">Expression</span>::<span class="ident">Spread</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             <span class="ident">Expression</span>::<span class="ident">Super</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
 
-            <span class="comment">// BindingElement(inner) =&gt; fmt::Debug::fmt(inner, f),</span>
-            <span class="comment">// BindingProperty(inner) =&gt; fmt::Debug::fmt(inner, f),</span>
-            
             <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             <span class="ident">Expression</span>::<span class="ident">Null</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             <span class="ident">Expression</span>::<span class="ident">Boolean</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
@@ -717,8 +650,9 @@
             <span class="ident">Expression</span>::<span class="ident">RegularExpression</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             <span class="ident">Expression</span>::<span class="ident">Template</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             
-            <span class="comment">// ArrayLiteral(inner) =&gt; fmt::Debug::fmt(inner, f),</span>
-            <span class="comment">// ObjectLiteral(inner) =&gt; fmt::Debug::fmt(inner, f),</span>
+            <span class="ident">Expression</span>::<span class="ident">ArrayLiteral</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">ObjectLiteral</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+
             <span class="ident">Expression</span>::<span class="ident">Function</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             <span class="ident">Expression</span>::<span class="ident">ArrowFunction</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             <span class="ident">Expression</span>::<span class="ident">Class</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
@@ -742,8 +676,8 @@
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
 
-            <span class="ident">Expression</span>::<span class="ident">ObjectBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
-            <span class="ident">Expression</span>::<span class="ident">ArrayBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">AssignmentPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
+            <span class="ident">Expression</span>::<span class="ident">BindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
 
             <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
             <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">inner</span>, <span class="ident">f</span>),
@@ -758,9 +692,6 @@
             <span class="ident">Expression</span>::<span class="ident">Spread</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
             <span class="ident">Expression</span>::<span class="ident">Super</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
 
-            <span class="comment">// BindingElement(inner) =&gt; inner.loc,</span>
-            <span class="comment">// BindingProperty(inner) =&gt; inner.loc,</span>
-            
             <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
             <span class="ident">Expression</span>::<span class="ident">Null</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
             <span class="ident">Expression</span>::<span class="ident">Boolean</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
@@ -769,8 +700,9 @@
             <span class="ident">Expression</span>::<span class="ident">RegularExpression</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
             <span class="ident">Expression</span>::<span class="ident">Template</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
             
-            <span class="comment">// ArrayLiteral(inner) =&gt; inner.loc,</span>
-            <span class="comment">// ObjectLiteral(inner) =&gt; inner.loc,</span>
+            <span class="ident">Expression</span>::<span class="ident">ArrayLiteral</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
+            <span class="ident">Expression</span>::<span class="ident">ObjectLiteral</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
+
             <span class="ident">Expression</span>::<span class="ident">Function</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
             <span class="ident">Expression</span>::<span class="ident">ArrowFunction</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
             <span class="ident">Expression</span>::<span class="ident">Class</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
@@ -793,9 +725,9 @@
             <span class="ident">Expression</span>::<span class="ident">Yield</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
-
-            <span class="ident">Expression</span>::<span class="ident">ObjectBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
-            <span class="ident">Expression</span>::<span class="ident">ArrayBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>,
+            
+            <span class="ident">Expression</span>::<span class="ident">AssignmentPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>(),
+            <span class="ident">Expression</span>::<span class="ident">BindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>(),
 
             <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>(),
             <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">loc</span>(),
@@ -808,9 +740,6 @@
             <span class="ident">Expression</span>::<span class="ident">Spread</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
             <span class="ident">Expression</span>::<span class="ident">Super</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
 
-            <span class="comment">// BindingElement(inner) =&gt; inner.span,</span>
-            <span class="comment">// BindingProperty(inner) =&gt; inner.span,</span>
-            
             <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
             <span class="ident">Expression</span>::<span class="ident">Null</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
             <span class="ident">Expression</span>::<span class="ident">Boolean</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
@@ -819,8 +748,9 @@
             <span class="ident">Expression</span>::<span class="ident">RegularExpression</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
             <span class="ident">Expression</span>::<span class="ident">Template</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
 
-            <span class="comment">// ArrayLiteral(inner) =&gt; inner.span,</span>
-            <span class="comment">// ObjectLiteral(inner) =&gt; inner.span,</span>
+            <span class="ident">Expression</span>::<span class="ident">ArrayLiteral</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
+            <span class="ident">Expression</span>::<span class="ident">ObjectLiteral</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
+
             <span class="ident">Expression</span>::<span class="ident">Function</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
             <span class="ident">Expression</span>::<span class="ident">ArrowFunction</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
             <span class="ident">Expression</span>::<span class="ident">Class</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
@@ -844,8 +774,8 @@
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
 
-            <span class="ident">Expression</span>::<span class="ident">ObjectBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
-            <span class="ident">Expression</span>::<span class="ident">ArrayBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>,
+            <span class="ident">Expression</span>::<span class="ident">AssignmentPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>(),
+            <span class="ident">Expression</span>::<span class="ident">BindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>(),
 
             <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>(),
             <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">span</span>(),
@@ -970,9 +900,6 @@
             <span class="ident">Expression</span>::<span class="ident">Spread</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">1</span>,
             <span class="ident">Expression</span>::<span class="ident">Super</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
 
-            <span class="comment">// BindingElement(inner) =&gt; inner.span,</span>
-            <span class="comment">// BindingProperty(inner) =&gt; inner.span,</span>
-            
             <span class="ident">Expression</span>::<span class="ident">Identifier</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
             <span class="ident">Expression</span>::<span class="ident">Null</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
             <span class="ident">Expression</span>::<span class="ident">Boolean</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
@@ -981,8 +908,9 @@
             <span class="ident">Expression</span>::<span class="ident">RegularExpression</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
             <span class="ident">Expression</span>::<span class="ident">Template</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
 
-            <span class="comment">// ArrayLiteral(inner) =&gt; inner.span,</span>
-            <span class="comment">// ObjectLiteral(inner) =&gt; inner.span,</span>
+            <span class="ident">Expression</span>::<span class="ident">ArrayLiteral</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">ObjectLiteral</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+
             <span class="ident">Expression</span>::<span class="ident">Function</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
             <span class="ident">Expression</span>::<span class="ident">ArrowFunction</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
             <span class="ident">Expression</span>::<span class="ident">Class</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
@@ -1007,8 +935,8 @@
             
             <span class="ident">Expression</span>::<span class="ident">Comma</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
 
-            <span class="ident">Expression</span>::<span class="ident">ObjectBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
-            <span class="ident">Expression</span>::<span class="ident">ArrayBindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">AssignmentPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">Expression</span>::<span class="ident">BindingPattern</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
 
             <span class="ident">Expression</span>::<span class="ident">JSXFragment</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
             <span class="ident">Expression</span>::<span class="ident">JSXElement</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="op">-</span><span class="number">1</span>,
@@ -1033,21 +961,6 @@
     <span class="kw">pub</span> <span class="ident">bounds</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> [ <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> ],
 }
 
-<span class="comment">// [ ]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ArrayLiteral</span> {
-    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
-    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
-    <span class="comment">// TODO:</span>
-}
-
-<span class="comment">// { }</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ObjectLiteral</span> {
-    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
-    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
-    <span class="comment">// TODO:</span>
-}
 
 <span class="comment">// ( Expression, + )</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
@@ -1124,7 +1037,11 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">InfixExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;InfixExpression{{ left: {:?}, operator: {:?}, right: {:?} }}&quot;</span>, <span class="self">self</span>.<span class="ident">left</span>, <span class="self">self</span>.<span class="ident">operator</span>, <span class="self">self</span>.<span class="ident">right</span>)
+        <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;InfixExpression&quot;</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;left&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">left</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;operator&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">operator</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;right&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">right</span>)
+            .<span class="ident">finish</span>()
     }
 }
 
@@ -1181,47 +1098,6 @@
     <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
     <span class="comment">// TODO:</span>
     <span class="kw">pub</span> <span class="ident">items</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> [ <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> ],
-}
-
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BindingElement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
-    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
-    <span class="comment">// Identifier           Option&lt;Initializer&gt;</span>
-    <span class="comment">// ArrayBindingPattern  Initializer</span>
-    <span class="comment">// ObjectBindingPattern Initializer</span>
-    <span class="kw">pub</span> <span class="ident">key</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">initializer</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
-}
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ArrayBindingPattern</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
-    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
-    <span class="kw">pub</span> <span class="ident">elems</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> [ <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BindingElement</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span> ],
-    <span class="kw">pub</span> <span class="ident">rest_elem</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SpreadExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
-}
-
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BindingProperty</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
-    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
-    <span class="comment">// Identifier           Option&lt;Initializer&gt;</span>
-    <span class="comment">// ArrayBindingPattern  Initializer</span>
-    <span class="comment">// ObjectBindingPattern Initializer</span>
-    <span class="kw">pub</span> <span class="ident">key</span>: <span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">initializer</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Expression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,
-}
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ObjectBindingPattern</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="ident">loc</span>: <span class="ident">Loc</span>,
-    <span class="kw">pub</span> <span class="ident">span</span>: <span class="ident">Span</span>,
-    <span class="comment">// BindingProperty, BindingProperty, Option&lt;SpreadExpression&gt;</span>
-    <span class="kw">pub</span> <span class="ident">properties</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;ast</span> [ <span class="ident">BindingProperty</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;</span> ],
-    <span class="kw">pub</span> <span class="ident">rest_property</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SpreadExpression</span><span class="op">&lt;</span><span class="lifetime">&#39;ast</span><span class="op">&gt;&gt;</span>,  <span class="comment">// BindingIdentifier</span>
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "ecmascript";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
