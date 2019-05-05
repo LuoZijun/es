@@ -357,6 +357,7 @@ pub struct ReturnStatement<'ast> {
     pub value: Option<Expression<'ast>>,
 }
 
+// NOTE: 不推荐的语句！(在编译的时候会报错)
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct WithStatement<'ast> {
     pub loc: Loc,

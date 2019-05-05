@@ -28,6 +28,12 @@ use std::path::{ Path, PathBuf, };
 // http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js
 // http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.map
 
+// NOTE:
+//      https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Errors/Deprecated_source_map_pragma
+//      使用 `//# sourceMappingURL=http://example.com/path/to/your/sourcemap.map`
+//      替代 `//@ sourceMappingURL=http://example.com/path/to/your/sourcemap.map`
+// 
+
 const VERSION: u8      = 3u8;
 const COMMA: &[u8]     = b",";
 const SEMICOLON: &[u8] = b";";

@@ -1,4 +1,4 @@
-#![cfg_attr(feature = "nightly", feature(test, repeat_generic_slice, duration_constants, const_fn))]
+#![cfg_attr(feature = "nightly", feature(test, repeat_generic_slice, duration_constants, const_fn, alloc_layout_extra))]
 #![recursion_limit="1024"]
 #![allow(
     unused_imports, unused_variables, unused_must_use, 
@@ -16,6 +16,8 @@ extern crate serde;
 #[macro_use]
 extern crate serde_json;
 extern crate vlq;
+extern crate time;
+extern crate num;
 
 
 pub mod rc_ref;
