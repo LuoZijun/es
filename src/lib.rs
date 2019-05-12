@@ -18,6 +18,7 @@ extern crate serde_json;
 extern crate vlq;
 extern crate time;
 extern crate num;
+extern crate rustc_hash;
 
 
 pub mod rc_ref;

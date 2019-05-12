@@ -1,0 +1,9 @@
+[package]
+name = "vm"
+version = "0.1.0"
+authors = ["luozijun <luozijun.assistant@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+num  = "0.2"
+rustc-hash = "1.0"
