@@ -22,10 +22,18 @@ pub fn is_es_punctuator(ch: char) -> bool {
     match ch {
         '{' | '}' | '(' | ')' | '[' | ']' 
         | '.' | ';' | ':' | ',' | '?'
-        | '/' | '!' | '|' | '&' | '^'
-        | '<' | '>' | '~' | '%' | '=' 
-        | '+' | '-' | '*' | '`' | '#'
-        | '\'' | '"' => true,
+        | '#' | '`' | '"' | '\'' => true,
+        _ => false,
+    }
+}
+
+#[inline]
+pub fn is_es_operator(ch: char) -> bool {
+    // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-punctuators
+    match ch {
+        '+' | '-' | '*' | '/' | '%' | '=' 
+        | '!' | '&' | '^' | '~' | '|'
+        | '<' | '>' => true,
         _ => false,
     }
 }
@@ -44,13 +52,17 @@ pub enum Category {
     LineTerminator,
     /// ```text
     /// '{' | '}' | '(' | ')' | '[' | ']' 
-    /// | '.' | ';' | ':' | ',' | '?'
-    /// | '/' | '!' | '|' | '&' | '^'
-    /// | '<' | '>' | '~' | '%' | '=' 
-    /// | '+' | '-' | '*' | '`' | '#'
-    /// | '\'' | '"'
+    /// '.' | ';' | ':' | ',' | '?'
+    /// '#' | '`' | '"' | '\''
     /// ```
     Punctuator,
+    // ```text
+    // '+' | '-' | '*' | '/' | '%' | '=' 
+    // '!' | '&' | '^' | '~' | '|'
+    // '<' | '>'
+    // ```
+    Operator,
+
     /// '\'
     BackSlash, // escape
     // Unicode ID_Continue or Unicode ID_Start
@@ -72,18 +84,15 @@ pub fn eschar_category(ch: char) -> Category {
         BACKSLASH   => Category::BackSlash,
         CR | LF | LS | PS => Category::LineTerminator,
         TAB | VT | FF | SP | NBSP | ZWNBSP
-        | '\u{0085}'
-        | '\u{1680}'
+        | '\u{0085}' | '\u{1680}'
         | '\u{2000}' ..= '\u{200A}'
-        | '\u{202F}'
-        | '\u{205F}'
-        | '\u{3000}' => Category::WhiteSpace,
+        | '\u{202F}' | '\u{205F}' | '\u{3000}' => Category::WhiteSpace,
         '{' | '}' | '(' | ')' | '[' | ']' 
         | '.' | ';' | ':' | ',' | '?'
-        | '/' | '!' | '|' | '&' | '^'
-        | '<' | '>' | '~' | '%' | '=' 
-        | '+' | '-' | '*' | '`' | '#'
-        | '\'' | '"' => Category::Punctuator,
+        | '#' | '`' | '"' | '\'' => Category::Punctuator,
+        '+' | '-' | '*' | '/' | '%' | '=' 
+        | '!' | '&' | '^' | '~' | '|'
+        | '<' | '>' => Category::Operator,
         // Fast path
         DOLLAR_SIGN | LOW_LINE | 'a' ... 'z' | 'A' ... 'Z' => Category::IDContinue,
         ZWJ | ZWNJ => Category::IDContinueOnly,
