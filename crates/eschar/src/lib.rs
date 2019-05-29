@@ -1,7 +1,10 @@
 mod id;
 mod white_space;
 
-pub use crate::id::{ is_id_start, is_id_continue, ZWJ, ZWNJ, DOLLAR_SIGN, LOW_LINE, };
+pub use crate::id::{
+    is_id_start, is_id_continue, is_id_continue_only,
+    ZWJ, ZWNJ, DOLLAR_SIGN, LOW_LINE,
+};
 pub use crate::white_space::{
     is_es_line_terminator, is_es_whitespace,
     TAB, VT, FF, SP, NBSP, ZWNBSP,
@@ -35,11 +38,11 @@ pub enum Category {
     Punctuator,
     // \
     BackSlash, // escape
-    // IdentifierStart: Unicode ID_Start
-    IDStart,
-    // IdentifierPart: Unicode ID_Continue
+    // IdentifierPart: Include IdentifierStart
+    // Unicode ID_Continue or Unicode ID_Start
     IDContinue,
-    IDStartAndIDContinue,
+    // IdentifierPart: ID_Continue
+    IDContinueOnly,
     // 0 ... 9
     Digit,
     Unspecified,
@@ -64,11 +67,15 @@ pub fn eschar_category(ch: char) -> Category {
         | '/' | '!' | '|' | '&' | '^'
         | '<' | '>' | '~' | '%' | '=' 
         | '+' | '-' | '*' | '`' | '#' => Category::Punctuator,
-        _ => match (is_id_start(ch), is_id_continue(ch)) {
-            (true, true) => Category::IDStartAndIDContinue,
-            (true, false) => Category::IDStart,
-            (false, true) => Category::IDContinue,
-            (false, false) => Category::Unspecified,
+        // Fast
+        '$' | '_' | 'a' ... 'z' | 'A' ... 'Z' => Category::IDContinue,
+        ZWJ | ZWNJ => Category::IDContinueOnly,
+        _ => match is_id_continue(ch) {
+            true => match is_id_continue_only(ch) {
+                true => Category::IDContinueOnly,
+                false => Category::IDContinue,
+            },
+            false => Category::Unspecified,
         },
     }
 }
