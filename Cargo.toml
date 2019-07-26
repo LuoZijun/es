@@ -45,7 +45,7 @@ members = [
 
 [dependencies]
 log = "0.4"
-unicode-xid = "0.1"
+unicode-xid = "0.2"
 toolshed = "0.8"
 vlq = "0.5"
 serde = "1.0"
