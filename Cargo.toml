@@ -59,7 +59,7 @@ fnv  = "1.0"
 
 
 [dev-dependencies]
-rustyline  = "3.0"
+rustyline  = "7.0"
 env_logger = { version = "0.6", default-features = false, features = [ "termcolor", "atty", "humantime"]  }
 
 [features]
