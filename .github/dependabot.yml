@@ -1,0 +1,14 @@
+version: 2
+updates:
+- package-ecosystem: cargo
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: rustyline
+    versions:
+    - 7.1.0
+  - dependency-name: num
+    versions:
+    - 0.3.0
